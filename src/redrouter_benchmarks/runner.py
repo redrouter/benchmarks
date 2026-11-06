@@ -8,9 +8,11 @@ from pathlib import Path
 import httpx
 
 from redrouter_benchmarks import METHODOLOGY_VERSION, __version__
+from redrouter_benchmarks.adapters import get_adapter
+from redrouter_benchmarks.adapters.base import Content, Done, Error, Finish, Usage
 from redrouter_benchmarks.catalog import Catalog, resource_dir
 from redrouter_benchmarks.clock import Clock, iso
-from redrouter_benchmarks.sse import ProtocolError, SSEParser, decode_event
+from redrouter_benchmarks.sse import ProtocolError, SSEParser
 
 STRATA = ("prose-1000", "code-1000", "prose-8000", "code-8000")
 ERRORS = (
@@ -40,19 +42,6 @@ def classify_status(status: int) -> str | None:
     if not 200 <= status < 300:
         return "client_error"
     return None
-
-
-def count(value):
-    return value if type(value) is int and value >= 0 else None
-
-
-def normalize_usage(usage: dict) -> dict:
-    return {
-        "prompt": count(usage.get("prompt_tokens")),
-        "cached": count((usage.get("prompt_tokens_details") or {}).get("cached_tokens")),
-        "completion": count(usage.get("completion_tokens")),
-        "reasoning": count((usage.get("completion_tokens_details") or {}).get("reasoning_tokens")),
-    }
 
 
 def cost_usd(usage: dict, price: dict) -> float | None:
@@ -90,20 +79,6 @@ def sample_metrics(record: dict) -> dict:
     return result
 
 
-def payload(route: dict, stratum: str, nonce: str) -> dict:
-    prompt = (resource_dir("prompts") / "1.0.0" / f"{stratum}.txt").read_text()
-    body = {
-        "model": route["provider_model"],
-        "messages": [{"role": "user", "content": f"Request nonce: {nonce}\n{prompt}"}],
-        "max_tokens": 512,
-        "temperature": 0.5,
-        "stream": True,
-    }
-    if route.get("include_usage", True):
-        body["stream_options"] = {"include_usage": True}
-    return {**body, **route.get("extra_body", {})}
-
-
 async def measure(
     client: httpx.AsyncClient,
     provider: dict,
@@ -118,12 +93,10 @@ async def measure(
     api_key: str,
     demo: bool = False,
 ) -> dict:
-    request = client.build_request(
-        "POST",
-        provider["base_url"].rstrip("/") + "/chat/completions",
-        headers={"Authorization": f"Bearer {api_key}", "Accept": "text/event-stream"},
-        json=payload(route, stratum, nonce),
-    )
+    adapter = get_adapter(provider["protocol"])
+    prompt = (resource_dir("prompts") / "1.0.0" / f"{stratum}.txt").read_text()
+    request = adapter.build_request(provider, route, prompt, nonce, api_key)
+    request.headers = httpx.Headers({**client.headers, **request.headers})
     start = clock.monotonic_ns()
     record = {
         "run_id": run_id,
@@ -165,46 +138,29 @@ async def measure(
         nonlocal done
         if done:
             raise ProtocolError
-        data = decode_event(event)
-        if data is None:
-            done = True
-            return
-        if data.get("error"):
-            error = data["error"]
-            status = error.get("code") if isinstance(error, dict) else None
-            record["error_class"] = classify_status(status) if type(status) is int else "protocol"
-            raise ProtocolError
-        usage = data.get("usage")
-        if usage is not None:
-            if not isinstance(usage, dict):
-                raise ProtocolError
-            normalized = normalize_usage(usage)
-            record["usage"].update({k: v for k, v in normalized.items() if v is not None})
-        for choice in data.get("choices", []):
-            if choice.get("index", 0) != 0:
-                continue
-            delta = choice.get("delta") or {}
-            content = any(delta.get(k) for k in ("content", "reasoning_content", "reasoning"))
-            tools = any(
-                (tool.get("function") or {}).get("arguments")
-                for tool in delta.get("tool_calls", [])
-            )
-            if content or tools:
-                if stamps["first_delta_ns"] is None:
-                    stamps["first_delta_ns"] = timestamp
-                    record["first_chunk_tokens"] = count((usage or {}).get("completion_tokens"))
-                stamps["last_delta_ns"] = timestamp
-                record["content_delta_count"] += 1
-            if choice.get("finish_reason") is not None:
-                finish = choice["finish_reason"]
-                if not isinstance(finish, str) or finish not in {
-                    "stop",
-                    "length",
-                    "tool_calls",
-                    "function_call",
-                }:
+        for item in adapter.parse_event(event):
+            match item:
+                case Done():
+                    done = True
+                case Error(status):
+                    record["error_class"] = (
+                        classify_status(status) if status is not None else "protocol"
+                    )
                     raise ProtocolError
-                record["finish_reason"] = finish
+                case Usage(counts):
+                    record["usage"].update({k: v for k, v in counts.items() if v is not None})
+                case Content(tokens):
+                    if stamps["first_delta_ns"] is None:
+                        stamps["first_delta_ns"] = timestamp
+                        record["first_chunk_tokens"] = tokens
+                    stamps["last_delta_ns"] = timestamp
+                    record["content_delta_count"] += 1
+                case Finish(reason):
+                    if reason not in {"stop", "length", "tool_calls", "function_call"}:
+                        raise ProtocolError
+                    record["finish_reason"] = reason
+                case _:
+                    raise ProtocolError
 
     try:
         response = await clock.wait_for(client.send(request, stream=True), STALL_TIMEOUT)

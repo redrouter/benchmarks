@@ -1,0 +1,4 @@
+data: {"choices":[{"index":0,"delta":{"content":"sample"}}],"usage":{"prompt_tokens":1000,"completion_tokens":2}}
+
+data: {"error":{"code":429,"message":"synthetic-error-body"}}
+

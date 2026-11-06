@@ -6,6 +6,8 @@ from datetime import date
 from pathlib import Path
 from urllib.parse import urlparse
 
+from redrouter_benchmarks.adapters import registry
+
 SLUG = re.compile(r"[a-z0-9][a-z0-9.-]*\Z")
 MODIFICATIONS = {"none", "abliterated", "uncensored", "heretic"}
 
@@ -29,13 +31,17 @@ class Catalog:
     @classmethod
     def load(cls, root: Path | None = None) -> "Catalog":
         root = root or resource_dir("catalog")
+        adapters = registry()
         providers = {}
         for path in sorted((root / "providers").glob("*.toml")):
             p = tomllib.loads(path.read_text())
             if p["id"] != path.stem or not SLUG.fullmatch(p["id"]):
                 raise ValueError(f"Invalid provider identity: {path}")
-            if p["protocol"] != "openai-chat":
-                raise ValueError(f"Unsupported protocol: {path}")
+            if p["protocol"] not in adapters:
+                raise ValueError(
+                    f"Unknown adapter protocol {p['protocol']!r} in {path}; "
+                    f"available: {', '.join(sorted(adapters))}"
+                )
             if not all(https_url(p[k]) for k in ("url", "base_url", "terms_url")):
                 raise ValueError(f"Invalid provider URL: {path}")
             if Path(p["logo"]).name != p["logo"] or not p["api_key_env"]:

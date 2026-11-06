@@ -1,0 +1,14 @@
+: heartbeat
+
+data: {"choices":[{"index":0,"delta":{"role":"assistant"}}]}
+
+data: {"choices":[{"index":1,"delta":{"content":"ignored"}},{"index":0,"delta":{"reasoning_content":"sample café"}}],"usage":{"completion_tokens":2}}
+
+data: {"choices":[{"index":0,"delta":{"content":"sample"}}]}
+
+data: {"choices":[{"index":0,"delta":{"tool_calls":[{"function":{"arguments":"{}"}}]},"finish_reason":"tool_calls"}]}
+
+data: {"choices":[],"usage":{"prompt_tokens":1000,"completion_tokens":502,"prompt_tokens_details":{"cached_tokens":200},"completion_tokens_details":{"reasoning_tokens":20}}}
+
+data: [DONE]
+

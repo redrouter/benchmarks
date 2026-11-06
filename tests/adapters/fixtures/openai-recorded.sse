@@ -1,0 +1,70 @@
+: Modified by RedRouter: response text and identifiers replaced with synthetic sample values.
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"role": "assistant", "content": "", "refusal": null}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"content": "sample"}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"content": "sample"}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"content": "sample"}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"content": "sample"}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"content": "sample"}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"content": "sample"}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"content": "sample"}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"content": "sample"}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"content": "sample"}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"content": "sample"}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"content": "sample"}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"content": "sample"}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"content": "sample"}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"content": "sample"}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"content": "sample"}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"content": "sample"}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"content": "sample"}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"content": "sample"}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"content": "sample"}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"content": "sample"}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"content": "sample"}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"content": "sample"}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"content": "sample"}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"content": "sample"}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"content": "sample"}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"content": "sample"}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"content": "sample"}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"content": "sample"}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"content": "sample"}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {"content": "sample"}, "logprobs": null, "finish_reason": null}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [{"index": 0, "delta": {}, "logprobs": null, "finish_reason": "stop"}]}
+
+data: {"id": "sample", "object": "chat.completion.chunk", "created": 1727346168, "model": "gpt-4o-2024-08-06", "system_fingerprint": "fp_5050236cbd", "choices": [], "usage": {"prompt_tokens": 14, "completion_tokens": 30, "total_tokens": 44, "completion_tokens_details": {"reasoning_tokens": 0}}}
+
+data: [DONE]
+
+
