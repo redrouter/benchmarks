@@ -1,0 +1,219 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://benchmarks.redrouter.org/data/schema/external.schema.json",
+  "title": "Published stock-model results from other evaluators",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "accessed_at",
+    "zip_sha256",
+    "generator_version",
+    "counts",
+    "results"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "accessed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "zip_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "generator_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kept_epoch",
+        "kept_upstream",
+        "dropped_licence",
+        "dropped_model",
+        "dropped_format",
+        "dropped_score"
+      ],
+      "properties": {
+        "kept_epoch": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "kept_upstream": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "dropped_licence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "dropped_model": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "dropped_format": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "dropped_score": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "benchmark",
+          "model_id",
+          "model_version",
+          "evaluator",
+          "source_file",
+          "attribution",
+          "version",
+          "agent",
+          "scaffold",
+          "run_id",
+          "source",
+          "source_url",
+          "licence_url",
+          "licence_evidence_url",
+          "licence_id",
+          "run_date",
+          "score",
+          "epoch_attribution"
+        ],
+        "properties": {
+          "benchmark": {
+            "type": "string",
+            "minLength": 1
+          },
+          "model_id": {
+            "enum": [
+              "deepseek-v4.1-flash",
+              "deepseek-v4.1-flash-1017",
+              "glm-5.3",
+              "glm-5.3-flash",
+              "qwen3.8-27b"
+            ]
+          },
+          "model_version": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evaluator": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_file": {
+            "type": "string",
+            "minLength": 1
+          },
+          "attribution": {
+            "type": "string",
+            "minLength": 1
+          },
+          "version": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1
+          },
+          "agent": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1
+          },
+          "scaffold": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1
+          },
+          "run_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1
+          },
+          "source": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://"
+          },
+          "source_url": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://"
+          },
+          "licence_url": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://"
+          },
+          "licence_evidence_url": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://"
+          },
+          "licence_id": {
+            "type": "string",
+            "pattern": "^(CC-(BY|BY-SA)-(1\\.0|2\\.0|2\\.5|3\\.0|4\\.0)|CC0-1\\.0)$"
+          },
+          "run_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "score": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "value",
+              "unit",
+              "metric"
+            ],
+            "properties": {
+              "value": {
+                "type": "number"
+              },
+              "unit": {
+                "enum": [
+                  "fraction",
+                  "%",
+                  "points"
+                ]
+              },
+              "metric": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "epoch_attribution": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

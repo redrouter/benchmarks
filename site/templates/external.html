@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block intro %}<p class="intro">Published stock-model results from other evaluators.</p>{% include 'external-notice.html' %}{% endblock %}
+{% block content %}
+{% if external %}<p class="footnote external-provenance">Accessed {{ external.accessed_at[:10] }} · <a href="/data/external.json" download>Download results JSON</a> · <a href="/data/schema/external.schema.json">Schema</a><br>Epoch ZIP SHA-256: <code>{{ external.zip_sha256 }}</code></p>{% endif %}
+{% set external_rows = external.results if external else [] %}{% include 'external-table.html' %}
+{% endblock %}

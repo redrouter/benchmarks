@@ -1,0 +1,13 @@
+{% if external_rows %}
+<div class="table-scroll" role="region" aria-label="Published stock-model results, scroll horizontally for all columns" tabindex="0">
+<table class="external-results"><caption class="sr-only">Published stock-model results from other evaluators</caption>
+<thead><tr><th scope="col">Model</th><th scope="col">Benchmark / version</th><th scope="col">Score</th><th scope="col">Evaluator / agent</th><th scope="col">Run date</th><th scope="col">Source and attribution</th></tr></thead>
+<tbody>{% for row in external_rows %}<tr>
+<td>{% if row.model_id in models %}<a href="/models/{{ row.model_id }}/">{{ row.model_id }}</a>{% else %}{{ row.model_id }}{% endif %}<small>{{ row.model_version }}</small></td>
+<td>{{ row.benchmark }}<small>Version: {{ row.version or 'Not reported' }}</small></td>
+<td class="numeric">{{ row.score.value|number(4) }} {{ row.score.unit }}<small>{{ row.score.metric }}</small></td>
+<td>{{ row.evaluator }}<small>Agent: {{ row.agent or 'Not reported' }}<br>Scaffold: {{ row.scaffold or 'Not reported' }}</small></td>
+<td>{{ row.run_date or 'Not reported' }}</td>
+<td class="external-attribution"><p><a href="{{ row.source|safe_url }}">{{ row.attribution }}</a></p><small><a href="{{ row.licence_url|safe_url }}">{{ row.licence_id|licence_label }}</a> · <a href="{{ row.source_url|safe_url }}">Original result</a> · <a href="{{ row.licence_evidence_url|safe_url }}">Licence evidence</a></small>{% if row.epoch_attribution %}<p><a href="{{ epoch_url }}">{{ row.epoch_attribution }}</a></p><small><a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></small>{% endif %}</td>
+</tr>{% endfor %}</tbody></table></div>
+{% else %}<p class="footnote">No licensed external results are available for this selection.</p>{% endif %}

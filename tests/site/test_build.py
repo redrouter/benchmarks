@@ -72,7 +72,7 @@ def test_fixture_matches_both_schemas():
 
 
 def test_build_pages_and_downloads(dist):
-    assert len(list(dist.rglob("*.html"))) == 17
+    assert len(list(dist.rglob("*.html"))) == 18
     for name in (
         "summary.json",
         "summary.csv",

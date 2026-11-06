@@ -1,0 +1,14 @@
+{
+  "https://epoch.ai/benchmarks": {
+    "name": "Epoch AI",
+    "licence_id": "CC-BY-4.0",
+    "licence_url": "https://creativecommons.org/licenses/by/4.0/",
+    "evidence_url": "https://epoch.ai/benchmarks?view=table"
+  },
+  "https://arena.ai/leaderboard": {
+    "name": "Arena (LMArena)",
+    "licence_id": "CC-BY-4.0",
+    "licence_url": "https://creativecommons.org/licenses/by/4.0/",
+    "evidence_url": "https://huggingface.co/datasets/lmarena-ai/leaderboard-dataset/blob/5a7e6bb84a93f55df56b198be8e56e53755a216a/README.md"
+  }
+}

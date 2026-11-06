@@ -15,4 +15,5 @@
 {% endif %}
 </section>{% endfor %}{% endfor %}
 <noscript><p class="footnote">The initial selection is shown above. Select a <a href="/models/">model page</a> to explore other models. Region selection and table sorting require JavaScript.</p></noscript>
+{% if model %}<section class="published-results"><h2>Published results from other evaluators</h2>{% include 'external-notice.html' %}{% set external_rows = external.results|selectattr('model_id', 'equalto', model.id)|list if external else [] %}{% include 'external-table.html' %}<p class="footnote"><a href="/external/">All external results →</a></p></section>{% endif %}
 {% endblock %}

@@ -28,6 +28,11 @@ def main(argv: list[str] | None = None) -> None:
     demo.add_argument("--output", type=Path, required=True)
     demo.add_argument("--days", type=int, default=14)
     demo.add_argument("--seed", type=int, default=7)
+    external = sub.add_parser(
+        "fetch-external", help="Import licensed stock-model results from Epoch"
+    )
+    external.add_argument("--output", type=Path, required=True)
+    external.add_argument("--zip", type=Path)
     build = sub.add_parser("build-site", help="Build the static benchmark site")
     build.add_argument("--data", type=Path, required=True)
     build.add_argument("--output", type=Path, required=True)
@@ -64,6 +69,10 @@ def main(argv: list[str] | None = None) -> None:
         elif args.command == "demo-data":
             result = asyncio.run(demo_data(args.output, args.days, args.seed))
             print(f"Demo data: {len(result['routes'])} routes, {args.days} days, seed {args.seed}")
+        elif args.command == "fetch-external":
+            from redrouter_benchmarks.external import fetch_external
+
+            fetch_external(args.output, args.zip)
         elif args.command == "build-site":
             from redrouter_benchmarks.site.build import build_site
 
