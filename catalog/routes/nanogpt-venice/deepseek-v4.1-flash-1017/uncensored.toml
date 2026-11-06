@@ -1,0 +1,21 @@
+provider_model = "deepseek/deepseek-v4.1-flash-1017-uncensored"
+model_id = "deepseek-v4.1-flash-1017"
+modification = "uncensored"
+enabled = false
+include_usage = true
+upstream = "venice"
+context_tokens = 1000000
+
+[price]
+input_usd_per_mtok = 0.347
+output_usd_per_mtok = 1.39
+source_url = "https://nano-gpt.com/provider/venice"
+checked_at = "2026-11-05"
+cached_input_usd_per_mtok = 0.00866
+
+[extra_body]
+reasoning_effort = "none"
+
+[extra_body.provider]
+only = ["venice"]
+allow_fallbacks = false

@@ -1,0 +1,14 @@
+provider_model = "abliteration-abliterated-model-large-v2"
+model_id = "glm-5.3"
+modification = "abliterated"
+enabled = true
+include_usage = true
+upstream = "Abliterated Large v2 via abliteration.ai"
+context_tokens = 1000000
+
+[price]
+input_usd_per_mtok = 3
+output_usd_per_mtok = 5
+source_url = "https://api.venice.ai/api/v1/models"
+checked_at = "2026-11-05"
+cached_input_usd_per_mtok = 0.3

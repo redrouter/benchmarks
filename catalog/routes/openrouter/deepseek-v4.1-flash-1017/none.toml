@@ -1,0 +1,24 @@
+provider_model = "deepseek/deepseek-v4.1-flash-1017"
+model_id = "deepseek-v4.1-flash-1017"
+modification = "none"
+enabled = true
+include_usage = true
+upstream = "morph/fp8"
+declared_precision = "FP8"
+context_tokens = 1048576
+
+[price]
+input_usd_per_mtok = 0.022
+output_usd_per_mtok = 0.4
+source_url = "https://openrouter.ai/api/v1/models/deepseek/deepseek-v4.1-flash-1017/endpoints"
+checked_at = "2026-11-05"
+cached_input_usd_per_mtok = 0.004
+
+[extra_body]
+
+[extra_body.provider]
+order = ["morph/fp8"]
+allow_fallbacks = false
+
+[extra_body.reasoning]
+effort = "none"

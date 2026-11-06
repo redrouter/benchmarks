@@ -1,0 +1,51 @@
+{
+  "checked_at": "2026-11-05",
+  "method": "Unauthenticated public GETs only; no inference calls.",
+  "observations": [
+    {
+      "url": "https://api.refuseless.com/v1/models",
+      "http_status": 200,
+      "result": "IDs and context confirmed; dated DeepSeek checkpoint ambiguous against model-page base link."
+    },
+    {
+      "url": "https://docs.abliteration.ai/models",
+      "http_status": 200,
+      "result": "Model IDs, base URL and context confirmed; GET /v1/models requires authentication (401). Large v2 cannot disable reasoning."
+    },
+    {
+      "url": "https://api.venice.ai/api/v1/models",
+      "http_status": 200,
+      "result": "Exact dated DeepSeek ID and Large v2 confirmed with prices; public metadata is not a serving test."
+    },
+    {
+      "url": "https://yeta.ai/",
+      "http_status": 200,
+      "result": "Prices published; exact API base URL, dated checkpoint and request model ID unconfirmed. platform.yeta.ai/docs returned 403; api.yeta.ai DNS failed. Catalogue base URL is an inactive candidate."
+    },
+    {
+      "url": "https://larprouter.com/",
+      "http_status": 200,
+      "result": "Base URL and exact dated model ID confirmed in curl example; /v1/models requires authentication (401)."
+    },
+    {
+      "url": "https://www.experientiallabs.ai/uncensored",
+      "http_status": 200,
+      "result": "Base URL, IDs, dated DeepSeek base, context and promotional prices confirmed; /v1/models requires authentication (401)."
+    },
+    {
+      "url": "https://nano-gpt.com/api/v1/models",
+      "http_status": 200,
+      "result": "Canonical model IDs confirmed. Supplier membership and marked-up prices checked on each /provider/<supplier> page. Venice lists undated uncensored DeepSeek only; its dated uncensored pin is disabled."
+    },
+    {
+      "url": "https://docs.nano-gpt.com/api-reference/miscellaneous/provider-selection",
+      "http_status": 200,
+      "result": "provider.only is a hard pin; provider.order alone is soft. All pins set only and allow_fallbacks=false."
+    },
+    {
+      "url": "https://openrouter.ai/api/v1/models",
+      "http_status": 200,
+      "result": "Standard-model controls confirmed. Supplier tags, precision and prices checked with each model /endpoints GET; controls pin morph/fp8 or z-ai/fp8."
+    }
+  ]
+}

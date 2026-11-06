@@ -1,0 +1,8 @@
+id = "abliteration"
+name = "abliteration.ai"
+url = "https://abliteration.ai"
+logo = "abliteration.svg"
+base_url = "https://api.abliteration.ai/v1"
+protocol = "openai-chat"
+api_key_env = "ABLITERATION_API_KEY"
+terms_url = "https://abliteration.ai/terms-of-service"

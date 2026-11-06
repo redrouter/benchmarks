@@ -1,0 +1,8 @@
+id = "nanogpt-heabsy"
+name = "NanoGPT \u2192 Heabsy"
+url = "https://nano-gpt.com/provider/heabsy"
+logo = "nanogpt-heabsy.svg"
+base_url = "https://nano-gpt.com/api/v1"
+protocol = "openai-chat"
+api_key_env = "NANOGPT_API_KEY"
+terms_url = "https://nano-gpt.com/legal/terms-of-service"

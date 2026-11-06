@@ -1,0 +1,19 @@
+provider_model = "deepseek-v4-1-flash-1017-uncensored"
+model_id = "deepseek-v4.1-flash-1017"
+modification = "uncensored"
+enabled = true
+include_usage = true
+context_tokens = 1000000
+
+[price]
+input_usd_per_mtok = 0.33
+output_usd_per_mtok = 1.32
+source_url = "https://docs.venice.ai/overview/pricing"
+checked_at = "2026-11-05"
+cached_input_usd_per_mtok = 0.00825
+
+[extra_body]
+
+[extra_body.venice_parameters]
+disable_thinking = true
+include_venice_system_prompt = false

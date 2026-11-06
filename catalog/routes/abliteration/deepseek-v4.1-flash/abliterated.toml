@@ -1,0 +1,17 @@
+provider_model = "abliterated-model-large-flash"
+model_id = "deepseek-v4.1-flash"
+modification = "abliterated"
+enabled = true
+include_usage = true
+upstream = "Abliterated Large Flash"
+context_tokens = 1048576
+
+[price]
+input_usd_per_mtok = 1
+output_usd_per_mtok = 2
+source_url = "https://abliteration.ai/pricing"
+checked_at = "2026-11-05"
+cached_input_usd_per_mtok = 0.1
+
+[extra_body]
+reasoning_effort = "none"

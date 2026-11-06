@@ -1,0 +1,8 @@
+id = "openrouter"
+name = "OpenRouter"
+url = "https://openrouter.ai"
+logo = "openrouter.svg"
+base_url = "https://openrouter.ai/api/v1"
+protocol = "openai-chat"
+api_key_env = "OPENROUTER_API_KEY"
+terms_url = "https://openrouter.ai/terms"

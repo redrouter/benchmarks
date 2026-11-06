@@ -1,0 +1,17 @@
+provider_model = "glm-5.3-abliterated"
+model_id = "glm-5.3"
+modification = "abliterated"
+enabled = true
+include_usage = true
+declared_precision = "NVFP4"
+context_tokens = 1048576
+
+[price]
+input_usd_per_mtok = 1
+output_usd_per_mtok = 2
+source_url = "https://refuseless.com/models/glm-5.3-abliterated"
+checked_at = "2026-11-05"
+cached_input_usd_per_mtok = 0.15
+
+[extra_body]
+reasoning_effort = "low"

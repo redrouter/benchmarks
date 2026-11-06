@@ -1,0 +1,14 @@
+provider_model = "deepseek-v4.1-flash-uncensored"
+model_id = "deepseek-v4.1-flash-1017"
+modification = "uncensored"
+enabled = false
+include_usage = true
+declared_precision = "FP8"
+context_tokens = 1000000
+
+[price]
+input_usd_per_mtok = 0.08
+output_usd_per_mtok = 0.35
+source_url = "https://yeta.ai/"
+checked_at = "2026-11-05"
+cached_input_usd_per_mtok = 0.01

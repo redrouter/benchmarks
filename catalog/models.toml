@@ -1,0 +1,23 @@
+[[models]]
+id = "deepseek-v4.1-flash-1017"
+name = "DeepSeek V4.1 Flash 1017"
+creator = "DeepSeek"
+family = "DeepSeek"
+
+[[models]]
+id = "deepseek-v4.1-flash"
+name = "DeepSeek V4.1 Flash (undated derivative)"
+creator = "DeepSeek"
+family = "DeepSeek"
+
+[[models]]
+id = "glm-5.3-flash"
+name = "GLM 5.3 Flash"
+creator = "Z.ai"
+family = "GLM"
+
+[[models]]
+id = "glm-5.3"
+name = "GLM 5.3"
+creator = "Z.ai"
+family = "GLM"

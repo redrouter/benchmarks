@@ -1,0 +1,12 @@
+provider_model = "deepseek-v4.1-flash-1017-abliterated"
+model_id = "deepseek-v4.1-flash-1017"
+modification = "abliterated"
+enabled = true
+include_usage = true
+context_tokens = 1000000
+
+[price]
+input_usd_per_mtok = 0.12
+output_usd_per_mtok = 0.5
+source_url = "https://larprouter.com/pricing"
+checked_at = "2026-11-05"

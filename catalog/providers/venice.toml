@@ -1,0 +1,8 @@
+id = "venice"
+name = "Venice"
+url = "https://venice.ai"
+logo = "venice.svg"
+base_url = "https://api.venice.ai/api/v1"
+protocol = "openai-chat"
+api_key_env = "VENICE_API_KEY"
+terms_url = "https://venice.ai/legal/tos"

@@ -1,0 +1,8 @@
+id = "refuseless"
+name = "Refuseless"
+url = "https://refuseless.com"
+logo = "refuseless.svg"
+base_url = "https://api.refuseless.com/v1"
+protocol = "openai-chat"
+api_key_env = "REFUSELESS_API_KEY"
+terms_url = "https://refuseless.com/terms"

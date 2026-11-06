@@ -1,0 +1,8 @@
+id = "yeta"
+name = "Yeta Labs"
+url = "https://yeta.ai"
+logo = "yeta.svg"
+base_url = "https://platform.yeta.ai/v1"
+protocol = "openai-chat"
+api_key_env = "YETA_API_KEY"
+terms_url = "https://platform.yeta.ai/tos"

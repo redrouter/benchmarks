@@ -1,0 +1,22 @@
+provider_model = "pqhaz/DeepSeek-V4.1-Flash-1017-heretic"
+model_id = "deepseek-v4.1-flash-1017"
+modification = "heretic"
+enabled = true
+include_usage = true
+upstream = "sable"
+declared_precision = "NATIVE"
+context_tokens = 512000
+
+[price]
+input_usd_per_mtok = 0.173
+output_usd_per_mtok = 0.693
+source_url = "https://nano-gpt.com/provider/sable"
+checked_at = "2026-11-05"
+cached_input_usd_per_mtok = 0.0115
+
+[extra_body]
+reasoning_effort = "none"
+
+[extra_body.provider]
+only = ["sable"]
+allow_fallbacks = false

@@ -1,0 +1,8 @@
+id = "larprouter"
+name = "LarpRouter"
+url = "https://larprouter.com"
+logo = "larprouter.svg"
+base_url = "https://larprouter.com/v1"
+protocol = "openai-chat"
+api_key_env = "LARPROUTER_API_KEY"
+terms_url = "https://larprouter.com/terms"

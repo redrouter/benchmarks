@@ -1,0 +1,8 @@
+id = "explabs"
+name = "Experiential Labs"
+url = "https://www.experientiallabs.ai"
+logo = "explabs.svg"
+base_url = "https://api.experientiallabs.ai/v1"
+protocol = "openai-chat"
+api_key_env = "EXPLABS_API_KEY"
+terms_url = "https://www.experientiallabs.ai/terms"
