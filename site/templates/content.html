@@ -1,2 +1,2 @@
 {% extends 'base.html' %}
-{% block content %}<article class="prose">{{ content }}</article>{% endblock %}
+{% block content %}<article class="prose">{{ content }}</article>{% if data_request %}<div class="data-request"><a class="button" href="mailto:support@redrouter.org?subject=Benchmark%20data%20access">Request full data access</a></div>{% endif %}{% endblock %}

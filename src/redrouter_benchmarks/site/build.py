@@ -459,16 +459,11 @@ def build_site(data_dir: Path, output_dir: Path) -> None:
         "content.html",
         title="Methodology",
         active="methodology",
+        data_request=True,
         content=Markup(
             markdown.markdown(methodology.read_text(), extensions=["tables", "fenced_code", "toc"])
         ),
     )
-    files = [
-        p.relative_to(output_dir / "data").as_posix()
-        for p in sorted((output_dir / "data").rglob("*"))
-        if p.is_file()
-    ]
-    render("data/index.html", "data.html", title="Open data", active="data", files=files)
     render(
         "404.html",
         "content.html",

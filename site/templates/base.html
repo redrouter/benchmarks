@@ -14,11 +14,11 @@
 <a class="skip" href="#main">Skip to content</a>
 <div class="aurora" aria-hidden="true"><canvas id="aurora" data-aurora="panel" data-density="150"></canvas></div>
 <header><div class="header-inner"><a class="brand" href="/" aria-label="RedRouter Benchmarks overview"><img src="/assets/logo.svg" alt="" width="26" height="26"><strong>RedRouter</strong><span class="brand-divider">/</span><span>Benchmarks</span></a>{% if summary.demo %}<span class="tag demo">Demo data</span>{% endif %}
-<nav aria-label="Main navigation">{% for key, name, href in [('overview','Overview','/'),('models','Models','/models/'),('providers','Providers','/providers/'),('external','External results','/external/'),('methodology','Methodology','/methodology/'),('data','Data','/data/')] %}<a href="{{ href }}"{% if active == key %} aria-current="page"{% endif %}>{{ name }}</a>{% endfor %}</nav></div></header>
+<nav aria-label="Main navigation">{% for key, name, href in [('overview','Overview','/'),('models','Models','/models/'),('providers','Providers','/providers/'),('external','External results','/external/'),('methodology','Methodology','/methodology/')] %}<a href="{{ href }}"{% if active == key %} aria-current="page"{% endif %}>{{ name }}</a>{% endfor %}</nav></div></header>
 <main id="main"><div class="page-heading"><div class="heading-row">{% block heading %}<h1>{{ title }}</h1>{% endblock %}{% block status %}{% endblock %}</div></div>
 {% block content %}{% endblock %}
 {% include 'further-reading.html' %}
 </main>
-<footer><div><p>Maintained by RedRouter, an inference provider. Methodology and data are open.</p><p><a href="/methodology/">Methodology</a><a href="/data/">Download data</a><a href="https://redrouter.org">RedRouter</a></p></div></footer>
+<footer><div><p>Maintained by RedRouter, an inference provider. Methodology is open.</p><p><a href="/methodology/">Methodology</a><a href="https://redrouter.org">RedRouter</a></p></div></footer>
 <div id="tooltip" role="tooltip" hidden></div>
 </body></html>

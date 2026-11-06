@@ -214,7 +214,7 @@ def test_every_page_has_further_reading_and_optional_results(
     output = tmp_path / "dist"
     build.build_site(data, output)
     pages = list(output.rglob("*.html"))
-    assert len(pages) == 18
+    assert len(pages) == 17
     for page in pages:
         content = page.read_text()
         assert 'href="https://redrouter.org/blog/benchmarks-we-dont-run"' in content

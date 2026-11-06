@@ -72,7 +72,7 @@ def test_fixture_matches_both_schemas():
 
 
 def test_build_pages_and_downloads(dist):
-    assert len(list(dist.rglob("*.html"))) == 18
+    assert len(list(dist.rglob("*.html"))) == 17
     for name in (
         "summary.json",
         "summary.csv",
@@ -82,7 +82,10 @@ def test_build_pages_and_downloads(dist):
     ):
         assert (dist / "data" / name).is_file()
     assert "Demo data" in (dist / "index.html").read_text()
-    assert "Fixture methodology" in (dist / "methodology/index.html").read_text()
+    methodology = (dist / "methodology/index.html").read_text()
+    assert "Fixture methodology" in methodology
+    assert "mailto:support@redrouter.org" in methodology
+    assert not (dist / "data/index.html").exists()
     assert 'data-days="7"' in (dist / "models/deepseek-v4.1-flash-1017/index.html").read_text()
 
 
