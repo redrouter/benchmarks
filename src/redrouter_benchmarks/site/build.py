@@ -10,6 +10,8 @@ import markdown
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from markupsafe import Markup
 
+from redrouter_benchmarks.external import EPOCH, licence_label, load_external
+
 ROOT = Path(__file__).resolve().parents[3]
 COLORS = [
     "#b0161c",
@@ -308,6 +310,8 @@ def build_site(data_dir: Path, output_dir: Path) -> None:
     if not methodology.is_file():
         raise FileNotFoundError(f"Methodology is required to build the site: {methodology}")
     summary = json.loads((data_dir / "summary.json").read_text())
+    external = load_external(data_dir / "external.json")
+    further_reading = json.loads((ROOT / "site/data/further-reading.json").read_text())
     if summary["schema_version"] != 1:
         raise ValueError("Unsupported summary schema_version")
     assets = ROOT / "site" / "assets"
@@ -371,7 +375,9 @@ def build_site(data_dir: Path, output_dir: Path) -> None:
         loader=FileSystemLoader(ROOT / "site" / "templates"),
         autoescape=select_autoescape(),
     )
-    env.filters.update(number=number, timestamp=timestamp)
+    env.filters.update(
+        number=number, timestamp=timestamp, safe_url=safe_url, licence_label=licence_label
+    )
     default_model = next(
         (m for m in models if "deepseek" in m and "1017" in m), next(iter(models), "")
     )
@@ -388,6 +394,9 @@ def build_site(data_dir: Path, output_dir: Path) -> None:
         "scatter_chart": scatter_chart,
         "history_chart": history_chart,
         "histories": histories,
+        "external": external,
+        "epoch_url": EPOCH,
+        "further_reading": further_reading,
     }
 
     def render(path, template, **context):
@@ -408,6 +417,12 @@ def build_site(data_dir: Path, output_dir: Path) -> None:
         title="Models",
         active="models",
         kind="models",
+    )
+    render(
+        "external/index.html",
+        "external.html",
+        title="External results",
+        active="external",
     )
     for model in models.values():
         render(
