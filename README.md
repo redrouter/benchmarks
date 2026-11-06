@@ -13,7 +13,7 @@ Maintained by **RedRouter, an inference provider**. RedRouter routes are exclude
 | Observed success | Successful requests / attempted requests; failures retained without retries |
 | Price | Dated catalogue prices, USD per million tokens; 3:1 input/output blend |
 
-Summary latency and speed show p50/p90 over 72 hours. A metric needs eight usable successful samples. Missing usage or an unknown first-chunk token count leaves speed and time-to-500 null. See [METHODOLOGY.md](METHODOLOGY.md) for exact definitions and limitations.
+Summary latency and speed show p50/p90 over 72 hours. A metric needs eight usable successful samples. Missing usage leaves speed and time-to-500 null; an unreported first chunk counts as one token. See [METHODOLOGY.md](METHODOLOGY.md) for exact definitions and limitations.
 
 ## Local preview, without keys
 
@@ -26,7 +26,7 @@ uv run redrouter-benchmarks build-site --data out/demo --output dist
 uv run redrouter-benchmarks serve --dist dist --port 8787
 ```
 
-Open `http://localhost:8787`. The site commands require the site implementation to be present in the checkout. Demo generation uses the real runner and aggregator with an in-process transport and simulated clock; it never contacts providers. Seed 7 ends at the fixed reference time `2026-11-05T00:00:00Z`, includes a mid-window degradation and a route missing its final 48 hours, and marks the summary and every raw sample `demo: true`. Demonstration results must be refused by any publishing pipeline.
+Open `http://localhost:8787`. Demo generation uses the real runner and aggregator with an in-process transport and simulated clock; it never contacts providers. Seed 7 ends at the fixed reference time `2026-11-05T00:00:00Z`, includes a mid-window degradation and a route missing its final 48 hours, and marks the summary and every raw sample `demo: true`. Demonstration results must be refused by any publishing pipeline.
 
 ## Measure providers
 
