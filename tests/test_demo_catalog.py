@@ -22,7 +22,7 @@ def demo(tmp_path_factory):
 def test_catalogue_has_sourced_prices_and_no_affiliated_routes(catalog):
     assert len(catalog.providers) == 13
     assert len(catalog.routes) == 25
-    assert sum(r["enabled"] for r in catalog.routes.values()) == 24
+    assert sum(r["enabled"] for r in catalog.routes.values()) == 23
     for route in catalog.routes.values():
         assert "redrouter" not in route["id"]
         if route["enabled"]:
@@ -47,7 +47,9 @@ def test_catalogue_rejects_enabled_route_without_price(catalog, tmp_path):
 def test_full_demo_matches_both_schemas(demo):
     output, summary = demo
     assert summary["demo"] is True
-    assert validate_data(output) == 25
+    assert validate_data(output) == 24
+    assert {p["id"] for p in summary["providers"]} == {r["provider_id"] for r in summary["routes"]}
+    assert "larprouter" not in {p["id"] for p in summary["providers"]}
     assert len(list((output / "raw").rglob("*.jsonl.gz"))) == 28
 
 
@@ -59,7 +61,7 @@ def test_demo_has_failures_regions_schedule_and_scenarios(demo):
         for line in gzip.open(p, "rt")
     ]
     assert len({r["run_id"] for r in records}) == 224
-    assert len(records) == 21376
+    assert len(records) == 20480
     assert {r["region"] for r in records} == {"us-east-1", "us-west-2"}
     assert {r["error_class"] for r in records} == {None, "rate_limited", "server_error", "timeout"}
     assert set(Counter((r["run_id"], r["route_id"]) for r in records).values()) == {4}

@@ -237,6 +237,8 @@ def aggregate(
                     **{f"errors_{kind}": m["errors"][kind] for kind in ERRORS},
                 }
             )
+    listed = {r["provider_id"] for r in result["routes"]}
+    result["providers"] = [p for p in result["providers"] if p["id"] in listed]
     write_raw(records, output)
     write_json(output / "summary.json", result)
     if csv_rows:
