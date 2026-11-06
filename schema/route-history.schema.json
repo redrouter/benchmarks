@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://benchmarks.redrouter.org/schema/route-history.schema.json",
+  "title": "Route history",
+  "type": "object",
+  "required": ["schema_version", "route_id", "bucket_hours", "points"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": 1},
+    "route_id": {"type": "string"},
+    "bucket_hours": {"const": 3},
+    "points": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["t", "region", "requests", "successes", "ttft_ms_p50", "output_tokens_per_second_p50", "end_to_end_500_ms_p50"],
+        "additionalProperties": false,
+        "properties": {
+          "t": {"type": "string", "format": "date-time"},
+          "region": {"type": "string"},
+          "requests": {"type": "integer", "minimum": 0},
+          "successes": {"type": "integer", "minimum": 0},
+          "ttft_ms_p50": {"type": ["number", "null"]},
+          "output_tokens_per_second_p50": {"type": ["number", "null"]},
+          "end_to_end_500_ms_p50": {"type": ["number", "null"]}
+        }
+      }
+    }
+  }
+}

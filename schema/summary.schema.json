@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://benchmarks.redrouter.org/schema/summary.schema.json",
+  "title": "Benchmark summary",
+  "type": "object",
+  "required": ["schema_version", "methodology_version", "generated_at", "window_hours", "demo", "regions", "providers", "models", "routes"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": 1},
+    "methodology_version": {"type": "string"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "window_hours": {"type": "integer", "minimum": 1},
+    "demo": {"type": "boolean"},
+    "regions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "label"],
+        "additionalProperties": false,
+        "properties": {"id": {"type": "string"}, "label": {"type": "string"}}
+      }
+    },
+    "providers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "url", "logo"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"$ref": "#/$defs/slug"},
+          "name": {"type": "string"},
+          "url": {"type": "string", "format": "uri"},
+          "logo": {"type": "string"}
+        }
+      }
+    },
+    "models": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "creator", "family"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"$ref": "#/$defs/slug"},
+          "name": {"type": "string"},
+          "creator": {"type": "string"},
+          "family": {"type": "string"}
+        }
+      }
+    },
+    "routes": {"type": "array", "items": {"$ref": "#/$defs/route"}}
+  },
+  "$defs": {
+    "slug": {"type": "string", "pattern": "^[a-z0-9][a-z0-9.-]*$"},
+    "nullable_number": {"type": ["number", "null"]},
+    "distribution": {
+      "type": "object",
+      "required": ["p50", "p90"],
+      "additionalProperties": false,
+      "properties": {"p50": {"$ref": "#/$defs/nullable_number"}, "p90": {"$ref": "#/$defs/nullable_number"}}
+    },
+    "metrics": {
+      "type": "object",
+      "required": ["requests", "successes", "success_rate", "ttft_ms", "output_tokens_per_second", "end_to_end_500_ms", "errors"],
+      "additionalProperties": false,
+      "properties": {
+        "requests": {"type": "integer", "minimum": 0},
+        "successes": {"type": "integer", "minimum": 0},
+        "success_rate": {"$ref": "#/$defs/nullable_number"},
+        "ttft_ms": {"$ref": "#/$defs/distribution"},
+        "output_tokens_per_second": {"$ref": "#/$defs/distribution"},
+        "end_to_end_500_ms": {"$ref": "#/$defs/distribution"},
+        "errors": {
+          "type": "object",
+          "required": ["timeout", "rate_limited", "server_error", "client_error", "network", "empty_output", "protocol"],
+          "additionalProperties": false,
+          "properties": {
+            "timeout": {"type": "integer"},
+            "rate_limited": {"type": "integer"},
+            "server_error": {"type": "integer"},
+            "client_error": {"type": "integer"},
+            "network": {"type": "integer"},
+            "empty_output": {"type": "integer"},
+            "protocol": {"type": "integer"}
+          }
+        }
+      }
+    },
+    "route": {
+      "type": "object",
+      "required": ["id", "provider_id", "model_id", "provider_model", "modification", "upstream", "declared_precision", "context_tokens", "price", "status", "last_success_at", "history", "metrics"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9.-]*/[a-z0-9][a-z0-9.-]*/[a-z0-9-]+$"},
+        "provider_id": {"$ref": "#/$defs/slug"},
+        "model_id": {"$ref": "#/$defs/slug"},
+        "provider_model": {"type": "string"},
+        "modification": {"enum": ["none", "abliterated", "uncensored", "heretic"]},
+        "upstream": {"type": ["string", "null"]},
+        "declared_precision": {"type": ["string", "null"]},
+        "context_tokens": {"type": ["integer", "null"]},
+        "price": {
+          "type": "object",
+          "required": ["input_usd_per_mtok", "cached_input_usd_per_mtok", "output_usd_per_mtok", "blended_usd_per_mtok", "source_url", "checked_at"],
+          "additionalProperties": false,
+          "properties": {
+            "input_usd_per_mtok": {"type": "number"},
+            "cached_input_usd_per_mtok": {"$ref": "#/$defs/nullable_number"},
+            "output_usd_per_mtok": {"type": "number"},
+            "blended_usd_per_mtok": {"type": "number"},
+            "source_url": {"type": "string", "format": "uri"},
+            "checked_at": {"type": "string", "format": "date"}
+          }
+        },
+        "status": {"enum": ["ok", "degraded", "failing", "stale", "insufficient_data"]},
+        "last_success_at": {"type": ["string", "null"], "format": "date-time"},
+        "history": {"type": "string"},
+        "metrics": {
+          "type": "object",
+          "required": ["all"],
+          "additionalProperties": {"$ref": "#/$defs/metrics"},
+          "properties": {"all": {"$ref": "#/$defs/metrics"}}
+        }
+      }
+    }
+  }
+}
