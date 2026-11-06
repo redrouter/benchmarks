@@ -72,6 +72,10 @@ Use ordinary paid accounts, public endpoints and the same settings for every rou
 
 The suite does not measure task correctness, refusal rate, tool-call quality, model capability, deployed weight hashes, actual quantization, saturated throughput, concurrency scaling, long-context limits or worldwide uptime. These require different workloads, references or infrastructure; latency cannot establish them. A transport-level successful answer can still be useless. Four synthetic requests every three hours cannot certify an SLA or rare-event reliability. Cache busting reduces shared-prefix reuse but cannot guarantee no provider-side cache hits; retain reported cache usage.
 
+## External results
+
+External results describe stock models evaluated by other organizations. They are not RedRouter measurements and not measurements of the listed hosts. Exact model identifiers and reasoning settings are preserved; missing run dates and benchmark versions remain unknown.
+
 ## Versions, corrections and provider response
 
 Changes to prompts, timing formulas, output limits, reasoning policy, sampling weights or status rules require a methodology version change. Keep old raw observations associated with their original version; aggregation rejects mixed versions. Additive routes and dated price corrections use catalogue commits without relabelling old raw price snapshots. Harness releases are recorded separately. Reproduction requires the source revision, locked dependencies, catalogue snapshot, region, seed and original raw archive.

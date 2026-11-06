@@ -45,6 +45,10 @@ The entry-point name is the catalogue's `protocol`. Duplicate names fail validat
 
 Require stored SSE fixture tests for content/reasoning/tool deltas, cumulative and missing usage, finish/termination, error envelopes, malformed/truncated streams and arbitrary byte boundaries. Include runner tests that retain partial timing and usage on failure without leaking text or credentials, plus request-body/authentication and registration tests. Fixtures must be public or synthetic, with provenance and no paid calls.
 
+## Add an external source
+
+Add a source to `src/redrouter_benchmarks/external/licences.json` only with an explicit Creative Commons grant that permits commercial reuse of the score data, its licence URL and evidence URL, and offline filtering tests.
+
 ## Changes and corrections
 
 Use Conventional Commits, for example `feat(catalog): add a sourced supplier route` or `fix(runner): retain stream timeout failures`. Write commit identity as `RedRouter <support@redrouter.org>`. Include the exact validation commands and numeric results in the pull request. Keep code concise; add comments only for non-obvious constraints. Apply the version policy in [METHODOLOGY.md](METHODOLOGY.md) when changing measurement behavior.

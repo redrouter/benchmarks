@@ -65,6 +65,10 @@ Provider settings live in [`catalog/providers/`](catalog/providers/); routes and
 
 Built-in protocols are `openai-chat` and `anthropic-messages`. Installed adapters register through the `redrouter_benchmarks.adapters` Python entry-point group; see [CONTRIBUTING.md](CONTRIBUTING.md#add-a-protocol-adapter).
 
+## External results
+
+`uv run redrouter-benchmarks fetch-external --output <data-dir>` adds licensed published results for the same model families before `build-site`. Only Epoch AI results (CC BY 4.0) and sources with an explicit commercial-use Creative Commons grant are included. `--zip <path>` reads a local copy of Epoch's archive.
+
 ## Data
 
 ```text
