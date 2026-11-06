@@ -1,0 +1,44 @@
+{
+  "refuseless": {
+    "terms": "https://refuseless.com/terms"
+  },
+  "abliteration": {
+    "terms": "https://abliteration.ai/terms-of-service"
+  },
+  "venice": {
+    "terms": "https://venice.ai/legal/tos"
+  },
+  "yeta": {
+    "terms": "https://platform.yeta.ai/tos"
+  },
+  "larprouter": {
+    "terms": "https://larprouter.com/terms"
+  },
+  "explabs": {
+    "terms": "https://www.experientiallabs.ai/terms"
+  },
+  "nanogpt": {
+    "terms": "https://nano-gpt.com/legal/terms-of-service"
+  },
+  "openrouter": {
+    "terms": "https://openrouter.ai/terms"
+  },
+  "heabsy": {
+    "terms": "https://heabsy.com/terms"
+  },
+  "arnict": {
+    "terms": "https://arnict.com/terms"
+  },
+  "orcarouter": {
+    "terms": "https://www.orcarouter.ai/terms.html"
+  },
+  "entrim": {
+    "terms": "https://entrim.ai/terms-of-service/"
+  },
+  "kitani": {
+    "terms": "https://kitani.ai/terms"
+  },
+  "sable": {
+    "terms": "https://sableapi.com/terms"
+  }
+}

@@ -1,0 +1,14 @@
+<div class="table-scroll" role="region" aria-label="Provider comparison, scroll horizontally for all columns" tabindex="0">
+<table class="comparison"><caption class="sr-only">{{ title }} provider routes · {{ region.label }} · trailing {{ summary.window_hours }} hours</caption>
+<thead><tr>{% for label, unit in [('Provider','Route / upstream'),('Model','Model family'),('Modification','Declared'),('Precision','Declared'),('Context','Tokens'),('Blended price','USD / 1M tokens'),('Input price','USD / 1M tokens'),('Output price','USD / 1M tokens'),('Output speed','p50 · tok/s'),('TTFT','p50 · seconds'),('Time to 500','p50 · seconds'),('Success rate','Observed · %'),('Status','Route · all regions'),('Last success','Route · UTC')] %}<th scope="col" aria-sort="none"><button type="button" data-sort="{{ loop.index0 }}">{{ label }} <span class="sort-icon" aria-hidden="true">↕</span><small>{{ unit }}</small></button></th>{% endfor %}</tr></thead>
+<tbody>{% for r in selected_routes %}{% set m = r.metrics.get(region.id, {}) %}
+<tr>
+<td data-value="{{ r.label }}"><a class="provider-name" href="/providers/{{ r.provider_id }}/"><img class="provider-logo" src="{{ r.provider.logo }}" alt="" width="26" height="26"><span>{{ r.provider.name }}{% if r.upstream %}<small>via {{ r.upstream }}</small>{% endif %}</span></a></td>
+<td data-value="{{ r.model.name }}"><a href="/models/{{ r.model_id }}/">{{ r.model.name }}</a></td>
+<td>{{ r.modification }}</td><td>{{ r.declared_precision or 'Unknown' }}</td><td data-value="{{ r.context_tokens if r.context_tokens is not none else '' }}">{{ r.context_tokens|number(0) }}</td>
+{% for key in ['blended_usd_per_mtok', 'input_usd_per_mtok', 'output_usd_per_mtok'] %}<td class="numeric" data-value="{{ r.price[key] }}"><a href="{{ r.price.source_url }}" title="Declared price, checked {{ r.price.checked_at }}">${{ r.price[key]|number(3) }}</a></td>{% endfor %}
+{% for key in ['output_tokens_per_second','ttft_ms','end_to_end_500_ms'] %}{% set v = m.get(key, {}).get('p50') %}<td class="numeric" data-value="{{ v if v is not none else '' }}">{{ (v / 1000 if v is not none and key != 'output_tokens_per_second' else v)|number }}</td>{% endfor %}
+<td class="numeric" data-value="{{ m.get('success_rate') if m.get('success_rate') is not none else '' }}">{{ (100 * m.success_rate if m.get('success_rate') is not none else none)|number }}{% if m.get('success_rate') is not none %}%{% endif %}<small>{{ m.get('successes', 0) }} / {{ m.get('requests', 0) }} requests</small></td>
+<td><span class="status {{ r.status }}">{{ r.status|replace('_',' ') }}</span></td><td data-value="{{ r.last_success_at or '' }}">{{ r.last_success_at|timestamp }}</td>
+</tr>{% else %}<tr><td colspan="14">No routes measured for this selection.</td></tr>{% endfor %}</tbody>
+</table></div>

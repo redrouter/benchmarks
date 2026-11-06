@@ -1,0 +1,102 @@
+[
+  {
+    "id": "refuseless",
+    "source_url": "https://refuseless.com/favicon.svg",
+    "fetched_at": "2026-11-06T05:35:14.103452+00:00",
+    "format": "svg",
+    "monogram": true,
+    "reason": "https://refuseless.com/favicon.svg: HTTP Error 403: Forbidden; https://refuseless.com/icon.svg: HTTP Error 403: Forbidden; https://refuseless.com/apple-touch-icon.png: HTTP Error 403: Forbidden"
+  },
+  {
+    "id": "abliteration",
+    "source_url": "https://abliteration.ai/icon.svg",
+    "fetched_at": "2026-11-06T05:35:13.993189+00:00",
+    "format": "svg",
+    "monogram": false
+  },
+  {
+    "id": "venice",
+    "source_url": "https://venice.ai/favicon.png",
+    "fetched_at": "2026-11-06T05:35:13.943267+00:00",
+    "format": "png",
+    "monogram": false
+  },
+  {
+    "id": "yeta",
+    "source_url": "https://yeta.ai/assets/yeta-mark.svg",
+    "fetched_at": "2026-11-06T05:35:14.027293+00:00",
+    "format": "svg",
+    "monogram": false
+  },
+  {
+    "id": "larprouter",
+    "source_url": "https://larprouter.com/logo.png",
+    "fetched_at": "2026-11-06T05:35:13.948027+00:00",
+    "format": "png",
+    "monogram": false
+  },
+  {
+    "id": "explabs",
+    "source_url": "https://www.experientiallabs.ai/icon.svg",
+    "fetched_at": "2026-11-06T05:35:14.053611+00:00",
+    "format": "svg",
+    "monogram": false
+  },
+  {
+    "id": "nanogpt",
+    "source_url": "https://nano-gpt.com/favicon/android-chrome-512x512.png",
+    "fetched_at": "2026-11-06T05:35:14.122850+00:00",
+    "format": "png",
+    "monogram": false
+  },
+  {
+    "id": "openrouter",
+    "source_url": "https://openrouter.ai/apple-touch-icon.png",
+    "fetched_at": "2026-11-06T05:35:14.610399+00:00",
+    "format": "png",
+    "monogram": false
+  },
+  {
+    "id": "heabsy",
+    "source_url": "https://heabsy.com/favicon/favicon.svg",
+    "fetched_at": "2026-11-06T05:35:14.150512+00:00",
+    "format": "svg",
+    "monogram": false
+  },
+  {
+    "id": "arnict",
+    "source_url": "https://arnict.com/apple-icon.png",
+    "fetched_at": "2026-11-06T05:35:14.212208+00:00",
+    "format": "png",
+    "monogram": false
+  },
+  {
+    "id": "orcarouter",
+    "source_url": "https://www.orcarouter.ai/orca-logo-classic.png",
+    "fetched_at": "2026-11-06T05:35:14.261632+00:00",
+    "format": "png",
+    "monogram": false
+  },
+  {
+    "id": "entrim",
+    "source_url": "https://entrim.ai/favicon.svg",
+    "fetched_at": "2026-11-06T05:35:14.691414+00:00",
+    "format": "svg",
+    "monogram": false
+  },
+  {
+    "id": "kitani",
+    "source_url": "https://kitani.ai/favicon.svg",
+    "fetched_at": "2026-11-06T05:35:14.356166+00:00",
+    "format": "svg",
+    "monogram": false
+  },
+  {
+    "id": "sable",
+    "source_url": "https://sableapi.com/favicon.svg",
+    "fetched_at": "2026-11-06T05:41:33.314761+00:00",
+    "format": "svg",
+    "monogram": true,
+    "reason": "https://sableapi.com/favicon.svg: HTTP Error 404: Not Found; https://sableapi.com/icon.svg: HTTP Error 404: Not Found; https://sableapi.com/apple-touch-icon.png: HTTP Error 404: Not Found; https://sableapi.com/favicon.ico: HTTP Error 404: Not Found"
+  }
+]
