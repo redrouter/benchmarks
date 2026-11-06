@@ -6,6 +6,7 @@ build-backend = "hatchling.build"
 name = "redrouter-benchmarks"
 version = "0.1.0"
 description = "Continuous, reproducible measurements of inference APIs"
+readme = "README.md"
 requires-python = ">=3.12"
 license = "Apache-2.0"
 authors = [{name = "RedRouter", email = "support@redrouter.org"}]
@@ -29,7 +30,7 @@ target-version = "py312"
 line-length = 100
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "UP", "B", "ASYNC"]
+select = ["E", "F", "I", "UP", "B"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
