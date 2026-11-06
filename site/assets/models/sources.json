@@ -1,0 +1,20 @@
+[
+  {
+    "id": "deepseek",
+    "creator": "DeepSeek",
+    "source_url": "https://github.com/lobehub/lobe-icons",
+    "license": "MIT"
+  },
+  {
+    "id": "zai",
+    "creator": "Z.ai",
+    "source_url": "https://github.com/lobehub/lobe-icons",
+    "license": "MIT"
+  },
+  {
+    "id": "qwen",
+    "creator": "Qwen",
+    "source_url": "https://github.com/lobehub/lobe-icons",
+    "license": "MIT"
+  }
+]

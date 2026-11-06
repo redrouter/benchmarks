@@ -19,6 +19,67 @@
   });
   region?.addEventListener('change', select);
   if (region) select();
+  const pickers = [...document.querySelectorAll('.picker')];
+  const closeAll = except => pickers.forEach(picker => { if (picker !== except) toggle(picker, false); });
+  function toggle(picker, open) {
+    const button = picker.querySelector('.picker-button');
+    const menu = picker.querySelector('.picker-menu');
+    button.setAttribute('aria-expanded', String(open));
+    menu.hidden = !open;
+    if (open) (menu.querySelector('[aria-selected="true"]') || menu.querySelector('[role="option"]')).focus();
+  }
+  function sync(picker) {
+    const select = picker.querySelector('select');
+    picker.querySelectorAll('[role="option"]').forEach(option => {
+      const chosen = option.dataset.value === select.value;
+      option.setAttribute('aria-selected', String(chosen));
+      if (chosen) picker.querySelector('.picker-button').innerHTML = option.innerHTML;
+    });
+  }
+  function choose(picker, option) {
+    const select = picker.querySelector('select');
+    toggle(picker, false);
+    picker.querySelector('.picker-button').focus();
+    if (select.value === option.dataset.value) return;
+    select.value = option.dataset.value;
+    sync(picker);
+    select.dispatchEvent(new Event('change'));
+  }
+  pickers.forEach(picker => {
+    sync(picker);
+    const button = picker.querySelector('.picker-button');
+    const options = () => [...picker.querySelectorAll('[role="option"]')];
+    button.addEventListener('click', () => {
+      const open = button.getAttribute('aria-expanded') !== 'true';
+      closeAll(picker);
+      toggle(picker, open);
+    });
+    button.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); closeAll(picker); toggle(picker, true); }
+    });
+    picker.querySelector('.picker-menu').addEventListener('click', event => {
+      const option = event.target.closest('[role="option"]');
+      if (option) choose(picker, option);
+    });
+    picker.querySelector('.picker-menu').addEventListener('keydown', event => {
+      const list = options();
+      const index = list.indexOf(document.activeElement);
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+        event.preventDefault();
+        list[(index + (event.key === 'ArrowDown' ? 1 : list.length - 1)) % list.length].focus();
+      } else if (event.key === 'Home' || event.key === 'End') {
+        event.preventDefault();
+        list[event.key === 'Home' ? 0 : list.length - 1].focus();
+      } else if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        if (index >= 0) choose(picker, list[index]);
+      } else if (event.key === 'Escape' || event.key === 'Tab') {
+        toggle(picker, false);
+        if (event.key === 'Escape') button.focus();
+      }
+    });
+  });
+  document.addEventListener('click', event => { if (!event.target.closest('.picker')) closeAll(); });
   document.querySelectorAll('.period-selector').forEach(selector => selector.addEventListener('change', () => {
     selector.closest('.selection').querySelectorAll('.history-period').forEach(period => { period.hidden = period.dataset.days !== selector.value; });
   }));

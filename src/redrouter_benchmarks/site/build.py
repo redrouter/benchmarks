@@ -332,7 +332,14 @@ def build_site(data_dir: Path, output_dir: Path) -> None:
         )
         for p in summary["providers"]
     }
-    models = {m["id"]: m for m in summary["models"]}
+
+    def model_logo(model):
+        path = assets / "models" / (re.sub(r"[^a-z0-9]", "", model["creator"].lower()) + ".svg")
+        if not path.is_file():
+            raise ValueError(f"No local model logo for {model['id']}: {model['creator']}")
+        return f"/assets/models/{path.name}"
+
+    models = {m["id"]: dict(m, logo=model_logo(m)) for m in summary["models"]}
     histories = {}
     routes = []
     for route in summary["routes"]:
