@@ -1,7 +1,7 @@
 id = "nanogpt-orcarouter"
 name = "NanoGPT \u2192 OrcaRouter"
 url = "https://nano-gpt.com/provider/orcarouter"
-logo = "nanogpt-orcarouter.svg"
+logo = "nanogpt.png"
 base_url = "https://nano-gpt.com/api/v1"
 protocol = "openai-chat"
 api_key_env = "NANOGPT_API_KEY"

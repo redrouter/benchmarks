@@ -76,11 +76,11 @@ def sample_metrics(record: dict) -> dict:
         return result
     result["ttft_ms"] = (first - start) / 1_000_000
     completion = record["usage"]["completion"]
-    first_tokens = record.get("first_chunk_tokens")
+    first_tokens = record.get("first_chunk_tokens") or 1
     if (
         completion is not None
-        and first_tokens is not None
         and completion > first_tokens
+        and record.get("content_delta_count", 0) >= 2
         and last is not None
         and last > first
     ):

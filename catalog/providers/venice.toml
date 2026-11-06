@@ -1,7 +1,7 @@
 id = "venice"
 name = "Venice"
 url = "https://venice.ai"
-logo = "venice.svg"
+logo = "venice.png"
 base_url = "https://api.venice.ai/api/v1"
 protocol = "openai-chat"
 api_key_env = "VENICE_API_KEY"

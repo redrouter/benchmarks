@@ -105,9 +105,8 @@ def test_each_content_kind_starts_ttft(catalog, route, delta):
     assert sample_metrics(record)["ttft_ms"] == 1000
 
 
-@pytest.mark.parametrize("usage", [None, {"prompt_tokens": 1000, "completion_tokens": 512}])
-def test_missing_usage_or_first_chunk_count_preserves_ttft(catalog, route, usage):
-    chunks = [(1, event({"content": "x"})), (2, event({"content": "y"}, "stop", usage))]
+def test_missing_usage_preserves_ttft_only(catalog, route):
+    chunks = [(1, event({"content": "x"})), (2, event({"content": "y"}, "stop"))]
     record = observation(catalog, route, chunks)
     assert record["error_class"] is None
     assert sample_metrics(record) == {
@@ -115,6 +114,14 @@ def test_missing_usage_or_first_chunk_count_preserves_ttft(catalog, route, usage
         "output_tokens_per_second": None,
         "end_to_end_500_ms": None,
     }
+
+
+def test_unreported_first_chunk_counts_as_one_token(catalog, route):
+    usage = {"prompt_tokens": 1000, "completion_tokens": 512}
+    chunks = [(1, event({"content": "x"})), (2, event({"content": "y"}, "stop", usage))]
+    metrics = sample_metrics(observation(catalog, route, chunks))
+    assert metrics["output_tokens_per_second"] == 255.5
+    assert metrics["end_to_end_500_ms"] == 1000 + 500 / 255.5 * 1000
 
 
 @pytest.mark.parametrize(

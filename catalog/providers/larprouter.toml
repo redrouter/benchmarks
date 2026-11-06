@@ -1,7 +1,7 @@
 id = "larprouter"
 name = "LarpRouter"
 url = "https://larprouter.com"
-logo = "larprouter.svg"
+logo = "larprouter.png"
 base_url = "https://larprouter.com/v1"
 protocol = "openai-chat"
 api_key_env = "LARPROUTER_API_KEY"

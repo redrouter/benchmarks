@@ -1,7 +1,7 @@
 id = "nanogpt-sable"
 name = "NanoGPT \u2192 Sable"
 url = "https://nano-gpt.com/provider/sable"
-logo = "nanogpt-sable.svg"
+logo = "nanogpt.png"
 base_url = "https://nano-gpt.com/api/v1"
 protocol = "openai-chat"
 api_key_env = "NANOGPT_API_KEY"

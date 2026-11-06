@@ -83,10 +83,7 @@ def test_build_pages_and_downloads(dist):
         assert (dist / "data" / name).is_file()
     assert "Demo data" in (dist / "index.html").read_text()
     assert "Fixture methodology" in (dist / "methodology/index.html").read_text()
-    assert (
-        'data-days="7"'
-        in (dist / "models/deepseek-v4.1-flash-1017/index.html").read_text()
-    )
+    assert 'data-days="7"' in (dist / "models/deepseek-v4.1-flash-1017/index.html").read_text()
 
 
 def test_every_internal_link_and_resource_exists(dist):
@@ -106,9 +103,7 @@ def test_assets_load_without_external_requests(dist):
         parser.feed(page.read_text())
         assert all(url.startswith("/") for url in parser.resources)
     for path in (dist / "assets").glob("*.css"):
-        assert not re.search(
-            r'(?:url\(|@import\s)[\s"\']*(?:https?:)?//', path.read_text()
-        )
+        assert not re.search(r'(?:url\(|@import\s)[\s"\']*(?:https?:)?//', path.read_text())
     assert "fetch(" not in (dist / "assets/site.js").read_text()
 
 
@@ -132,9 +127,7 @@ def test_provider_marks_are_local_and_sanitized(dist):
             )
             for key, value in node.attrib.items():
                 assert not key.lower().startswith("on")
-                assert not (
-                    key.split("}")[-1] in ("href", "src") and not value.startswith("#")
-                )
+                assert not (key.split("}")[-1] in ("href", "src") and not value.startswith("#"))
                 assert not re.search(r'url\(\s*["\']?(?!#)', value)
 
 
@@ -192,12 +185,8 @@ def test_preview_serves_custom_404(tmp_path):
     from redrouter_benchmarks.site.serve import SiteHandler
 
     (tmp_path / "404.html").write_text("<h1>Page not found</h1>")
-    server = ThreadingHTTPServer(
-        ("127.0.0.1", 0), partial(SiteHandler, directory=str(tmp_path))
-    )
-    worker = Thread(
-        target=partial(server.serve_forever, poll_interval=0.01), daemon=True
-    )
+    server = ThreadingHTTPServer(("127.0.0.1", 0), partial(SiteHandler, directory=str(tmp_path)))
+    worker = Thread(target=partial(server.serve_forever, poll_interval=0.01), daemon=True)
     worker.start()
     try:
         connection = HTTPConnection("127.0.0.1", server.server_port)
