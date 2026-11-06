@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{ title }} · RedRouter Benchmarks</title>
+<meta name="description" content="Open measurements of inference provider speed, latency, reliability and price. Compare exact model routes across US regions.">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/tokens.css"><link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header><div class="header-inner"><a class="brand" href="/" aria-label="RedRouter Benchmarks overview"><img src="/assets/logo.svg" alt="" width="26" height="26"><strong>RedRouter</strong><span class="brand-divider">/</span><span>Benchmarks</span></a>{% if summary.demo %}<span class="tag demo">Demo data</span>{% endif %}
+<nav aria-label="Main navigation">{% for key, name, href in [('overview','Overview','/'),('models','Models','/models/'),('providers','Providers','/providers/'),('methodology','Methodology','/methodology/'),('data','Data','/data/')] %}<a href="{{ href }}"{% if active == key %} aria-current="page"{% endif %}>{{ name }}</a>{% endfor %}</nav></div></header>
+<main id="main"><div class="page-heading"><p class="eyebrow">REDROUTER BENCHMARKS</p>{% block heading %}<h1>{{ title }}</h1>{% endblock %}{% block intro %}{% endblock %}</div>
+{% block content %}{% endblock %}
+</main>
+<footer><div><p>Maintained by RedRouter, an inference provider. Methodology and data are open.</p><p><a href="/methodology/">Methodology</a><a href="/data/">Download data</a><a href="https://redrouter.org">RedRouter</a></p></div></footer>
+<div id="tooltip" role="tooltip" hidden></div>
+</body></html>
