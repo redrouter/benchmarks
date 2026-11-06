@@ -1,0 +1,897 @@
+{
+  "schema_version": 1,
+  "methodology_version": "1.0",
+  "generated_at": "2026-11-05T18:00:00Z",
+  "window_hours": 72,
+  "demo": true,
+  "regions": [
+    {
+      "id": "us-east-1",
+      "label": "US East"
+    },
+    {
+      "id": "us-west-2",
+      "label": "US West"
+    }
+  ],
+  "providers": [
+    {
+      "id": "refuseless",
+      "name": "Refuseless",
+      "url": "https://refuseless.com",
+      "logo": "assets/providers/refuseless.svg"
+    },
+    {
+      "id": "abliteration",
+      "name": "abliteration.ai",
+      "url": "https://abliteration.ai",
+      "logo": "assets/providers/abliteration.svg"
+    },
+    {
+      "id": "venice",
+      "name": "Venice",
+      "url": "https://venice.ai",
+      "logo": "assets/providers/venice.png"
+    },
+    {
+      "id": "yeta",
+      "name": "Yeta Labs",
+      "url": "https://yeta.ai",
+      "logo": "assets/providers/yeta.svg"
+    },
+    {
+      "id": "larprouter",
+      "name": "LarpRouter",
+      "url": "https://larprouter.com",
+      "logo": "assets/providers/larprouter.png"
+    },
+    {
+      "id": "explabs",
+      "name": "Experiential Labs",
+      "url": "https://www.experientiallabs.ai",
+      "logo": "assets/providers/explabs.svg"
+    },
+    {
+      "id": "nanogpt",
+      "name": "NanoGPT",
+      "url": "https://nano-gpt.com",
+      "logo": "assets/providers/nanogpt.png"
+    },
+    {
+      "id": "openrouter",
+      "name": "OpenRouter",
+      "url": "https://openrouter.ai",
+      "logo": "assets/providers/openrouter.png"
+    }
+  ],
+  "models": [
+    {
+      "id": "deepseek-v4.1-flash-1017",
+      "name": "DeepSeek V4.1 Flash 1017",
+      "creator": "DeepSeek",
+      "family": "DeepSeek"
+    },
+    {
+      "id": "glm-5.3-flash",
+      "name": "GLM 5.3 Flash",
+      "creator": "Z.ai",
+      "family": "GLM"
+    },
+    {
+      "id": "qwen3.8-27b",
+      "name": "Qwen 3.8 27B",
+      "creator": "Qwen",
+      "family": "Qwen"
+    }
+  ],
+  "routes": [
+    {
+      "id": "refuseless/deepseek-v4.1-flash-1017/abliterated",
+      "provider_id": "refuseless",
+      "model_id": "deepseek-v4.1-flash-1017",
+      "provider_model": "deepseek-v4.1-flash-1017-abliterated",
+      "modification": "abliterated",
+      "upstream": null,
+      "declared_precision": "FP8",
+      "context_tokens": 1000000,
+      "price": {
+        "input_usd_per_mtok": 0.08,
+        "cached_input_usd_per_mtok": null,
+        "output_usd_per_mtok": 0.35,
+        "blended_usd_per_mtok": 0.1475,
+        "source_url": "https://refuseless.com/pricing",
+        "checked_at": "2026-11-05"
+      },
+      "status": "ok",
+      "last_success_at": "2026-11-05T17:30:00Z",
+      "history": "routes/refuseless/deepseek-v4.1-flash-1017/abliterated.json",
+      "metrics": {
+        "all": {
+          "requests": 64,
+          "successes": 62,
+          "success_rate": 0.96875,
+          "ttft_ms": {
+            "p50": 250,
+            "p90": 375
+          },
+          "output_tokens_per_second": {
+            "p50": 85.0,
+            "p90": 102.0
+          },
+          "end_to_end_500_ms": {
+            "p50": 6132,
+            "p90": 9199
+          },
+          "errors": {
+            "timeout": 2,
+            "rate_limited": 0,
+            "server_error": 0,
+            "client_error": 0,
+            "network": 0,
+            "empty_output": 0,
+            "protocol": 0
+          }
+        },
+        "us-east-1": {
+          "requests": 32,
+          "successes": 31,
+          "success_rate": 0.96875,
+          "ttft_ms": {
+            "p50": 235,
+            "p90": 352
+          },
+          "output_tokens_per_second": {
+            "p50": 90.43,
+            "p90": 108.51
+          },
+          "end_to_end_500_ms": {
+            "p50": 5764,
+            "p90": 8647
+          },
+          "errors": {
+            "timeout": 1,
+            "rate_limited": 0,
+            "server_error": 0,
+            "client_error": 0,
+            "network": 0,
+            "empty_output": 0,
+            "protocol": 0
+          }
+        },
+        "us-west-2": {
+          "requests": 32,
+          "successes": 31,
+          "success_rate": 0.96875,
+          "ttft_ms": {
+            "p50": 265,
+            "p90": 398
+          },
+          "output_tokens_per_second": {
+            "p50": 80.19,
+            "p90": 96.23
+          },
+          "end_to_end_500_ms": {
+            "p50": 6500,
+            "p90": 9750
+          },
+          "errors": {
+            "timeout": 1,
+            "rate_limited": 0,
+            "server_error": 0,
+            "client_error": 0,
+            "network": 0,
+            "empty_output": 0,
+            "protocol": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "abliteration/deepseek-v4.1-flash-1017/uncensored",
+      "provider_id": "abliteration",
+      "model_id": "deepseek-v4.1-flash-1017",
+      "provider_model": "deepseek-v4.1-flash-1017-uncensored",
+      "modification": "uncensored",
+      "upstream": null,
+      "declared_precision": "FP8",
+      "context_tokens": 262144,
+      "price": {
+        "input_usd_per_mtok": 0.15,
+        "cached_input_usd_per_mtok": null,
+        "output_usd_per_mtok": 0.45,
+        "blended_usd_per_mtok": 0.225,
+        "source_url": "https://abliteration.ai/pricing",
+        "checked_at": "2026-11-05"
+      },
+      "status": "ok",
+      "last_success_at": "2026-11-05T17:30:00Z",
+      "history": "routes/abliteration/deepseek-v4.1-flash-1017/uncensored.json",
+      "metrics": {
+        "all": {
+          "requests": 64,
+          "successes": 62,
+          "success_rate": 0.96875,
+          "ttft_ms": {
+            "p50": 360,
+            "p90": 540
+          },
+          "output_tokens_per_second": {
+            "p50": 102.0,
+            "p90": 122.4
+          },
+          "end_to_end_500_ms": {
+            "p50": 5262,
+            "p90": 7893
+          },
+          "errors": {
+            "timeout": 2,
+            "rate_limited": 0,
+            "server_error": 0,
+            "client_error": 0,
+            "network": 0,
+            "empty_output": 0,
+            "protocol": 0
+          }
+        },
+        "us-east-1": {
+          "requests": 32,
+          "successes": 31,
+          "success_rate": 0.96875,
+          "ttft_ms": {
+            "p50": 338,
+            "p90": 508
+          },
+          "output_tokens_per_second": {
+            "p50": 108.51,
+            "p90": 130.21
+          },
+          "end_to_end_500_ms": {
+            "p50": 4946,
+            "p90": 7419
+          },
+          "errors": {
+            "timeout": 1,
+            "rate_limited": 0,
+            "server_error": 0,
+            "client_error": 0,
+            "network": 0,
+            "empty_output": 0,
+            "protocol": 0
+          }
+        },
+        "us-west-2": {
+          "requests": 32,
+          "successes": 31,
+          "success_rate": 0.96875,
+          "ttft_ms": {
+            "p50": 382,
+            "p90": 572
+          },
+          "output_tokens_per_second": {
+            "p50": 96.23,
+            "p90": 115.47
+          },
+          "end_to_end_500_ms": {
+            "p50": 5578,
+            "p90": 8367
+          },
+          "errors": {
+            "timeout": 1,
+            "rate_limited": 0,
+            "server_error": 0,
+            "client_error": 0,
+            "network": 0,
+            "empty_output": 0,
+            "protocol": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "venice/deepseek-v4.1-flash-1017/abliterated",
+      "provider_id": "venice",
+      "model_id": "deepseek-v4.1-flash-1017",
+      "provider_model": "deepseek-v4.1-flash-1017-abliterated",
+      "modification": "abliterated",
+      "upstream": null,
+      "declared_precision": "FP8",
+      "context_tokens": 1000000,
+      "price": {
+        "input_usd_per_mtok": 0.22,
+        "cached_input_usd_per_mtok": null,
+        "output_usd_per_mtok": 0.55,
+        "blended_usd_per_mtok": 0.3025,
+        "source_url": "https://venice.ai/pricing",
+        "checked_at": "2026-11-05"
+      },
+      "status": "ok",
+      "last_success_at": "2026-11-05T17:30:00Z",
+      "history": "routes/venice/deepseek-v4.1-flash-1017/abliterated.json",
+      "metrics": {
+        "all": {
+          "requests": 64,
+          "successes": 62,
+          "success_rate": 0.96875,
+          "ttft_ms": {
+            "p50": 470,
+            "p90": 705
+          },
+          "output_tokens_per_second": {
+            "p50": 119.0,
+            "p90": 142.8
+          },
+          "end_to_end_500_ms": {
+            "p50": 4672,
+            "p90": 7008
+          },
+          "errors": {
+            "timeout": 2,
+            "rate_limited": 0,
+            "server_error": 0,
+            "client_error": 0,
+            "network": 0,
+            "empty_output": 0,
+            "protocol": 0
+          }
+        },
+        "us-east-1": {
+          "requests": 32,
+          "successes": 31,
+          "success_rate": 0.96875,
+          "ttft_ms": {
+            "p50": 442,
+            "p90": 663
+          },
+          "output_tokens_per_second": {
+            "p50": 126.6,
+            "p90": 151.91
+          },
+          "end_to_end_500_ms": {
+            "p50": 4391,
+            "p90": 6587
+          },
+          "errors": {
+            "timeout": 1,
+            "rate_limited": 0,
+            "server_error": 0,
+            "client_error": 0,
+            "network": 0,
+            "empty_output": 0,
+            "protocol": 0
+          }
+        },
+        "us-west-2": {
+          "requests": 32,
+          "successes": 31,
+          "success_rate": 0.96875,
+          "ttft_ms": {
+            "p50": 498,
+            "p90": 747
+          },
+          "output_tokens_per_second": {
+            "p50": 112.26,
+            "p90": 134.72
+          },
+          "end_to_end_500_ms": {
+            "p50": 4952,
+            "p90": 7428
+          },
+          "errors": {
+            "timeout": 1,
+            "rate_limited": 0,
+            "server_error": 0,
+            "client_error": 0,
+            "network": 0,
+            "empty_output": 0,
+            "protocol": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "yeta/deepseek-v4.1-flash-1017/uncensored",
+      "provider_id": "yeta",
+      "model_id": "deepseek-v4.1-flash-1017",
+      "provider_model": "deepseek-v4.1-flash-1017-uncensored",
+      "modification": "uncensored",
+      "upstream": null,
+      "declared_precision": "FP8",
+      "context_tokens": 262144,
+      "price": {
+        "input_usd_per_mtok": 0.29,
+        "cached_input_usd_per_mtok": null,
+        "output_usd_per_mtok": 0.65,
+        "blended_usd_per_mtok": 0.38,
+        "source_url": "https://yeta.ai/pricing",
+        "checked_at": "2026-11-05"
+      },
+      "status": "ok",
+      "last_success_at": "2026-11-05T17:30:00Z",
+      "history": "routes/yeta/deepseek-v4.1-flash-1017/uncensored.json",
+      "metrics": {
+        "all": {
+          "requests": 64,
+          "successes": 62,
+          "success_rate": 0.96875,
+          "ttft_ms": {
+            "p50": 580,
+            "p90": 870
+          },
+          "output_tokens_per_second": {
+            "p50": 136.0,
+            "p90": 163.2
+          },
+          "end_to_end_500_ms": {
+            "p50": 4256,
+            "p90": 6385
+          },
+          "errors": {
+            "timeout": 2,
+            "rate_limited": 0,
+            "server_error": 0,
+            "client_error": 0,
+            "network": 0,
+            "empty_output": 0,
+            "protocol": 0
+          }
+        },
+        "us-east-1": {
+          "requests": 32,
+          "successes": 31,
+          "success_rate": 0.96875,
+          "ttft_ms": {
+            "p50": 545,
+            "p90": 818
+          },
+          "output_tokens_per_second": {
+            "p50": 144.68,
+            "p90": 173.62
+          },
+          "end_to_end_500_ms": {
+            "p50": 4001,
+            "p90": 6002
+          },
+          "errors": {
+            "timeout": 1,
+            "rate_limited": 0,
+            "server_error": 0,
+            "client_error": 0,
+            "network": 0,
+            "empty_output": 0,
+            "protocol": 0
+          }
+        },
+        "us-west-2": {
+          "requests": 32,
+          "successes": 31,
+          "success_rate": 0.96875,
+          "ttft_ms": {
+            "p50": 615,
+            "p90": 922
+          },
+          "output_tokens_per_second": {
+            "p50": 128.3,
+            "p90": 153.96
+          },
+          "end_to_end_500_ms": {
+            "p50": 4512,
+            "p90": 6768
+          },
+          "errors": {
+            "timeout": 1,
+            "rate_limited": 0,
+            "server_error": 0,
+            "client_error": 0,
+            "network": 0,
+            "empty_output": 0,
+            "protocol": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "larprouter/deepseek-v4.1-flash-1017/abliterated",
+      "provider_id": "larprouter",
+      "model_id": "deepseek-v4.1-flash-1017",
+      "provider_model": "deepseek-v4.1-flash-1017-abliterated",
+      "modification": "abliterated",
+      "upstream": null,
+      "declared_precision": null,
+      "context_tokens": 1000000,
+      "price": {
+        "input_usd_per_mtok": 0.36,
+        "cached_input_usd_per_mtok": null,
+        "output_usd_per_mtok": 0.75,
+        "blended_usd_per_mtok": 0.4575,
+        "source_url": "https://larprouter.com/pricing",
+        "checked_at": "2026-11-05"
+      },
+      "status": "degraded",
+      "last_success_at": "2026-11-05T17:30:00Z",
+      "history": "routes/larprouter/deepseek-v4.1-flash-1017/abliterated.json",
+      "metrics": {
+        "all": {
+          "requests": 36,
+          "successes": 34,
+          "success_rate": 0.9444444444444444,
+          "ttft_ms": {
+            "p50": 690,
+            "p90": 1035
+          },
+          "output_tokens_per_second": {
+            "p50": 153.0,
+            "p90": 183.6
+          },
+          "end_to_end_500_ms": {
+            "p50": 3958,
+            "p90": 5937
+          },
+          "errors": {
+            "timeout": 2,
+            "rate_limited": 0,
+            "server_error": 0,
+            "client_error": 0,
+            "network": 0,
+            "empty_output": 0,
+            "protocol": 0
+          }
+        },
+        "us-east-1": {
+          "requests": 32,
+          "successes": 31,
+          "success_rate": 0.96875,
+          "ttft_ms": {
+            "p50": 649,
+            "p90": 973
+          },
+          "output_tokens_per_second": {
+            "p50": 162.77,
+            "p90": 195.32
+          },
+          "end_to_end_500_ms": {
+            "p50": 3720,
+            "p90": 5581
+          },
+          "errors": {
+            "timeout": 1,
+            "rate_limited": 0,
+            "server_error": 0,
+            "client_error": 0,
+            "network": 0,
+            "empty_output": 0,
+            "protocol": 0
+          }
+        },
+        "us-west-2": {
+          "requests": 4,
+          "successes": 3,
+          "success_rate": 0.75,
+          "ttft_ms": {
+            "p50": null,
+            "p90": null
+          },
+          "output_tokens_per_second": {
+            "p50": null,
+            "p90": null
+          },
+          "end_to_end_500_ms": {
+            "p50": null,
+            "p90": null
+          },
+          "errors": {
+            "timeout": 1,
+            "rate_limited": 0,
+            "server_error": 0,
+            "client_error": 0,
+            "network": 0,
+            "empty_output": 0,
+            "protocol": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "explabs/glm-5.3-flash/uncensored",
+      "provider_id": "explabs",
+      "model_id": "glm-5.3-flash",
+      "provider_model": "glm-5.3-flash-uncensored",
+      "modification": "uncensored",
+      "upstream": null,
+      "declared_precision": "FP8",
+      "context_tokens": 262144,
+      "price": {
+        "input_usd_per_mtok": 0.43,
+        "cached_input_usd_per_mtok": null,
+        "output_usd_per_mtok": 0.85,
+        "blended_usd_per_mtok": 0.535,
+        "source_url": "https://www.experientiallabs.ai/pricing",
+        "checked_at": "2026-11-05"
+      },
+      "status": "ok",
+      "last_success_at": "2026-11-05T17:30:00Z",
+      "history": "routes/explabs/glm-5.3-flash/uncensored.json",
+      "metrics": {
+        "all": {
+          "requests": 64,
+          "successes": 62,
+          "success_rate": 0.96875,
+          "ttft_ms": {
+            "p50": 800,
+            "p90": 1200
+          },
+          "output_tokens_per_second": {
+            "p50": 170.0,
+            "p90": 204.0
+          },
+          "end_to_end_500_ms": {
+            "p50": 3741,
+            "p90": 5612
+          },
+          "errors": {
+            "timeout": 2,
+            "rate_limited": 0,
+            "server_error": 0,
+            "client_error": 0,
+            "network": 0,
+            "empty_output": 0,
+            "protocol": 0
+          }
+        },
+        "us-east-1": {
+          "requests": 32,
+          "successes": 31,
+          "success_rate": 0.96875,
+          "ttft_ms": {
+            "p50": 752,
+            "p90": 1128
+          },
+          "output_tokens_per_second": {
+            "p50": 180.85,
+            "p90": 217.02
+          },
+          "end_to_end_500_ms": {
+            "p50": 3517,
+            "p90": 5275
+          },
+          "errors": {
+            "timeout": 1,
+            "rate_limited": 0,
+            "server_error": 0,
+            "client_error": 0,
+            "network": 0,
+            "empty_output": 0,
+            "protocol": 0
+          }
+        },
+        "us-west-2": {
+          "requests": 32,
+          "successes": 31,
+          "success_rate": 0.96875,
+          "ttft_ms": {
+            "p50": 848,
+            "p90": 1272
+          },
+          "output_tokens_per_second": {
+            "p50": 160.38,
+            "p90": 192.45
+          },
+          "end_to_end_500_ms": {
+            "p50": 3966,
+            "p90": 5948
+          },
+          "errors": {
+            "timeout": 1,
+            "rate_limited": 0,
+            "server_error": 0,
+            "client_error": 0,
+            "network": 0,
+            "empty_output": 0,
+            "protocol": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "nanogpt/glm-5.3-flash/abliterated",
+      "provider_id": "nanogpt",
+      "model_id": "glm-5.3-flash",
+      "provider_model": "glm-5.3-flash-abliterated",
+      "modification": "abliterated",
+      "upstream": "Heabsy",
+      "declared_precision": "FP8",
+      "context_tokens": 1000000,
+      "price": {
+        "input_usd_per_mtok": 0.5,
+        "cached_input_usd_per_mtok": null,
+        "output_usd_per_mtok": 0.95,
+        "blended_usd_per_mtok": 0.6125,
+        "source_url": "https://nano-gpt.com/pricing",
+        "checked_at": "2026-11-05"
+      },
+      "status": "ok",
+      "last_success_at": "2026-11-05T17:30:00Z",
+      "history": "routes/nanogpt/glm-5.3-flash/abliterated.json",
+      "metrics": {
+        "all": {
+          "requests": 64,
+          "successes": 62,
+          "success_rate": 0.96875,
+          "ttft_ms": {
+            "p50": 910,
+            "p90": 1365
+          },
+          "output_tokens_per_second": {
+            "p50": 187.0,
+            "p90": 224.4
+          },
+          "end_to_end_500_ms": {
+            "p50": 3584,
+            "p90": 5376
+          },
+          "errors": {
+            "timeout": 2,
+            "rate_limited": 0,
+            "server_error": 0,
+            "client_error": 0,
+            "network": 0,
+            "empty_output": 0,
+            "protocol": 0
+          }
+        },
+        "us-east-1": {
+          "requests": 32,
+          "successes": 31,
+          "success_rate": 0.96875,
+          "ttft_ms": {
+            "p50": 855,
+            "p90": 1283
+          },
+          "output_tokens_per_second": {
+            "p50": 198.94,
+            "p90": 238.72
+          },
+          "end_to_end_500_ms": {
+            "p50": 3369,
+            "p90": 5053
+          },
+          "errors": {
+            "timeout": 1,
+            "rate_limited": 0,
+            "server_error": 0,
+            "client_error": 0,
+            "network": 0,
+            "empty_output": 0,
+            "protocol": 0
+          }
+        },
+        "us-west-2": {
+          "requests": 32,
+          "successes": 31,
+          "success_rate": 0.96875,
+          "ttft_ms": {
+            "p50": 965,
+            "p90": 1447
+          },
+          "output_tokens_per_second": {
+            "p50": 176.42,
+            "p90": 211.7
+          },
+          "end_to_end_500_ms": {
+            "p50": 3799,
+            "p90": 5698
+          },
+          "errors": {
+            "timeout": 1,
+            "rate_limited": 0,
+            "server_error": 0,
+            "client_error": 0,
+            "network": 0,
+            "empty_output": 0,
+            "protocol": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "openrouter/qwen3.8-27b/none",
+      "provider_id": "openrouter",
+      "model_id": "qwen3.8-27b",
+      "provider_model": "qwen3.8-27b-none",
+      "modification": "none",
+      "upstream": null,
+      "declared_precision": "FP8",
+      "context_tokens": 262144,
+      "price": {
+        "input_usd_per_mtok": 0.57,
+        "cached_input_usd_per_mtok": null,
+        "output_usd_per_mtok": 1.05,
+        "blended_usd_per_mtok": 0.69,
+        "source_url": "https://openrouter.ai/pricing",
+        "checked_at": "2026-11-05"
+      },
+      "status": "ok",
+      "last_success_at": "2026-11-05T17:30:00Z",
+      "history": "routes/openrouter/qwen3.8-27b/none.json",
+      "metrics": {
+        "all": {
+          "requests": 64,
+          "successes": 62,
+          "success_rate": 0.96875,
+          "ttft_ms": {
+            "p50": 1020,
+            "p90": 1530
+          },
+          "output_tokens_per_second": {
+            "p50": 204.0,
+            "p90": 244.8
+          },
+          "end_to_end_500_ms": {
+            "p50": 3471,
+            "p90": 5206
+          },
+          "errors": {
+            "timeout": 2,
+            "rate_limited": 0,
+            "server_error": 0,
+            "client_error": 0,
+            "network": 0,
+            "empty_output": 0,
+            "protocol": 0
+          }
+        },
+        "us-east-1": {
+          "requests": 32,
+          "successes": 31,
+          "success_rate": 0.96875,
+          "ttft_ms": {
+            "p50": 959,
+            "p90": 1438
+          },
+          "output_tokens_per_second": {
+            "p50": 217.02,
+            "p90": 260.43
+          },
+          "end_to_end_500_ms": {
+            "p50": 3263,
+            "p90": 4894
+          },
+          "errors": {
+            "timeout": 1,
+            "rate_limited": 0,
+            "server_error": 0,
+            "client_error": 0,
+            "network": 0,
+            "empty_output": 0,
+            "protocol": 0
+          }
+        },
+        "us-west-2": {
+          "requests": 32,
+          "successes": 31,
+          "success_rate": 0.96875,
+          "ttft_ms": {
+            "p50": 1081,
+            "p90": 1622
+          },
+          "output_tokens_per_second": {
+            "p50": 192.45,
+            "p90": 230.94
+          },
+          "end_to_end_500_ms": {
+            "p50": 3679,
+            "p90": 5519
+          },
+          "errors": {
+            "timeout": 1,
+            "rate_limited": 0,
+            "server_error": 0,
+            "client_error": 0,
+            "network": 0,
+            "empty_output": 0,
+            "protocol": 0
+          }
+        }
+      }
+    }
+  ]
+}
