@@ -1,11 +1,11 @@
 {
-  "checked_at": "2026-11-05",
-  "method": "Unauthenticated public GETs only; no inference calls.",
+  "checked_at": "2026-11-06",
+  "method": "Unauthenticated public GETs and authenticated GET /v1/models; no inference calls.",
   "observations": [
     {
       "url": "https://api.refuseless.com/v1/models",
       "http_status": 200,
-      "result": "IDs and context confirmed; dated DeepSeek checkpoint ambiguous against model-page base link."
+      "result": "IDs and context confirmed. The authenticated list exposes only undated deepseek-v4.1-flash-abliterated, so it is catalogued as the undated derivative."
     },
     {
       "url": "https://docs.abliteration.ai/models",
@@ -18,9 +18,9 @@
       "result": "Exact dated DeepSeek ID and Large v2 confirmed with prices; public metadata is not a serving test."
     },
     {
-      "url": "https://yeta.ai/",
+      "url": "https://platform.yeta.ai/v1/models",
       "http_status": 200,
-      "result": "Prices published; exact API base URL, dated checkpoint and request model ID unconfirmed. platform.yeta.ai/docs returned 403; api.yeta.ai DNS failed. Catalogue base URL is an inactive candidate."
+      "result": "Base URL and request IDs confirmed with an authenticated GET. Only undated deepseek-v4.1-flash-uncensored is listed, so it is catalogued as the undated derivative. Prices from yeta.ai."
     },
     {
       "url": "https://larprouter.com/",
@@ -35,7 +35,7 @@
     {
       "url": "https://nano-gpt.com/api/v1/models",
       "http_status": 200,
-      "result": "Canonical model IDs confirmed. Supplier membership and marked-up prices checked on each /provider/<supplier> page. Venice lists undated uncensored DeepSeek only; its dated uncensored pin is disabled."
+      "result": "Canonical model IDs confirmed. Supplier membership and marked-up prices checked on each /provider/<supplier> page and /api/models/<id>/providers. Venice serves only the undated uncensored DeepSeek; its dated uncensored pin stays disabled."
     },
     {
       "url": "https://docs.nano-gpt.com/api-reference/miscellaneous/provider-selection",

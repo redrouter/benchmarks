@@ -1,7 +1,7 @@
 provider_model = "deepseek-v4.1-flash-abliterated"
-model_id = "deepseek-v4.1-flash-1017"
+model_id = "deepseek-v4.1-flash"
 modification = "abliterated"
-enabled = false
+enabled = true
 include_usage = true
 declared_precision = "FP8"
 context_tokens = 1048576
