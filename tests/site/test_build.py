@@ -38,7 +38,7 @@ def source(tmp_path, monkeypatch):
         "# Fixture methodology\n\n## Metrics\n\nMedian of successful samples.\n"
     )
     (source / "LICENSE").write_text("Fixture licence\n")
-    monkeypatch.setattr(build, "ROOT", source)
+    monkeypatch.setattr(build, "resource", lambda name: source / name)
     return source
 
 

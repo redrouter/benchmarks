@@ -8,7 +8,7 @@ import pytest
 
 from redrouter_benchmarks.adapters import get_adapter, registry
 from redrouter_benchmarks.adapters.base import Content, Done, Finish, Usage
-from redrouter_benchmarks.catalog import resource_dir
+from redrouter_benchmarks.catalog import resource
 from redrouter_benchmarks.clock import SimulatedClock
 from redrouter_benchmarks.demo import DEMO_NOW, sse
 from redrouter_benchmarks.runner import (
@@ -212,7 +212,7 @@ def test_workload_and_supplier_pins_are_preserved(catalog):
     for route in catalog.routes.values():
         for stratum in STRATA:
             provider = catalog.providers[route["provider_id"]]
-            prompt = (resource_dir("prompts") / "1.0.0" / f"{stratum}.txt").read_text()
+            prompt = (resource("prompts") / "1.0.0" / f"{stratum}.txt").read_text()
             request = get_adapter(provider["protocol"]).build_request(
                 provider, route, prompt, "unique-nonce", "test-key"
             )

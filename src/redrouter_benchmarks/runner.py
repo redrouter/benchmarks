@@ -10,7 +10,7 @@ import httpx
 from redrouter_benchmarks import METHODOLOGY_VERSION, __version__
 from redrouter_benchmarks.adapters import get_adapter
 from redrouter_benchmarks.adapters.base import Content, Done, Error, Finish, Usage
-from redrouter_benchmarks.catalog import Catalog, resource_dir
+from redrouter_benchmarks.catalog import Catalog, resource
 from redrouter_benchmarks.clock import Clock, iso
 from redrouter_benchmarks.sse import ProtocolError, SSEParser
 
@@ -94,7 +94,7 @@ async def measure(
     demo: bool = False,
 ) -> dict:
     adapter = get_adapter(provider["protocol"])
-    prompt = (resource_dir("prompts") / "1.0.0" / f"{stratum}.txt").read_text()
+    prompt = (resource("prompts") / "1.0.0" / f"{stratum}.txt").read_text()
     request = adapter.build_request(provider, route, prompt, nonce, api_key)
     request.headers = httpx.Headers({**client.headers, **request.headers})
     start = clock.monotonic_ns()

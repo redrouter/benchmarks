@@ -4,7 +4,7 @@ import sys
 import pytest
 
 from redrouter_benchmarks.adapters import get_adapter, registry
-from redrouter_benchmarks.catalog import Catalog, resource_dir
+from redrouter_benchmarks.catalog import Catalog, resource
 
 
 @pytest.fixture(autouse=True)
@@ -32,7 +32,7 @@ def install_entry_point(
 
 def catalogue_with_protocol(tmp_path, protocol):
     root = tmp_path / "catalog"
-    shutil.copytree(resource_dir("catalog"), root)
+    shutil.copytree(resource("catalog"), root)
     path = next((root / "providers").glob("*.toml"))
     path.write_text(
         path.read_text().replace('protocol = "openai-chat"', f'protocol = "{protocol}"')

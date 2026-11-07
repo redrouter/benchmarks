@@ -12,9 +12,9 @@ SLUG = re.compile(r"[a-z0-9][a-z0-9.-]*\Z")
 MODIFICATIONS = {"none", "abliterated", "uncensored", "heretic"}
 
 
-def resource_dir(name: str) -> Path:
+def resource(name: str) -> Path:
     checkout = Path(__file__).resolve().parents[2] / name
-    return checkout if checkout.is_dir() else Path(__file__).parent / f"_{name}"
+    return checkout if checkout.exists() else Path(__file__).parent / f"_{name}"
 
 
 def https_url(value: str) -> bool:
@@ -30,7 +30,7 @@ class Catalog:
 
     @classmethod
     def load(cls, root: Path | None = None) -> "Catalog":
-        root = root or resource_dir("catalog")
+        root = root or resource("catalog")
         adapters = registry()
         providers = {}
         for path in sorted((root / "providers").glob("*.toml")):

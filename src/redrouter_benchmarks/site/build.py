@@ -10,9 +10,9 @@ import markdown
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from markupsafe import Markup
 
+from redrouter_benchmarks.catalog import resource
 from redrouter_benchmarks.external import EPOCH, licence_label, load_external
 
-ROOT = Path(__file__).resolve().parents[3]
 COLORS = [
     "#b0161c",
     "#3b5bdb",
@@ -306,15 +306,15 @@ def build_site(data_dir: Path, output_dir: Path) -> None:
         or data_dir.is_relative_to(output_dir)
     ):
         raise ValueError("Data and output directories must not overlap")
-    methodology = ROOT / "METHODOLOGY.md"
+    methodology = resource("METHODOLOGY.md")
     if not methodology.is_file():
         raise FileNotFoundError(f"Methodology is required to build the site: {methodology}")
     summary = json.loads((data_dir / "summary.json").read_text())
     external = load_external(data_dir / "external.json")
-    further_reading = json.loads((ROOT / "site/data/further-reading.json").read_text())
+    further_reading = json.loads((resource("site") / "data" / "further-reading.json").read_text())
     if summary["schema_version"] != 1:
         raise ValueError("Unsupported summary schema_version")
-    assets = ROOT / "site" / "assets"
+    assets = resource("site") / "assets"
 
     def logo_for(provider):
         path = assets / "providers" / Path(provider["logo"]).name
@@ -375,11 +375,11 @@ def build_site(data_dir: Path, output_dir: Path) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     shutil.copytree(assets, output_dir / "assets", dirs_exist_ok=True)
     shutil.copytree(data_dir, output_dir / "data", dirs_exist_ok=True)
-    shutil.copytree(ROOT / "schema", output_dir / "data" / "schema", dirs_exist_ok=True)
-    if (ROOT / "LICENSE").is_file():
-        shutil.copy2(ROOT / "LICENSE", output_dir / "data" / "LICENSE")
+    shutil.copytree(resource("schema"), output_dir / "data" / "schema", dirs_exist_ok=True)
+    if resource("LICENSE").is_file():
+        shutil.copy2(resource("LICENSE"), output_dir / "data" / "LICENSE")
     env = Environment(
-        loader=FileSystemLoader(ROOT / "site" / "templates"),
+        loader=FileSystemLoader(resource("site") / "templates"),
         autoescape=select_autoescape(),
     )
     env.filters.update(

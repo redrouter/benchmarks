@@ -206,7 +206,7 @@ def test_every_page_has_further_reading_and_optional_results(
     for folder in ("site", "schema"):
         (root / folder).symlink_to(ROOT / folder, target_is_directory=True)
     (root / "METHODOLOGY.md").write_text("# Test methodology\n")
-    monkeypatch.setattr(build, "ROOT", root)
+    monkeypatch.setattr(build, "resource", lambda name: root / name)
     data = tmp_path / "data"
     shutil.copytree(FIXTURE, data)
     if present:
