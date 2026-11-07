@@ -99,12 +99,16 @@ def svg_start(label, height, width=600):
     )
 
 
+def truncate(text, length):
+    return text if len(text) <= length else text[: length - 1].rstrip() + "…"
+
+
 def bar_chart(routes, region, key, title, unit, higher, compact=False):
     values = [(r, metric_value(r, region, key)) for r in routes]
     values.sort(key=lambda pair: (pair[1] is None, -(pair[1] or 0) if higher else pair[1] or 0))
     maximum = max([v for _, v in values if v is not None] or [1]) * 1.12 or 1
     height = max(115, 44 + len(values) * 38)
-    left, plot = (143, 165) if compact else (200, 340)
+    left, plot = (166, 150) if compact else (215, 325)
     parts = [
         svg_start(
             f"{title}, {unit}; {'higher' if higher else 'lower'} is better",
@@ -124,8 +128,13 @@ def bar_chart(routes, region, key, title, unit, higher, compact=False):
         y = 16 + i * 38
         label = route["label"]
         tip = f"{label}: {number(value, 3 if key == 'price' else 1)} {unit}"
-        short_label = label[:20] if compact else label[:25]
-        parts.append(f'<text class="bar-label" x="0" y="{y + 16}">{escape(short_label)}</text>')
+        short_label = truncate(label, 17 if compact else 26)
+        parts.append(
+            f'<rect class="logo-tile" x="0" y="{y + 1}" width="22" height="22" rx="4"/>'
+            f'<image href="{escape(route["provider"]["logo"], quote=True)}" x="2" '
+            f'y="{y + 3}" width="18" height="18"/>'
+            f'<text class="bar-label" x="30" y="{y + 16}">{escape(short_label)}</text>'
+        )
         if value is not None:
             width = max(0, value) / maximum * plot
             parts.append(
@@ -348,7 +357,10 @@ def build_site(data_dir: Path, output_dir: Path) -> None:
             if not re.fullmatch(r"[a-z0-9][a-z0-9.-]*", route[field]):
                 raise ValueError(f"Invalid {field}: {route[field]}")
         provider = providers[route["provider_id"]]
-        label = provider["name"] + (f" · {route['upstream']}" if route["upstream"] else "")
+        upstream = route["upstream"]
+        if upstream and upstream.lower() in provider["name"].lower():
+            upstream = None
+        label = provider["name"] + (f" · {upstream}" if upstream else "")
         if (
             sum(
                 r["provider_id"] == route["provider_id"] and r["model_id"] == route["model_id"]
@@ -362,6 +374,7 @@ def build_site(data_dir: Path, output_dir: Path) -> None:
             provider=provider,
             model=models[route["model_id"]],
             label=label,
+            upstream=upstream,
             color=COLORS[list(providers).index(route["provider_id"]) % len(COLORS)],
         )
         route["price"] = dict(route["price"], source_url=safe_url(route["price"]["source_url"]))

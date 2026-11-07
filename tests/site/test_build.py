@@ -24,7 +24,7 @@ class Links(HTMLParser):
         attrs = dict(attrs)
         if tag == "a":
             self.links.append(attrs.get("href", ""))
-        if tag in ("script", "img", "link"):
+        if tag in ("script", "img", "link", "image"):
             self.resources.append(attrs.get("src", attrs.get("href", "")))
 
 
@@ -143,6 +143,19 @@ def test_missing_methodology_fails_clearly(source, tmp_path):
     (source / "METHODOLOGY.md").unlink()
     with pytest.raises(FileNotFoundError, match="Methodology is required"):
         build.build_site(FIXTURE, tmp_path / "missing")
+
+
+def test_bar_charts_show_logos_and_skip_repeated_upstream(source, tmp_path):
+    data = tmp_path / "data"
+    shutil.copytree(FIXTURE, data)
+    summary = json.loads((data / "summary.json").read_text())
+    next(p for p in summary["providers"] if p["id"] == "nanogpt")["name"] = "NanoGPT → Heabsy"
+    (data / "summary.json").write_text(json.dumps(summary))
+    build.build_site(data, tmp_path / "dist")
+    page = (tmp_path / "dist" / "models" / "glm-5.3-flash" / "index.html").read_text()
+    assert "NanoGPT → Heabsy" in page
+    assert "· Heabsy" not in page and "via Heabsy" not in page
+    assert page.count('class="logo-tile"') == page.count('class="bar-label"') > 0
 
 
 def test_history_path_cannot_escape_data_directory(source, tmp_path):

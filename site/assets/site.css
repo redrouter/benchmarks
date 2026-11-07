@@ -87,18 +87,27 @@ header {
 }
 .brand {
   display:flex;
-  gap:8px;
-  align-items:center;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:3px;
   white-space:nowrap;
-  font-size:15px;
+  font-size:16px;
+  line-height:1.15;
   letter-spacing:-.02em;
 }
-.brand-divider {
-  color:var(--border-strong);
-  padding:0 3px;
-}
-.brand strong {
+.brand-title {
   font-weight:650;
+}
+.brand-by {
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  font-size:12px;
+  letter-spacing:0;
+  color:var(--text-subtle);
+}
+.brand-by:hover {
+  color:var(--text);
 }
 nav {
   display:flex;
@@ -327,6 +336,9 @@ td.numeric small {
   font-family:var(--font-sans);
   font-size:12px;
   fill:var(--text);
+}
+.chart-scroll .logo-tile {
+  fill:#fff;
 }
 .chart-scroll .axis {
   fill:var(--text-subtle);
