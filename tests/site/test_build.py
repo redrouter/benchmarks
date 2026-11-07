@@ -158,6 +158,16 @@ def test_bar_charts_show_logos_and_skip_repeated_upstream(source, tmp_path):
     assert page.count('class="logo-tile"') == page.count('class="bar-label"') > 0
 
 
+def test_pages_have_link_previews(dist):
+    page = (dist / "index.html").read_text()
+    assert (
+        '<meta property="og:image" content="https://benchmarks.redrouter.org/assets/og.png">'
+        in page
+    )
+    assert '<meta name="twitter:card" content="summary_large_image">' in page
+    assert (dist / "assets" / "og.png").is_file()
+
+
 def test_directories_show_logos(dist):
     for kind in ("models", "providers"):
         page = (dist / kind / "index.html").read_text()
