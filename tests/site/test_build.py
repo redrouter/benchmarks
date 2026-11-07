@@ -158,6 +158,12 @@ def test_bar_charts_show_logos_and_skip_repeated_upstream(source, tmp_path):
     assert page.count('class="logo-tile"') == page.count('class="bar-label"') > 0
 
 
+def test_directories_show_logos(dist):
+    for kind in ("models", "providers"):
+        page = (dist / kind / "index.html").read_text()
+        assert page.count('-logo" src=') == page.count('class="directory-item"') > 0
+
+
 def test_history_path_cannot_escape_data_directory(source, tmp_path):
     data = tmp_path / "data"
     shutil.copytree(FIXTURE, data)
