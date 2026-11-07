@@ -131,6 +131,19 @@ nav a[aria-current] {
 .github:hover {
   color:var(--text);
 }
+.sign-in {
+  padding:6px 14px;
+  border:1px solid var(--border-strong);
+  border-radius:var(--radius-sm);
+  font-size:var(--text-sm);
+  font-weight:500;
+  color:var(--text);
+  background:var(--surface);
+  white-space:nowrap;
+}
+.sign-in:hover {
+  border-color:var(--text-subtle);
+}
 main {
   position:relative;
   z-index:1;
@@ -557,6 +570,9 @@ footer p:last-child {
   }
   .demo+nav+.github {
     margin-left:0;
+  }
+  .sign-in {
+    order:1;
   }
   nav {
     order:2;
