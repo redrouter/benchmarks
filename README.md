@@ -50,7 +50,7 @@ uv run redrouter-benchmarks aggregate --input out/requests --output out/data \
   --now 2026-11-05T12:00:00Z
 ```
 
-Omit `--route` to select every enabled route whose provider has a credential. Repeated `--route` selects a subset; disabled routes cannot run. An explicit selection with a missing credential fails before making calls. `--seed` reproduces the request order and jitter. Run from the declared measurement region; the region argument is a label, not a network-location control. The intended cadence is every three hours in `us-east-1` and `us-west-2`.
+Omit `--route` to select every enabled route whose provider has a credential. Repeated `--route` selects a subset; disabled routes cannot run. An explicit selection with a missing credential fails before making calls. `--seed` reproduces the request order and jitter. Run from the declared measurement region; the region argument is a label, not a network-location control. The cadence is every eight hours, at 02:00, 10:00 and 18:00 UTC, in `us-east-1` and `us-west-2`.
 
 Provider settings live in [`catalog/providers/`](catalog/providers/); routes and dated price sources live in [`catalog/routes/`](catalog/routes/). NanoGPT supplier paths have distinct provider IDs, such as `nanogpt-heabsy`, and share `NANOGPT_API_KEY`; they are observations through the gateway, not independent direct-host measurements. Undated derivatives have a separate model identity from the dated 1017 release. See [`catalog/verification.json`](catalog/verification.json) for public checks and unresolved identities. Disabled candidates are retained as data without being measured.
 
@@ -78,7 +78,7 @@ Built-in protocols are `openai-chat` and `anthropic-messages`. Installed adapter
 <data-dir>/raw/<YYYY-MM-DD>/<region>.jsonl.gz
 ```
 
-[`summary.schema.json`](schema/summary.schema.json) and [`route-history.schema.json`](schema/route-history.schema.json) define the fixed public contract. Route IDs are `<provider_id>/<model_id>/<modification>`. CSV contains one row per route and region scope, including `all`. History uses UTC three-hour buckets: counts describe the bucket and medians describe the trailing 72 hours ending at that bucket's end. Missing observations produce gaps.
+[`summary.schema.json`](schema/summary.schema.json) and [`route-history.schema.json`](schema/route-history.schema.json) define the fixed public contract. Route IDs are `<provider_id>/<model_id>/<modification>`. CSV contains one row per route and region scope, including `all`. History uses UTC eight-hour buckets: counts describe the bucket and medians describe the trailing 72 hours ending at that bucket's end. Missing observations produce gaps.
 
 `run` writes one flushed JSONL record per request into `<output>/<run_id>.jsonl`. Aggregation accepts these files or the compressed archives, deduplicates by run/region/route/stratum, rejects conflicting duplicates and mixed methodology or demo/real inputs, and preserves all records completed by `--now`. Supply a complete input archive and a fresh output directory for each build. Identical inputs, catalogue and `--now` produce identical JSON, CSV and gzip bytes.
 

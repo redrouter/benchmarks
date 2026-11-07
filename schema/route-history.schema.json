@@ -8,7 +8,7 @@
   "properties": {
     "schema_version": {"const": 1},
     "route_id": {"type": "string"},
-    "bucket_hours": {"const": 3},
+    "bucket_hours": {"const": 8},
     "points": {
       "type": "array",
       "items": {

@@ -8,7 +8,7 @@ from pathlib import Path
 
 import httpx
 
-from redrouter_benchmarks.aggregate import REGIONS, aggregate
+from redrouter_benchmarks.aggregate import CADENCE_HOURS, REGIONS, aggregate
 from redrouter_benchmarks.catalog import Catalog
 from redrouter_benchmarks.clock import SimulatedClock
 from redrouter_benchmarks.runner import run_suite
@@ -107,9 +107,9 @@ async def demo_data(output: Path, days: int = 14, seed: int = 7) -> dict:
     routes = [r for r in catalog.routes.values() if r["enabled"]]
     with tempfile.TemporaryDirectory(prefix="redrouter-demo-") as temporary:
         raw = Path(temporary)
-        for run in range(days * 8):
+        for run in range(days * 24 // CADENCE_HOURS):
             for region_index, region in enumerate(REGIONS):
-                scheduled = start + timedelta(hours=run * 3, minutes=region_index * 5)
+                scheduled = start + timedelta(hours=run * CADENCE_HOURS, minutes=region_index * 5)
                 clock = SimulatedClock(scheduled)
                 selected = [
                     r

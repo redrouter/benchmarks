@@ -8,7 +8,7 @@ Each scheduled run attempts four requests per enabled route: approximately 1,000
 
 Every request prepends a new 128-bit nonce, uses temperature 0.5 and `max_tokens: 512`, requests streaming, and asks for usage with `stream_options.include_usage` where supported. No retries, warm-up calls, successful-sample replacement or adaptive endpoint selection. `length` is an expected successful finish at this output cap. Reasoning is disabled where documented; mandatory reasoning uses the lowest documented effort where supported and remains part of reported completion usage. Unknown controls are omitted. Hiding reasoning text is not disabling computation. Route request settings are explicit catalogue data, so mandatory-reasoning routes must not be interpreted as equivalent non-reasoning workloads.
 
-The intended cadence is 00:00, 03:00, …, 21:00 UTC, seven days a week, independently from measurement regions `us-east-1` and `us-west-2`. These are client locations, not claims about server location. Each region uses ordinary internet egress. No live observations are claimed by the demo.
+Runs start at 02:00, 10:00 and 18:00 UTC, seven days a week, independently from measurement regions `us-east-1` and `us-west-2`. These are client locations, not claims about server location. Each region uses ordinary internet egress. No live observations are claimed by the demo.
 
 For each run, seed a pseudorandom generator, shuffle requests within each gateway and shuffle gateway order on each pass. Take one request from each active gateway per pass, with uniform start jitter of 0–2 seconds before every request. V1 executes serially, so concurrency never exceeds one per provider within a runner process; all NanoGPT pins share one gateway queue. Preserve the seed in every record. Do not overlap runs in the same region. Two-region runs are independent and can overlap.
 
@@ -58,19 +58,19 @@ For p50 and p90, sort usable observations and linearly interpolate at index `(n 
 
 Status is evaluated per scope in this order; the summary route status uses `all`, and CSV includes regional statuses:
 
-1. **stale:** observations exist, but the latest completed request is older than 12 hours, including completed failures.
+1. **stale:** observations exist, but the latest completed request is older than 24 hours, including completed failures.
 2. **insufficient_data:** fewer than eight attempted requests in the 72-hour window, including a route never observed.
 3. **failing:** observed success rate below 0.80.
-4. **degraded:** success rate from 0.80 up to 0.95, or a rate at least 0.95 without a success in the last six hours.
-5. **ok:** success rate at least 0.95 and a success within the last six hours.
+4. **degraded:** success rate from 0.80 up to 0.95, or a rate at least 0.95 without a success in the last 16 hours.
+5. **ok:** success rate at least 0.95 and a success within the last 16 hours.
 
-History files retain UTC three-hour buckets for the supplied archive. Counts describe requests completed in the bucket. Each point's p50 is calculated over the trailing 72 hours ending at the earlier of bucket end and `now`, with the same eight-value minimum. Points are timestamped at bucket start. Missing buckets are gaps rather than fabricated zero-latency observations. This preserves meaningful trends despite only four requests per route/region/run.
+History files retain UTC eight-hour buckets for the supplied archive. Counts describe requests completed in the bucket. Each point's p50 is calculated over the trailing 72 hours ending at the earlier of bucket end and `now`, with the same eight-value minimum. Points are timestamped at bucket start. Missing buckets are gaps rather than fabricated zero-latency observations. This preserves meaningful trends despite only four requests per route/region/run.
 
 ## Fairness and limits
 
 Use ordinary paid accounts, public endpoints and the same settings for every route except documented API compatibility and reasoning controls. No provider-supplied benchmark keys, preferred endpoints, negotiated priority, pre-arranged capacity or free tiers. Disclose any unavoidable account-tier difference. Hard-pin suppliers and disable fallback wherever supported. A gateway that internally reroutes without a public pin remains a gateway observation; upstream labels are declarations, not proof of hardware independence. Do not merge aliases whose dated checkpoint binding is uncertain.
 
-The suite does not measure task correctness, refusal rate, tool-call quality, model capability, deployed weight hashes, actual quantization, saturated throughput, concurrency scaling, long-context limits or worldwide uptime. These require different workloads, references or infrastructure; latency cannot establish them. A transport-level successful answer can still be useless. Four synthetic requests every three hours cannot certify an SLA or rare-event reliability. Cache busting reduces shared-prefix reuse but cannot guarantee no provider-side cache hits; retain reported cache usage.
+The suite does not measure task correctness, refusal rate, tool-call quality, model capability, deployed weight hashes, actual quantization, saturated throughput, concurrency scaling, long-context limits or worldwide uptime. These require different workloads, references or infrastructure; latency cannot establish them. A transport-level successful answer can still be useless. Four synthetic requests every eight hours cannot certify an SLA or rare-event reliability. Cache busting reduces shared-prefix reuse but cannot guarantee no provider-side cache hits; retain reported cache usage.
 
 ## External results
 

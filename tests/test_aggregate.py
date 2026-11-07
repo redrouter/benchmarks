@@ -50,9 +50,9 @@ def test_each_metric_needs_eight_usable_samples(record):
         (80, 100, 1, "degraded"),
         (79, 100, 1, "failing"),
         (7, 7, 1, "insufficient_data"),
-        (8, 8, 13, "stale"),
-        (7, 7, 13, "stale"),
-        (100, 100, 7, "degraded"),
+        (8, 8, 25, "stale"),
+        (7, 7, 25, "stale"),
+        (100, 100, 17, "degraded"),
         (0, 0, 0, "insufficient_data"),
     ],
 )
@@ -123,7 +123,7 @@ def test_raw_deduplication_conflicts_and_mixed_demo_rejected(catalog, record, tm
 def test_history_uses_bucket_counts_and_trailing_window_percentiles(record):
     samples = []
     for run in range(3):
-        completed = DEMO_NOW - timedelta(hours=run * 3 + 1)
+        completed = DEMO_NOW - timedelta(hours=run * 8 + 1)
         samples.extend({**record, "completed_at": iso(completed)} for _ in range(4))
     points = history(record["route_id"], samples, DEMO_NOW)["points"]
     assert [p["requests"] for p in points] == [4, 4, 4]

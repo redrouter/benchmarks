@@ -13,6 +13,9 @@ from redrouter_benchmarks.clock import iso, parse_time
 from redrouter_benchmarks.runner import ERRORS, sample_metrics
 
 WINDOW_HOURS = 72
+CADENCE_HOURS = 8
+STALE_AFTER = timedelta(hours=3 * CADENCE_HOURS)
+RECENT_SUCCESS = timedelta(hours=2 * CADENCE_HOURS)
 REGIONS = {"us-east-1": "US East (N. Virginia)", "us-west-2": "US West (Oregon)"}
 METRICS = ("ttft_ms", "output_tokens_per_second", "end_to_end_500_ms")
 
@@ -44,7 +47,7 @@ def metrics(records: list[dict]) -> dict:
 
 
 def status(records: list[dict], window: list[dict], now: datetime) -> str:
-    if records and max(parse_time(r["completed_at"]) for r in records) < now - timedelta(hours=12):
+    if records and max(parse_time(r["completed_at"]) for r in records) < now - STALE_AFTER:
         return "stale"
     if len(window) < 8:
         return "insufficient_data"
@@ -53,7 +56,7 @@ def status(records: list[dict], window: list[dict], now: datetime) -> str:
     if rate < 0.8:
         return "failing"
     if rate < 0.95 or not any(
-        parse_time(r["completed_at"]) >= now - timedelta(hours=6) for r in successes
+        parse_time(r["completed_at"]) >= now - RECENT_SUCCESS for r in successes
     ):
         return "degraded"
     return "ok"
@@ -130,12 +133,14 @@ def history(route_id: str, records: list[dict], now: datetime) -> dict:
     by_region = defaultdict(list)
     for record in records:
         completed = parse_time(record["completed_at"])
-        bucket = completed.replace(hour=completed.hour // 3 * 3, minute=0, second=0, microsecond=0)
+        bucket = completed.replace(
+            hour=completed.hour // CADENCE_HOURS * CADENCE_HOURS, minute=0, second=0, microsecond=0
+        )
         buckets[(bucket, record["region"])].append(record)
         by_region[record["region"]].append(record)
     points = []
     for (bucket, region), samples in sorted(buckets.items()):
-        end = min(now, bucket + timedelta(hours=3))
+        end = min(now, bucket + timedelta(hours=CADENCE_HOURS))
         rolling = [
             r
             for r in by_region[region]
@@ -151,7 +156,12 @@ def history(route_id: str, records: list[dict], now: datetime) -> dict:
                 **{f"{name}_p50": m[name]["p50"] for name in METRICS},
             }
         )
-    return {"schema_version": 1, "route_id": route_id, "bucket_hours": 3, "points": points}
+    return {
+        "schema_version": 1,
+        "route_id": route_id,
+        "bucket_hours": CADENCE_HOURS,
+        "points": points,
+    }
 
 
 def aggregate(

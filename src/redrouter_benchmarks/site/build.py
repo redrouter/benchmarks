@@ -10,6 +10,7 @@ import markdown
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from markupsafe import Markup
 
+from redrouter_benchmarks.aggregate import CADENCE_HOURS
 from redrouter_benchmarks.catalog import resource
 from redrouter_benchmarks.external import EPOCH, licence_label, load_external
 
@@ -265,7 +266,7 @@ def history_chart(routes, histories, region, key, title, unit, days, generated_a
             if (
                 value is None
                 or previous is not None
-                and (t - previous).total_seconds() > 3 * 3600 * 1.5
+                and (t - previous).total_seconds() > CADENCE_HOURS * 3600 * 1.5
             ):
                 if segment:
                     parts.append(
@@ -401,6 +402,7 @@ def build_site(data_dir: Path, output_dir: Path) -> None:
         "scatter_chart": scatter_chart,
         "history_chart": history_chart,
         "histories": histories,
+        "bucket_hours": CADENCE_HOURS,
         "external": external,
         "epoch_url": EPOCH,
         "further_reading": further_reading,

@@ -60,8 +60,8 @@ def test_demo_has_failures_regions_schedule_and_scenarios(demo):
         for p in sorted((output / "raw").rglob("*.gz"))
         for line in gzip.open(p, "rt")
     ]
-    assert len({r["run_id"] for r in records}) == 224
-    assert len(records) == 20480
+    assert len({r["run_id"] for r in records}) == 84
+    assert len(records) == 7680
     assert {r["region"] for r in records} == {"us-east-1", "us-west-2"}
     assert {r["error_class"] for r in records} == {None, "rate_limited", "server_error", "timeout"}
     assert set(Counter((r["run_id"], r["route_id"]) for r in records).values()) == {4}
