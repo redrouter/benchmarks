@@ -124,6 +124,13 @@ nav a[aria-current] {
   color:var(--text);
   border-bottom-color:var(--brand);
 }
+.github {
+  display:flex;
+  color:var(--text-muted);
+}
+.github:hover {
+  color:var(--text);
+}
 main {
   position:relative;
   z-index:1;
@@ -544,7 +551,15 @@ footer p:last-child {
   .demo {
     margin-left:auto;
   }
+  .github {
+    order:1;
+    margin-left:auto;
+  }
+  .demo+nav+.github {
+    margin-left:0;
+  }
   nav {
+    order:2;
     width:100%;
     gap:0;
     justify-content:space-between;
