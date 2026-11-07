@@ -429,7 +429,7 @@ def build_site(data_dir: Path, output_dir: Path) -> None:
     render(
         "index.html",
         "comparison.html",
-        title="Inference provider benchmarks",
+        title="Continuous inference provider benchmarks",
         active="overview",
         model=None,
     )

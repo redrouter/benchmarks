@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block heading %}<h1>{{ model.name if model else 'Inference provider benchmarks' }}</h1>{% endblock %}
+{% block heading %}<h1>{{ model.name if model else 'Continuous inference provider benchmarks' }}</h1>{% endblock %}
 {% block status %}<p class="live-status"><span class="live-dot" aria-hidden="true"></span>Updated <time datetime="{{ summary.generated_at }}">{{ summary.generated_at|timestamp }}</time><span class="live-sep" aria-hidden="true">·</span>Trailing {{ summary.window_hours }} hours</p>{% endblock %}
 {% block content %}
 {% set bar_title, model_picker = 'Provider comparison', true %}{% include 'table-bar.html' %}
