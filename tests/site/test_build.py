@@ -89,6 +89,11 @@ def test_build_pages_and_downloads(dist):
     assert 'data-days="7"' in (dist / "models/deepseek-v4.1-flash-1017/index.html").read_text()
 
 
+def test_pages_have_no_inline_styles(dist):
+    for page in dist.rglob("*.html"):
+        assert " style=" not in page.read_text(), page
+
+
 def test_every_internal_link_and_resource_exists(dist):
     for page in dist.rglob("*.html"):
         parser = Links()

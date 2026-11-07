@@ -376,11 +376,7 @@ td.numeric small {
   align-items:center;
   gap:6px;
 }
-.legend span {
-  width:9px;
-  height:9px;
-  border-radius:50%;
-  background:var(--series);
+.legend svg {
   flex-shrink:0;
 }
 .history-heading {
@@ -606,8 +602,8 @@ footer p:last-child {
   .chart-scroll [stroke="#b0161c"] {
     stroke:#e4504a;
   }
-  .legend span[style*="#b0161c"] {
-    background:#e4504a;
+  .legend [fill="#b0161c"] {
+    fill:#e4504a;
   }
 }
 .aurora {
