@@ -78,7 +78,7 @@ def test_build_pages_and_downloads(dist):
         "summary.csv",
         "schema/summary.schema.json",
         "schema/route-history.schema.json",
-        "LICENSE",
+        "LICENSE.txt",
     ):
         assert (dist / "data" / name).is_file()
     assert "Demo data" in (dist / "index.html").read_text()

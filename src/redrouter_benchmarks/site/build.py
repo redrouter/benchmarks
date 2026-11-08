@@ -248,6 +248,10 @@ def history_chart(routes, histories, region, key, title, unit, days, generated_a
                     sorted(points),
                 )
             )
+    first = min((t for _, ps in series for t, _ in ps), default=start)
+    start = max(start, first - timedelta(hours=2))
+    span = (end - start).total_seconds()
+    short = span < 3 * 86400
     maximum = (
         100
         if key == "success_rate"
@@ -262,10 +266,16 @@ def history_chart(routes, histories, region, key, title, unit, days, generated_a
             f'class="axis" '
             f'x="{left - 10}" y="{y + 4}" text-anchor="end">{number(maximum * tick / 4)}</text>'
         )
-        t = start + timedelta(days=days * tick / 4)
+        if compact and short and tick % 2:
+            continue
+        t = start + timedelta(seconds=span * tick / 4)
+        if short:
+            t = (t + timedelta(minutes=30)).replace(minute=0, second=0, microsecond=0)
+        label = f"{t:%d %b %H:%M}" if short else f"{t:%d %b}"
+        x = left + (t - start).total_seconds() / span * plot if short else left + plot * tick / 4
+        anchor = "end" if short and tick == 4 else "middle"
         parts.append(
-            f'<text class="axis" x="{left + plot * tick / 4}" y="260" '
-            f'text-anchor="middle">{t:%d %b}</text>'
+            f'<text class="axis" x="{x:.2f}" y="260" text-anchor="{anchor}">{label}</text>'
         )
     count = 0
     for route, points in series:
@@ -285,7 +295,7 @@ def history_chart(routes, histories, region, key, title, unit, days, generated_a
                     )
                 segment = []
             if value is not None:
-                x = left + (t - start).total_seconds() / (days * 86400) * plot
+                x = left + (t - start).total_seconds() / span * plot
                 y = 235 - value / maximum * 210
                 segment.append(f"{x:.2f},{y:.2f}")
                 tip = f"{route['label']} · {t:%d %b %H:%M} UTC: {value:.1f} {unit}"
@@ -374,7 +384,12 @@ def build_site(data_dir: Path, output_dir: Path) -> None:
             model=models[route["model_id"]],
             label=label,
             upstream=upstream,
-            color=COLORS[list(providers).index(route["provider_id"]) % len(COLORS)],
+            color=COLORS[
+                [r["id"] for r in summary["routes"] if r["model_id"] == route["model_id"]].index(
+                    route["id"]
+                )
+                % len(COLORS)
+            ],
         )
         route["price"] = dict(route["price"], source_url=safe_url(route["price"]["source_url"]))
         history = json.loads(safe_file(data_dir, route["history"]).read_text())
@@ -390,7 +405,7 @@ def build_site(data_dir: Path, output_dir: Path) -> None:
     shutil.copytree(data_dir, output_dir / "data", dirs_exist_ok=True)
     shutil.copytree(resource("schema"), output_dir / "data" / "schema", dirs_exist_ok=True)
     if resource("LICENSE").is_file():
-        shutil.copy2(resource("LICENSE"), output_dir / "data" / "LICENSE")
+        shutil.copy2(resource("LICENSE"), output_dir / "data" / "LICENSE.txt")
     env = Environment(
         loader=FileSystemLoader(resource("site") / "templates"),
         autoescape=select_autoescape(),
