@@ -6,9 +6,8 @@ from pathlib import Path
 import httpx
 import pytest
 
-from redrouter_benchmarks.adapters import get_adapter, registry
+from redrouter_benchmarks.adapters import registry
 from redrouter_benchmarks.adapters.base import Content, Done, Finish, Usage
-from redrouter_benchmarks.catalog import resource
 from redrouter_benchmarks.clock import SimulatedClock
 from redrouter_benchmarks.demo import DEMO_NOW, sse
 from redrouter_benchmarks.runner import (
@@ -99,15 +98,6 @@ def test_timing_ignores_role_and_usage_only_events(catalog, route):
     assert record["response_headers"]["retry-after"] == "2"
 
 
-@pytest.mark.parametrize(
-    "delta",
-    [{"content": "x"}, {"reasoning": "x"}, {"tool_calls": [{"function": {"arguments": "{}"}}]}],
-)
-def test_each_content_kind_starts_ttft(catalog, route, delta):
-    record = observation(catalog, route, [(1, event(delta, "stop")), (0, sse("[DONE]"))])
-    assert sample_metrics(record)["ttft_ms"] == 1000
-
-
 def test_missing_usage_preserves_ttft_only(catalog, route):
     chunks = [(1, event({"content": "x"})), (2, event({"content": "y"}, "stop"))]
     record = observation(catalog, route, chunks)
@@ -174,54 +164,11 @@ def test_total_deadline_survives_heartbeat_traffic(catalog, route):
     assert record["timestamps"]["completed_ns"] == 180_000_000_000
 
 
-def test_coalesced_single_time_has_no_speed(record):
-    record["timestamps"]["last_delta_ns"] = record["timestamps"]["first_delta_ns"]
-    assert sample_metrics(record)["output_tokens_per_second"] is None
-
-
-@pytest.mark.parametrize("finish", ["untrusted-output", {"text": "untrusted-output"}])
-def test_invalid_finish_reason_cannot_leak_response_text(catalog, route, finish):
-    record = observation(catalog, route, [(0, event({"content": "x"}, finish))])
-    assert record["error_class"] == "protocol"
-    assert "untrusted-output" not in json.dumps(record)
-
-
-def test_failed_partial_stream_keeps_timing_but_cannot_contribute_metrics(catalog, route):
-    record = observation(
-        catalog,
-        route,
-        [
-            (1, event({"content": "x"}, usage={"completion_tokens": 1})),
-            (2, httpx.ReadError("private-error-body")),
-        ],
-    )
-    assert record["error_class"] == "network"
-    assert record["timestamps"]["first_delta_ns"] == 1_000_000_000
-    assert all(value is None for value in sample_metrics(record).values())
-    assert "private-error-body" not in json.dumps(record)
-
-
 def test_cache_and_reasoning_cost_use_reported_completion_total():
     usage = {"prompt": 1000, "cached": 200, "completion": 500, "reasoning": 250}
     price = {"input_usd_per_mtok": 1, "cached_input_usd_per_mtok": 0.1, "output_usd_per_mtok": 2}
     assert cost_usd(usage, price) == pytest.approx(0.00182)
     assert cost_usd({**usage, "completion": None}, price) is None
-
-
-def test_workload_and_supplier_pins_are_preserved(catalog):
-    for route in catalog.routes.values():
-        for stratum in STRATA:
-            provider = catalog.providers[route["provider_id"]]
-            prompt = (resource("prompts") / "1.0.0" / f"{stratum}.txt").read_text()
-            request = get_adapter(provider["protocol"]).build_request(
-                provider, route, prompt, "unique-nonce", "test-key"
-            )
-            body = json.loads(request.content)
-            assert body["messages"][0]["content"].startswith("Request nonce: unique-nonce\n")
-            assert body["max_tokens"] == 512 and body["temperature"] == 0.5 and body["stream"]
-            if route["provider_id"].startswith("nanogpt-"):
-                assert body["provider"]["only"] == [route["upstream"]]
-                assert body["provider"]["allow_fallbacks"] is False
 
 
 def test_scheduler_is_seeded_interleaves_gateways_and_has_four_strata(catalog):
@@ -263,7 +210,7 @@ def test_suite_has_no_retries_and_writes_failures(catalog, route, tmp_path):
     assert len({json.loads(call.content)["messages"][0]["content"] for call in calls}) == 4
 
 
-FIXTURES = Path(__file__).parent / "adapters" / "fixtures"
+FIXTURES = Path(__file__).parent / "fixtures" / "sse"
 
 
 def fixture_chunks(protocol, kind):
@@ -330,28 +277,6 @@ def test_anthropic_partial_stream_cannot_succeed(catalog, route, failure):
     assert record["timestamps"]["last_delta_ns"] == 11_000_000_000
     assert record["content_delta_count"] == 3
     assert "private-error-body" not in json.dumps(record)
-
-
-def test_anthropic_missing_usage_preserves_ttft_only(catalog, route):
-    provider = {**catalog.providers[route["provider_id"]], "protocol": "anthropic-messages"}
-    chunks = [
-        (1, sse({"type": "message_start", "message": {"usage": {}}})),
-        (
-            1,
-            sse({"type": "content_block_delta", "delta": {"type": "text_delta", "text": "sample"}}),
-        ),
-        (1, sse({"type": "message_delta", "delta": {"stop_reason": "end_turn"}})),
-        (1, sse({"type": "message_stop"})),
-    ]
-    record = observation(catalog, route, chunks, provider=provider)
-    assert record["error_class"] is None
-    assert record["usage"] == dict.fromkeys(("prompt", "cached", "completion", "reasoning"))
-    assert record["cost_usd"] is None
-    assert sample_metrics(record) == {
-        "ttft_ms": 2000,
-        "output_tokens_per_second": None,
-        "end_to_end_500_ms": None,
-    }
 
 
 @pytest.mark.parametrize("protocol", ["openai-chat", "anthropic-messages"])

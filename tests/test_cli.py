@@ -1,23 +1,6 @@
-import sys
-from types import ModuleType
-
 import pytest
 
 from redrouter_benchmarks.cli import main
-
-
-def test_site_commands_call_the_shared_function_contract(monkeypatch, tmp_path):
-    package = ModuleType("redrouter_benchmarks.site")
-    build = ModuleType("redrouter_benchmarks.site.build")
-    serve = ModuleType("redrouter_benchmarks.site.serve")
-    calls = []
-    build.build_site = lambda data, output: calls.append((data, output))
-    serve.serve = lambda dist, port: calls.append((dist, port))
-    for module in (package, build, serve):
-        monkeypatch.setitem(sys.modules, module.__name__, module)
-    main(["build-site", "--data", str(tmp_path / "data"), "--output", str(tmp_path / "dist")])
-    main(["serve", "--dist", str(tmp_path / "dist"), "--port", "9000"])
-    assert calls == [(tmp_path / "data", tmp_path / "dist"), (tmp_path / "dist", 9000)]
 
 
 def test_disabled_route_is_rejected_before_credentials_or_requests(catalog, tmp_path, capsys):

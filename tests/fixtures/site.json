@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "methodology_version": "1.0",
+  "generated_at": "2026-11-05T18:00:00Z",
+  "window_hours": 72,
+  "demo": true,
+  "regions": [
+    {"id": "us-east-1", "label": "US East"},
+    {"id": "us-west-2", "label": "US West"}
+  ],
+  "providers": [
+    {"id": "refuseless", "name": "Refuseless", "url": "https://refuseless.com", "logo": "assets/providers/refuseless.svg"},
+    {"id": "abliteration", "name": "abliteration.ai", "url": "https://abliteration.ai", "logo": "assets/providers/abliteration.svg"},
+    {"id": "venice", "name": "Venice", "url": "https://venice.ai", "logo": "assets/providers/venice.png"},
+    {"id": "yeta", "name": "Yeta Labs", "url": "https://yeta.ai", "logo": "assets/providers/yeta.svg"},
+    {"id": "larprouter", "name": "LarpRouter", "url": "https://larprouter.com", "logo": "assets/providers/larprouter.png"},
+    {"id": "explabs", "name": "Experiential Labs", "url": "https://www.experientiallabs.ai", "logo": "assets/providers/explabs.svg"},
+    {"id": "nanogpt", "name": "NanoGPT", "url": "https://nano-gpt.com", "logo": "assets/providers/nanogpt.png"},
+    {"id": "openrouter", "name": "OpenRouter", "url": "https://openrouter.ai", "logo": "assets/providers/openrouter.png"}
+  ],
+  "models": [
+    {"id": "deepseek-v4.1-flash-1017", "name": "DeepSeek V4.1 Flash 1017", "creator": "DeepSeek", "family": "DeepSeek"},
+    {"id": "glm-5.3-flash", "name": "GLM 5.3 Flash", "creator": "Z.ai", "family": "GLM"},
+    {"id": "qwen3.8-27b", "name": "Qwen 3.8 27B", "creator": "Qwen", "family": "Qwen"}
+  ],
+  "routes": [
+    {"id": "refuseless/deepseek-v4.1-flash-1017/abliterated", "provider_id": "refuseless", "model_id": "deepseek-v4.1-flash-1017", "provider_model": "deepseek-v4.1-flash-1017-abliterated", "modification": "abliterated", "upstream": null, "declared_precision": "FP8", "context_tokens": 1000000, "price": {"input_usd_per_mtok": 0.08, "cached_input_usd_per_mtok": null, "output_usd_per_mtok": 0.35, "blended_usd_per_mtok": 0.1475, "source_url": "https://refuseless.com/pricing", "checked_at": "2026-11-05"}, "status": "ok", "last_success_at": "2026-11-05T17:30:00Z", "history": "routes/refuseless/deepseek-v4.1-flash-1017/abliterated.json"},
+    {"id": "abliteration/deepseek-v4.1-flash-1017/uncensored", "provider_id": "abliteration", "model_id": "deepseek-v4.1-flash-1017", "provider_model": "deepseek-v4.1-flash-1017-uncensored", "modification": "uncensored", "upstream": null, "declared_precision": "FP8", "context_tokens": 262144, "price": {"input_usd_per_mtok": 0.15, "cached_input_usd_per_mtok": null, "output_usd_per_mtok": 0.45, "blended_usd_per_mtok": 0.225, "source_url": "https://abliteration.ai/pricing", "checked_at": "2026-11-05"}, "status": "ok", "last_success_at": "2026-11-05T17:30:00Z", "history": "routes/abliteration/deepseek-v4.1-flash-1017/uncensored.json"},
+    {"id": "venice/deepseek-v4.1-flash-1017/abliterated", "provider_id": "venice", "model_id": "deepseek-v4.1-flash-1017", "provider_model": "deepseek-v4.1-flash-1017-abliterated", "modification": "abliterated", "upstream": null, "declared_precision": "FP8", "context_tokens": 1000000, "price": {"input_usd_per_mtok": 0.22, "cached_input_usd_per_mtok": null, "output_usd_per_mtok": 0.55, "blended_usd_per_mtok": 0.3025, "source_url": "https://venice.ai/pricing", "checked_at": "2026-11-05"}, "status": "ok", "last_success_at": "2026-11-05T17:30:00Z", "history": "routes/venice/deepseek-v4.1-flash-1017/abliterated.json"},
+    {"id": "yeta/deepseek-v4.1-flash-1017/uncensored", "provider_id": "yeta", "model_id": "deepseek-v4.1-flash-1017", "provider_model": "deepseek-v4.1-flash-1017-uncensored", "modification": "uncensored", "upstream": null, "declared_precision": "FP8", "context_tokens": 262144, "price": {"input_usd_per_mtok": 0.29, "cached_input_usd_per_mtok": null, "output_usd_per_mtok": 0.65, "blended_usd_per_mtok": 0.38, "source_url": "https://yeta.ai/pricing", "checked_at": "2026-11-05"}, "status": "ok", "last_success_at": "2026-11-05T17:30:00Z", "history": "routes/yeta/deepseek-v4.1-flash-1017/uncensored.json"},
+    {"id": "larprouter/deepseek-v4.1-flash-1017/abliterated", "provider_id": "larprouter", "model_id": "deepseek-v4.1-flash-1017", "provider_model": "deepseek-v4.1-flash-1017-abliterated", "modification": "abliterated", "upstream": null, "declared_precision": null, "context_tokens": 1000000, "price": {"input_usd_per_mtok": 0.36, "cached_input_usd_per_mtok": null, "output_usd_per_mtok": 0.75, "blended_usd_per_mtok": 0.4575, "source_url": "https://larprouter.com/pricing", "checked_at": "2026-11-05"}, "status": "degraded", "last_success_at": "2026-11-05T17:30:00Z", "history": "routes/larprouter/deepseek-v4.1-flash-1017/abliterated.json"},
+    {"id": "explabs/glm-5.3-flash/uncensored", "provider_id": "explabs", "model_id": "glm-5.3-flash", "provider_model": "glm-5.3-flash-uncensored", "modification": "uncensored", "upstream": null, "declared_precision": "FP8", "context_tokens": 262144, "price": {"input_usd_per_mtok": 0.43, "cached_input_usd_per_mtok": null, "output_usd_per_mtok": 0.85, "blended_usd_per_mtok": 0.535, "source_url": "https://www.experientiallabs.ai/pricing", "checked_at": "2026-11-05"}, "status": "ok", "last_success_at": "2026-11-05T17:30:00Z", "history": "routes/explabs/glm-5.3-flash/uncensored.json"},
+    {"id": "nanogpt/glm-5.3-flash/abliterated", "provider_id": "nanogpt", "model_id": "glm-5.3-flash", "provider_model": "glm-5.3-flash-abliterated", "modification": "abliterated", "upstream": "Heabsy", "declared_precision": "FP8", "context_tokens": 1000000, "price": {"input_usd_per_mtok": 0.5, "cached_input_usd_per_mtok": null, "output_usd_per_mtok": 0.95, "blended_usd_per_mtok": 0.6125, "source_url": "https://nano-gpt.com/pricing", "checked_at": "2026-11-05"}, "status": "ok", "last_success_at": "2026-11-05T17:30:00Z", "history": "routes/nanogpt/glm-5.3-flash/abliterated.json"},
+    {"id": "openrouter/qwen3.8-27b/none", "provider_id": "openrouter", "model_id": "qwen3.8-27b", "provider_model": "qwen3.8-27b-none", "modification": "none", "upstream": null, "declared_precision": "FP8", "context_tokens": 262144, "price": {"input_usd_per_mtok": 0.57, "cached_input_usd_per_mtok": null, "output_usd_per_mtok": 1.05, "blended_usd_per_mtok": 0.69, "source_url": "https://openrouter.ai/pricing", "checked_at": "2026-11-05"}, "status": "ok", "last_success_at": "2026-11-05T17:30:00Z", "history": "routes/openrouter/qwen3.8-27b/none.json"}
+  ],
+  "metrics": [
+    ["refuseless/deepseek-v4.1-flash-1017/abliterated", "all", 64, 62, 250, 375, 85.0, 102.0, 6132, 9199],
+    ["refuseless/deepseek-v4.1-flash-1017/abliterated", "us-east-1", 32, 31, 235, 352, 90.43, 108.51, 5764, 8647],
+    ["refuseless/deepseek-v4.1-flash-1017/abliterated", "us-west-2", 32, 31, 265, 398, 80.19, 96.23, 6500, 9750],
+    ["abliteration/deepseek-v4.1-flash-1017/uncensored", "all", 64, 62, 360, 540, 102.0, 122.4, 5262, 7893],
+    ["abliteration/deepseek-v4.1-flash-1017/uncensored", "us-east-1", 32, 31, 338, 508, 108.51, 130.21, 4946, 7419],
+    ["abliteration/deepseek-v4.1-flash-1017/uncensored", "us-west-2", 32, 31, 382, 572, 96.23, 115.47, 5578, 8367],
+    ["venice/deepseek-v4.1-flash-1017/abliterated", "all", 64, 62, 470, 705, 119.0, 142.8, 4672, 7008],
+    ["venice/deepseek-v4.1-flash-1017/abliterated", "us-east-1", 32, 31, 442, 663, 126.6, 151.91, 4391, 6587],
+    ["venice/deepseek-v4.1-flash-1017/abliterated", "us-west-2", 32, 31, 498, 747, 112.26, 134.72, 4952, 7428],
+    ["yeta/deepseek-v4.1-flash-1017/uncensored", "all", 64, 62, 580, 870, 136.0, 163.2, 4256, 6385],
+    ["yeta/deepseek-v4.1-flash-1017/uncensored", "us-east-1", 32, 31, 545, 818, 144.68, 173.62, 4001, 6002],
+    ["yeta/deepseek-v4.1-flash-1017/uncensored", "us-west-2", 32, 31, 615, 922, 128.3, 153.96, 4512, 6768],
+    ["larprouter/deepseek-v4.1-flash-1017/abliterated", "all", 36, 34, 690, 1035, 153.0, 183.6, 3958, 5937],
+    ["larprouter/deepseek-v4.1-flash-1017/abliterated", "us-east-1", 32, 31, 649, 973, 162.77, 195.32, 3720, 5581],
+    ["larprouter/deepseek-v4.1-flash-1017/abliterated", "us-west-2", 4, 3, null, null, null, null, null, null],
+    ["explabs/glm-5.3-flash/uncensored", "all", 64, 62, 800, 1200, 170.0, 204.0, 3741, 5612],
+    ["explabs/glm-5.3-flash/uncensored", "us-east-1", 32, 31, 752, 1128, 180.85, 217.02, 3517, 5275],
+    ["explabs/glm-5.3-flash/uncensored", "us-west-2", 32, 31, 848, 1272, 160.38, 192.45, 3966, 5948],
+    ["nanogpt/glm-5.3-flash/abliterated", "all", 64, 62, 910, 1365, 187.0, 224.4, 3584, 5376],
+    ["nanogpt/glm-5.3-flash/abliterated", "us-east-1", 32, 31, 855, 1283, 198.94, 238.72, 3369, 5053],
+    ["nanogpt/glm-5.3-flash/abliterated", "us-west-2", 32, 31, 965, 1447, 176.42, 211.7, 3799, 5698],
+    ["openrouter/qwen3.8-27b/none", "all", 64, 62, 1020, 1530, 204.0, 244.8, 3471, 5206],
+    ["openrouter/qwen3.8-27b/none", "us-east-1", 32, 31, 959, 1438, 217.02, 260.43, 3263, 4894],
+    ["openrouter/qwen3.8-27b/none", "us-west-2", 32, 31, 1081, 1622, 192.45, 230.94, 3679, 5519]
+  ]
+}

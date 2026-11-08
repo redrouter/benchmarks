@@ -40,3 +40,10 @@ def record(route):
         "first_chunk_tokens": 1,
         "demo": False,
     }
+
+
+@pytest.fixture(scope="session")
+def site_input(tmp_path_factory):
+    from site_data import site_data
+
+    return site_data(tmp_path_factory.getbasetemp() / "site-data")
