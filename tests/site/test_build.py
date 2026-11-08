@@ -5,6 +5,8 @@ import shutil
 import xml.etree.ElementTree as ET
 from html.parser import HTMLParser
 from pathlib import Path
+from urllib.parse import urlsplit
+from urllib.robotparser import RobotFileParser
 
 import pytest
 from jsonschema import Draft202012Validator, FormatChecker
@@ -24,6 +26,10 @@ class Links(HTMLParser):
         attrs = dict(attrs)
         if tag == "a":
             self.links.append(attrs.get("href", ""))
+        if tag == "script" and not attrs.get("src"):
+            return
+        if tag == "link" and attrs.get("rel") == "canonical":
+            return
         if tag in ("script", "img", "link", "image"):
             self.resources.append(attrs.get("src", attrs.get("href", "")))
 
@@ -166,6 +172,161 @@ def test_pages_have_link_previews(dist):
     )
     assert '<meta name="twitter:card" content="summary_large_image">' in page
     assert (dist / "assets" / "og.png").is_file()
+
+
+def metadata(page):
+    head = page.split("</head>")[0]
+    title = re.search(r"<title>(.*?)</title>", head).group(1)
+    tags = dict(re.findall(r'<meta (?:name|property)="([^"]+)" content="([^"]*)">', head))
+    canonical = re.findall(r'<link rel="canonical" href="([^"]+)">', head)
+    graph = json.loads(
+        re.search(r'<script type="application/ld\+json">(.*?)</script>', head).group(1)
+    )["@graph"]
+    return title, tags, canonical, graph
+
+
+def test_search_metadata_and_sitemap(dist):
+    summary = json.loads((FIXTURE / "summary.json").read_text())
+    sitemap = ET.parse(dist / "sitemap.xml").getroot()
+    ns = {"s": "http://www.sitemaps.org/schemas/sitemap/0.9"}
+    urls = {entry.findtext("s:loc", namespaces=ns) for entry in sitemap}
+    expected = {
+        f"{build.SITE_URL}/{page.relative_to(dist).as_posix().removesuffix('index.html')}"
+        for page in dist.rglob("index.html")
+    }
+    assert urls == expected
+    for entry in sitemap:
+        assert entry.findtext("s:lastmod", namespaces=ns) == summary["generated_at"]
+    for url in urls:
+        assert url.endswith("/")
+        assert (dist / urlsplit(url).path.lstrip("/") / "index.html").is_file()
+    robots = RobotFileParser()
+    robots.parse((dist / "robots.txt").read_text().splitlines())
+    assert robots.can_fetch("*", "/models/")
+    assert robots.site_maps() == [f"{build.SITE_URL}/sitemap.xml"]
+    assert (dist / f"{build.INDEXNOW_KEY}.txt").read_bytes() == build.INDEXNOW_KEY.encode()
+    titles, descriptions = [], []
+    for page in dist.rglob("*.html"):
+        title, tags, canonical, graph = metadata(page.read_text())
+        titles.append(title)
+        descriptions.append(tags["description"])
+        assert title == tags["og:title"] == tags["twitter:title"]
+        assert tags["description"] == tags["og:description"] == tags["twitter:description"]
+        assert 0 < len(tags["description"]) <= 160
+        assert len(canonical) == 1 and canonical[0].endswith("/")
+        assert tags["og:url"] == canonical[0]
+        assert (tags.get("robots") == "noindex") == (page.name == "404.html")
+        assert tags["og:site_name"] == build.SITE_NAME
+        types = {node["@type"]: node for node in graph}
+        assert types["Organization"]["name"] == "RedRouter"
+        overview = page == dist / "index.html"
+        assert ("BreadcrumbList" in types) == (not overview)
+        assert ("WebSite" in types) == overview
+        has_dataset = overview or page.parent.parent == dist / "models"
+        assert ("Dataset" in types) == has_dataset
+        if has_dataset:
+            dataset = types["Dataset"]
+            assert {
+                "name",
+                "description",
+                "url",
+                "creator",
+                "license",
+                "isAccessibleForFree",
+                "dateModified",
+                "temporalCoverage",
+                "measurementTechnique",
+                "variableMeasured",
+                "keywords",
+                "distribution",
+            } <= dataset.keys()
+            assert len(dataset["description"]) >= 50
+            assert dataset["url"] == canonical[0]
+            assert dataset["dateModified"] == summary["generated_at"]
+            assert dataset["license"] == f"{build.SITE_URL}/data/LICENSE.txt"
+            assert dataset["isAccessibleForFree"] is True
+            assert len(dataset["variableMeasured"]) == 5
+            assert dataset["temporalCoverage"] == ("2026-11-02T18:00:00+00:00/2026-11-05T18:00:00Z")
+            downloads = dataset["distribution"]
+            assert any(
+                d["contentUrl"].endswith("/data/summary.csv") and d["encodingFormat"] == "text/csv"
+                for d in downloads
+            )
+            for download in downloads:
+                assert download["@type"] == "DataDownload"
+                assert (dist / urlsplit(download["contentUrl"]).path.lstrip("/")).is_file()
+    assert len(titles) == len(set(titles))
+    assert len(descriptions) == len(set(descriptions))
+
+
+def test_descriptions_use_pooled_route_metrics(dist):
+    model = metadata((dist / "models/glm-5.3-flash/index.html").read_text())[1]
+    assert "2 providers" in model["description"]
+    assert "Fastest: Heabsy via NanoGPT, 187 tok/s." in model["description"]
+    assert "Lowest price: Experiential Labs, $0.535/1M." in model["description"]
+    provider = metadata((dist / "providers/venice/index.html").read_text())[1]
+    assert "1 routes benchmarked over 72h" in provider["description"]
+    assert "119 tok/s output, 0.47 s TTFT, 96.9% success" in provider["description"]
+    control = metadata((dist / "models/qwen3.8-27b/index.html").read_text())[0]
+    assert "Standard-Model API" in control
+
+
+def test_metadata_omits_insufficient_and_nonfinite_values(source, tmp_path):
+    data = tmp_path / "data"
+    shutil.copytree(FIXTURE, data)
+    summary = json.loads((data / "summary.json").read_text())
+    for route in summary["routes"]:
+        route["metrics"]["all"]["requests"] = 0
+        route["metrics"]["all"]["success_rate"] = float("nan")
+        route["metrics"]["all"]["output_tokens_per_second"]["p50"] = 99999
+        route["price"]["blended_usd_per_mtok"] = 0
+    (data / "summary.json").write_text(json.dumps(summary))
+    output = tmp_path / "dist"
+    build.build_site(data, output)
+    for page in output.rglob("*.html"):
+        description = metadata(page.read_text())[1]["description"]
+        assert not any(
+            word in description
+            for word in ("None", "nan", "99999", "Fastest:", "Lowest price:", "Route medians:")
+        )
+    page = metadata((output / "models/glm-5.3-flash/index.html").read_text())
+    assert "0 providers" in page[1]["description"]
+    assert "Abliterated / Uncensored" in page[0]
+
+
+def test_metadata_uses_medians_and_omits_missing_metrics():
+    summary = json.loads((FIXTURE / "summary.json").read_text())
+    provider = summary["providers"][0]
+    routes = []
+    for route, speed in zip(summary["routes"][:3], (10, 20, 900), strict=True):
+        route.update(provider=provider, provider_id=provider["id"])
+        route["metrics"]["all"]["output_tokens_per_second"]["p50"] = speed
+        route["metrics"]["all"]["ttft_ms"]["p50"] = None
+        route["metrics"]["all"]["success_rate"] = float("nan")
+        routes.append(route)
+    result = build.page_metadata(
+        summary,
+        routes,
+        f"providers/{provider['id']}/index.html",
+        {"title": provider["name"], "provider": provider},
+        [],
+    )
+    assert "20 tok/s output" in result["description"]
+    assert "TTFT" not in result["description"] and "success" not in result["description"]
+
+
+def test_structured_data_escapes_script_content(source, tmp_path):
+    data = tmp_path / "data"
+    shutil.copytree(FIXTURE, data)
+    summary = json.loads((data / "summary.json").read_text())
+    summary["models"][0]["name"] = '</script><script>alert("x")</script>'
+    (data / "summary.json").write_text(json.dumps(summary))
+    output = tmp_path / "dist"
+    build.build_site(data, output)
+    page = (output / "models" / summary["models"][0]["id"] / "index.html").read_text()
+    dataset = next(node for node in metadata(page)[3] if node["@type"] == "Dataset")
+    assert summary["models"][0]["name"] in dataset["name"]
+    assert '<script>alert("x")</script>' not in page
 
 
 def test_directories_show_logos(dist):

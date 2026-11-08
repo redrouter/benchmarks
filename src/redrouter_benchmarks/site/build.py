@@ -1,10 +1,13 @@
 import json
+import math
 import re
 import shutil
 from datetime import UTC, datetime, timedelta
 from html import escape
 from pathlib import Path
+from statistics import median
 from urllib.parse import urlsplit
+from xml.etree.ElementTree import Element, SubElement, tostring
 
 import markdown
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -13,6 +16,10 @@ from markupsafe import Markup
 from redrouter_benchmarks.aggregate import CADENCE_HOURS
 from redrouter_benchmarks.catalog import resource
 from redrouter_benchmarks.external import EPOCH, licence_label, load_external
+
+SITE_URL = "https://benchmarks.redrouter.org"
+SITE_NAME = "Abliterated Benchmarks by RedRouter"
+INDEXNOW_KEY = "384fbe6b22e027070c349c862cddbc5c"
 
 COLORS = [
     "#b0161c",
@@ -325,6 +332,192 @@ def history_chart(routes, histories, region, key, title, unit, days, generated_a
     return Markup("".join(parts) + "</svg>")
 
 
+def finite(value):
+    return isinstance(value, (int, float)) and math.isfinite(value)
+
+
+def page_metadata(summary, routes, path, context, downloads):
+    model, provider = context.get("model"), context.get("provider")
+    page = path.removesuffix("index.html") if path != "404.html" else "404/"
+    canonical = f"{SITE_URL}/{page}"
+    eligible = [r for r in routes if r["metrics"].get("all", {}).get("requests", 0) >= 8]
+    selected = [
+        r
+        for r in eligible
+        if (not model or r["model_id"] == model["id"])
+        and (not provider or r["provider_id"] == provider["id"])
+    ]
+
+    def speed(route):
+        return route["metrics"]["all"].get("output_tokens_per_second", {}).get("p50")
+
+    fastest = max((r for r in selected if finite(speed(r))), key=speed, default=None)
+
+    def route_name(route):
+        name = route["provider"]["name"]
+        return f"{route['upstream']} via {name}" if route["upstream"] else name
+
+    def describe(base, clauses):
+        result = truncate(base, 160)
+        for clause in clauses:
+            if clause and len(result) + len(clause) + 1 <= 160:
+                result += " " + clause
+        return result
+
+    fastest_clause = ""
+    if fastest and not provider:
+        label = route_name(fastest)
+        if not model:
+            label = f"{fastest['model']['name']} via {label}"
+        fastest_clause = f"Fastest: {label}, {speed(fastest):.0f} tok/s."
+    window = summary["window_hours"]
+    cadence = f"Updated every {CADENCE_HOURS} hours."
+    titles = {
+        "": "Abliterated & Uncensored LLM API Benchmarks: Speed, Price, Uptime",
+        "models/": "Abliterated & Uncensored Models Compared by Provider",
+        "providers/": "Uncensored & Abliterated LLM API Providers Compared",
+        "methodology/": "Methodology: How We Benchmark Uncensored LLM APIs",
+        "external/": "External Stock-Model Benchmark Results for Abliterated Model Families",
+        "404/": f"Page not found · {SITE_NAME}",
+    }
+    if model:
+        modified = any(r["modification"] != "none" for r in routes if r["model_id"] == model["id"])
+        qualifier = " Abliterated / Uncensored" if modified else " Standard-Model"
+        title = f"{model['name']}{qualifier} API: Speed, Price & Uptime by Provider"
+        cheapest = min(
+            (r for r in selected if finite(r["price"].get("blended_usd_per_mtok"))),
+            key=lambda r: r["price"]["blended_usd_per_mtok"],
+            default=None,
+        )
+        price_clause = (
+            f"Lowest price: {route_name(cheapest)}, "
+            f"${cheapest['price']['blended_usd_per_mtok']:.3g}/1M."
+            if cheapest
+            else ""
+        )
+        base = (
+            f"{model['name']} APIs: {len({r['provider_id'] for r in selected})} providers "
+            f"over {window}h."
+        )
+        if cheapest and len(" ".join([base, fastest_clause, price_clause])) > 160:
+            price_clause = f"Lowest: ${cheapest['price']['blended_usd_per_mtok']:.3g}/1M."
+        description = describe(base, [fastest_clause, price_clause, cadence])
+    elif provider:
+        title = f"{provider['name']} API Speed & Uptime for Uncensored Models"
+        if not any(
+            r["modification"] != "none" for r in routes if r["provider_id"] == provider["id"]
+        ):
+            title = f"{provider['name']} API Speed & Uptime for Standard Models"
+        medians = []
+        for key, label, scale, unit in [
+            ("output_tokens_per_second", "output", 1, "tok/s"),
+            ("ttft_ms", "TTFT", 0.001, "s"),
+            ("success_rate", "success", 100, "%"),
+        ]:
+            values = [
+                r["metrics"]["all"].get(key)
+                if key == "success_rate"
+                else r["metrics"]["all"].get(key, {}).get("p50")
+                for r in selected
+            ]
+            values = [v * scale for v in values if finite(v)]
+            if values:
+                medians.append(f"{median(values):.3g}{'' if unit == '%' else ' '}{unit} {label}")
+        description = describe(
+            f"{provider['name']}: {len(selected)} routes benchmarked over {window}h.",
+            [("Route medians: " + ", ".join(medians) + ".") if medians else "", cadence],
+        )
+    else:
+        title = titles[page]
+        descriptions = {
+            "": "Compare",
+            "models/": "Browse",
+            "providers/": "Explore",
+        }
+        if page in descriptions:
+            description = describe(
+                f"{descriptions[page]} {len(summary['models'])} models and "
+                f"{len(summary['providers'])} providers over {window}h.",
+                [fastest_clause, cadence],
+            )
+        else:
+            description = {
+                "methodology/": "How RedRouter measures uncensored LLM API speed, latency, "
+                "success rate and price: workloads, sampling, aggregation and limitations.",
+                "external/": "Published stock-model scores for families with abliterated routes. "
+                "Compare evaluators, benchmark versions, dates and licensed sources.",
+                "404/": "This benchmark page could not be found. Browse model and provider "
+                "comparisons or return to the RedRouter benchmark overview.",
+            }[page]
+    organization = {
+        "@type": "Organization",
+        "@id": "https://redrouter.org/#organization",
+        "name": "RedRouter",
+        "url": "https://redrouter.org",
+        "logo": f"{SITE_URL}/assets/logo.svg",
+    }
+    graph = [organization]
+    if not page:
+        graph.append({"@type": "WebSite", "name": SITE_NAME, "url": canonical})
+    else:
+        crumbs = [("Overview", f"{SITE_URL}/")]
+        if model or provider:
+            kind = "models" if model else "providers"
+            crumbs.append((kind.title(), f"{SITE_URL}/{kind}/"))
+        crumbs.append((context["title"], canonical))
+        graph.append(
+            {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                    {"@type": "ListItem", "position": i, "name": name, "item": url}
+                    for i, (name, url) in enumerate(crumbs, 1)
+                ],
+            }
+        )
+    if not page or model:
+        generated = summary["generated_at"]
+        start = datetime.fromisoformat(generated) - timedelta(hours=window)
+        graph.append(
+            {
+                "@type": "Dataset",
+                "name": f"{model['name']} API route benchmarks" if model else SITE_NAME,
+                "description": (
+                    f"{'Demonstration' if summary.get('demo') else 'Observed'} API speed, latency, "
+                    f"success rate and declared blended price for "
+                    f"{model['name'] if model else 'abliterated and uncensored model'} routes "
+                    f"over a trailing {window}-hour window. Regional and pooled metrics are "
+                    "published; speed and latency percentiles require eight usable successes."
+                ),
+                "url": canonical,
+                "creator": organization,
+                "license": f"{SITE_URL}/data/LICENSE.txt",
+                "isAccessibleForFree": True,
+                "dateModified": generated,
+                "temporalCoverage": f"{start.isoformat()}/{generated}",
+                "measurementTechnique": f"Serial streaming API requests every {CADENCE_HOURS} "
+                "hours from US East and West; pooled request-level p50 over the trailing "
+                f"{window} hours, success rate including failures, "
+                "declared 3:1 input/output price.",
+                "variableMeasured": [
+                    "Output speed",
+                    "Time to first token",
+                    "Time to 500 tokens",
+                    "Success rate",
+                    "Blended price",
+                ],
+                "keywords": ["LLM", "API", "abliterated", "uncensored", "benchmarks"],
+                "distribution": downloads,
+            }
+        )
+    return {
+        "seo_title": title,
+        "description": description,
+        "canonical": canonical,
+        "noindex": path == "404.html",
+        "structured_data": {"@context": "https://schema.org", "@graph": graph},
+    }
+
+
 def build_site(data_dir: Path, output_dir: Path) -> None:
     data_dir, output_dir = Path(data_dir).resolve(), Path(output_dir).resolve()
     if (
@@ -445,11 +638,26 @@ def build_site(data_dir: Path, output_dir: Path) -> None:
         "epoch_url": EPOCH,
         "further_reading": further_reading,
     }
+    downloads = [
+        {
+            "@type": "DataDownload",
+            "contentUrl": f"{SITE_URL}/data/{path.relative_to(data_dir).as_posix()}",
+            "encodingFormat": "text/csv" if path.suffix == ".csv" else "application/json",
+        }
+        for path in sorted(data_dir.rglob("*"))
+        if path.is_file() and path.suffix in (".csv", ".json")
+    ]
+    sitemap = Element("urlset", xmlns="http://www.sitemaps.org/schemas/sitemap/0.9")
 
     def render(path, template, **context):
         target = output_dir / path
         target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(env.get_template(template).render(**common, **context))
+        metadata = page_metadata(summary, routes, path, context, downloads)
+        target.write_text(env.get_template(template).render(**common, **context, **metadata))
+        if not metadata["noindex"]:
+            entry = SubElement(sitemap, "url")
+            SubElement(entry, "loc").text = metadata["canonical"]
+            SubElement(entry, "lastmod").text = summary["generated_at"]
 
     render(
         "index.html",
@@ -513,3 +721,10 @@ def build_site(data_dir: Path, output_dir: Path) -> None:
             '<p>This page could not be found. <a href="/">Return to the overview</a>.</p>'
         ),
     )
+    (output_dir / "robots.txt").write_text(
+        f"User-agent: *\nAllow: /\n\nSitemap: {SITE_URL}/sitemap.xml\n"
+    )
+    (output_dir / "sitemap.xml").write_bytes(
+        tostring(sitemap, encoding="utf-8", xml_declaration=True)
+    )
+    (output_dir / f"{INDEXNOW_KEY}.txt").write_text(INDEXNOW_KEY)
