@@ -102,14 +102,14 @@
   }));
   const tooltip = document.querySelector('#tooltip');
   function show(target, x, y) {
-    tooltip.textContent = target.dataset.tooltip;
+    tooltip.textContent = target.getAttribute('aria-label');
     tooltip.hidden = false;
     tooltip.style.left = `${Math.max(8, Math.min(x, innerWidth - tooltip.offsetWidth - 8))}px`;
     tooltip.style.top = `${Math.max(8, Math.min(y + 12, innerHeight - tooltip.offsetHeight - 8))}px`;
   }
-  document.addEventListener('pointerover', event => { if (event.target.dataset.tooltip) show(event.target, event.clientX, event.clientY); });
-  document.addEventListener('pointerout', event => { if (event.target.dataset.tooltip) tooltip.hidden = true; });
-  document.addEventListener('focusin', event => { if (event.target.dataset.tooltip) { const box = event.target.getBoundingClientRect(); show(event.target, box.x, box.y); } });
+  document.addEventListener('pointerover', event => { if (event.target.matches('svg [aria-label]')) show(event.target, event.clientX, event.clientY); });
+  document.addEventListener('pointerout', event => { if (event.target.matches('svg [aria-label]')) tooltip.hidden = true; });
+  document.addEventListener('focusin', event => { if (event.target.matches('svg [aria-label]')) { const box = event.target.getBoundingClientRect(); show(event.target, box.x, box.y); } });
   document.addEventListener('focusout', () => { tooltip.hidden = true; });
   document.addEventListener('keydown', event => { if (event.key === 'Escape') tooltip.hidden = true; });
 })();

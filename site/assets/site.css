@@ -275,12 +275,12 @@ tbody tr:last-child td {
 tbody tr:hover {
   background:var(--surface-hover);
 }
-td.numeric {
+td.numeric,.comparison td:nth-child(n+6):nth-child(-n+12) {
   font-family:var(--font-mono);
   font-variant-numeric:tabular-nums;
   text-align:right;
 }
-td.numeric small {
+td.numeric small,.comparison td:nth-child(n+6):nth-child(-n+12) small {
   font-family:var(--font-sans);
 }
 .provider-name {
@@ -356,12 +356,16 @@ td.numeric small {
   height:auto;
   overflow:hidden;
 }
-.chart-scroll text {
+.chart-scroll use {
+  font-size:12px;
+  fill:var(--text);
+}
+.chart-scroll text,.chart-symbols text {
   font-family:var(--font-sans);
   font-size:12px;
   fill:var(--text);
 }
-.chart-scroll .logo-tile {
+.logo-tile {
   fill:#fff;
 }
 .chart-scroll .axis {
@@ -626,15 +630,96 @@ footer p:last-child {
     font-size:16px;
   }
 }
-.chart-compact {
+.chart-symbols {
+  position:absolute;
+  width:0;
+  height:0;
+  overflow:hidden;
+}
+.label-compact {
   display:none;
 }
+.bar-plot {
+  transform:translateX(215px);
+}
+.scatter-plot {
+  transform:translateX(65px);
+}
+.history-plot {
+  transform:translateX(62px);
+}
 @media(max-width:800px) {
-  .chart-wide {
+  .bar-chart svg,.history-chart svg {
+    width:calc(100% * 600 / 360);
+    max-width:none;
+  }
+  .scatter-chart svg {
+    width:calc(100% * 600 / 350);
+    max-width:none;
+  }
+  .chart-scroll {
+    overflow:hidden;
+  }
+  .label-wide,.compact-hidden {
     display:none;
   }
-  .chart-compact {
-    display:block;
+  .label-compact {
+    display:inline;
+  }
+  .bar-plot {
+    transform:translateX(166px) scaleX(calc(150 / 325));
+    --plot-inverse:calc(325 / 150);
+  }
+  .scatter-plot {
+    transform:translateX(65px) scaleX(calc(260 / 500));
+    --plot-inverse:calc(500 / 260);
+  }
+  .history-plot {
+    transform:translateX(50px) scaleX(calc(285 / 513));
+    --plot-inverse:calc(513 / 285);
+  }
+  .bar-plot text,.scatter-plot text,.history-plot text,
+  .scatter-plot circle,.history-plot circle {
+    transform-box:fill-box;
+    transform-origin:left center;
+    transform:scaleX(var(--plot-inverse));
+  }
+  .bar-plot [text-anchor="middle"],.scatter-plot [text-anchor="middle"],
+  .history-plot [text-anchor="middle"],.scatter-plot circle,.history-plot circle {
+    transform-origin:center;
+  }
+  .bar-plot [text-anchor="end"],.scatter-plot [text-anchor="end"],
+  .history-plot [text-anchor="end"] {
+    transform-origin:right center;
+  }
+  .bar-plot rect {
+    rx:calc(3px * 325 / 150);
+    ry:3px;
+  }
+  .bar-plot .gridline {
+    stroke-width:calc(325 / 150);
+  }
+  .bar-chart,.history-chart {
+    container-type:inline-size;
+  }
+  .bar-plot [tabindex]:focus,.history-plot polyline {
+    vector-effect:non-scaling-stroke;
+    stroke-width:calc(200cqw / 360);
+  }
+  .history-plot [stroke-dasharray="5 3"] {
+    stroke-dasharray:calc(500cqw / 360) calc(300cqw / 360);
+  }
+  .bar-plot .value {
+    transform:translateX(calc(5px * (325 / 150 - 1))) scaleX(var(--plot-inverse));
+  }
+  .scatter-plot .vertical-axis {
+    transform:translateX(calc(-11px * (500 / 260 - 1))) scaleX(var(--plot-inverse));
+  }
+  .scatter-plot .quadrant-label {
+    transform:translateX(calc(13px * (500 / 260 - 1))) scaleX(var(--plot-inverse));
+  }
+  .history-plot [text-anchor="end"][x="-10"] {
+    transform:translateX(calc(-10px * (513 / 285 - 1))) scaleX(var(--plot-inverse));
   }
 }
 .comparison th:first-child,.comparison td:first-child {

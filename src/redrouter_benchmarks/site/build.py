@@ -100,29 +100,27 @@ def metric_value(route, region, key):
 
 
 def svg_start(label, height, width=600):
-    return (
-        f'<svg role="img" aria-label="{escape(label, quote=True)}" viewBox="0 0 {width} {height}" '
-        f'xmlns="http://www.w3.org/2000/svg"><title>{escape(label)}</title>'
-    )
+    return f'<svg role="img" viewBox="0 0 {width} {height}"><title>{escape(label)}</title>'
 
 
 def truncate(text, length):
     return text if len(text) <= length else text[: length - 1].rstrip() + "…"
 
 
-def bar_chart(routes, region, key, title, unit, higher, compact=False):
+def bar_chart(routes, region, key, title, unit, higher):
     values = [(r, metric_value(r, region, key)) for r in routes]
     values.sort(key=lambda pair: (pair[1] is None, -(pair[1] or 0) if higher else pair[1] or 0))
     maximum = max([v for _, v in values if v is not None] or [1]) * 1.12 or 1
     height = max(115, 44 + len(values) * 38)
-    left, plot = (166, 150) if compact else (215, 325)
+    left, plot = 0, 325
     parts = [
         svg_start(
             f"{title}, {unit}; {'higher' if higher else 'lower'} is better",
             height,
-            360 if compact else 600,
+            600,
         )
     ]
+    parts.append('<g class="bar-plot">')
     for tick in range(5):
         x = left + tick * plot / 4
         parts.append(
@@ -131,32 +129,18 @@ def bar_chart(routes, region, key, title, unit, higher, compact=False):
             f'x="{x}" y="{height - 10}" '
             f'text-anchor="middle">{number(maximum * tick / 4, 2 if key == "price" else 1)}</text>'
         )
+    labels = []
     for i, (route, value) in enumerate(values):
         y = 16 + i * 38
         label = route["label"]
         tip = f"{label}: {number(value, 3 if key == 'price' else 1)} {unit}"
-        short_label = truncate(label, 17 if compact else 30)
-        parts.append(
-            f'<rect class="logo-tile" x="0" y="{y + 1}" width="22" height="22" rx="4"/>'
-            f'<image href="{escape(route["provider"]["logo"], quote=True)}" x="2" '
-            f'y="{y + 3}" width="18" height="18"/>'
-            + (
-                f'<rect class="logo-tile gateway-tile" x="13" y="{y + 14}" width="12" '
-                f'height="12" rx="3"/><image href="'
-                f'{escape(route["provider"]["gateway_logo"], quote=True)}" x="14" '
-                f'y="{y + 15}" width="10" height="10"/>'
-                if route["provider"].get("gateway_logo")
-                else ""
-            )
-            + f'<text class="bar-label" x="30" y="{y + 16}">{escape(short_label)}</text>'
-        )
+        labels.append(f'<use href="#label-{route["chart_label"]}" y="{y}"/>')
         if value is not None:
             width = max(0, value) / maximum * plot
             parts.append(
                 f'<rect tabindex="0" aria-label="{escape(tip, quote=True)}" x="{left}" y="{y}" '
                 f'width="{width:.2f}" '
-                f'height="23" rx="3" fill="{route["color"]}" '
-                f'data-tooltip="{escape(tip, quote=True)}"></rect>'
+                f'height="23" rx="3" fill="{route["color"]}"></rect>'
             )
             parts.append(
                 f'<text class="value" x="{left + 5 + width:.2f}" '
@@ -164,12 +148,13 @@ def bar_chart(routes, region, key, title, unit, higher, compact=False):
             )
         else:
             parts.append(f'<text class="axis" x="{left}" y="{y + 16}">Insufficient data</text>')
+    parts.append("</g>" + "".join(labels))
     if not values:
         parts.append('<text class="axis" x="200" y="45">No routes measured</text>')
     return Markup("".join(parts) + "</svg>")
 
 
-def scatter_chart(routes, region, compact=False):
+def scatter_chart(routes, region):
     values = [
         (
             r,
@@ -181,54 +166,56 @@ def scatter_chart(routes, region, compact=False):
     values = [(r, x, y) for r, x, y in values if y is not None]
     xmax = max([x for _, x, _ in values] + [0.1]) * 1.15
     ymax = max([y for _, _, y in values] + [1]) * 1.15
-    plot = 260 if compact else 500
-    mid = 65 + plot / 2
+    plot = 500
+    mid = plot / 2
     parts = [
         svg_start(
             "Output speed versus blended price. Upper left is faster and cheaper. Shading divides "
             "each axis at its midpoint.",
             340,
-            350 if compact else 600,
+            600,
         )
     ]
+    parts.append('<g class="scatter-plot">')
     for x, y, cls in [
-        (65, 20, "quadrant-good"),
+        (0, 20, "quadrant-good"),
         (mid, 20, "quadrant"),
-        (65, 150, "quadrant"),
+        (0, 150, "quadrant"),
         (mid, 150, "quadrant-muted"),
     ]:
         parts.append(f'<rect class="{cls}" x="{x}" y="{y}" width="{plot / 2}" height="130"/>')
-    parts.append('<text class="axis" x="78" y="40">Faster · cheaper</text>')
+    parts.append('<text class="axis quadrant-label" x="13" y="40">Faster · cheaper</text>')
     for tick in range(5):
-        x, y = 65 + plot * tick / 4, 280 - 260 * tick / 4
+        x, y = plot * tick / 4, 280 - 260 * tick / 4
         parts.append(
             f'<text class="axis" x="{x}" y="300" '
             f'text-anchor="middle">{number(xmax * tick / 4, 2)}</text><text '
-            f'class="axis" x="54" y="{y + 4}" text-anchor="end">{number(ymax * tick / 4, 0)}</text>'
+            f'class="axis vertical-axis" x="-11" y="{y + 4}" text-anchor="end">'
+            f"{number(ymax * tick / 4, 0)}</text>"
         )
     parts.append(
         f'<text class="axis" x="{mid}" y="330" text-anchor="middle">Blended price ($ / 1M tokens) '
-        f'→</text><text class="axis" transform="translate(16 150) rotate(-90)" '
+        '→</text></g><text class="axis" transform="translate(16 150) rotate(-90)" '
         f'text-anchor="middle">Output '
         f"speed (tok/s) →</text>"
     )
+    parts.append('<g class="scatter-plot">')
     for r, x, y in values:
         label = f"{r['label']}: ${x:.3f} / 1M tokens; {y:.1f} tok/s"
         parts.append(
             f'<circle tabindex="0" aria-label="{escape(label, quote=True)}" '
-            f'cx="{65 + x / xmax * plot:.2f}" '
-            f'cy="{280 - y / ymax * 260:.2f}" r="6" fill="{r["color"]}" '
-            f'data-tooltip="{escape(label, quote=True)}"></circle>'
+            f'cx="{x / xmax * plot:.2f}" '
+            f'cy="{280 - y / ymax * 260:.2f}" r="6" fill="{r["color"]}"></circle>'
         )
     if not values:
         parts.append(
             f'<text class="axis" x="{mid}" y="150" text-anchor="middle">No speed samples '
             f"available</text>"
         )
-    return Markup("".join(parts) + "</svg>")
+    return Markup("".join(parts) + "</g></svg>")
 
 
-def history_chart(routes, histories, region, key, title, unit, days, generated_at, compact=False):
+def history_chart(routes, histories, region, key, title, unit, days, generated_at):
     end = datetime.fromisoformat(generated_at).astimezone(UTC)
     start = end - timedelta(days=days)
     series = []
@@ -272,8 +259,11 @@ def history_chart(routes, histories, region, key, title, unit, days, generated_a
         if key == "success_rate"
         else max([v for _, ps in series for _, v in ps if v is not None] or [1]) * 1.12 or 1
     )
-    left, plot = (50, 285) if compact else (62, 513)
-    parts = [svg_start(f"{title}, {unit}, trailing {days} days", 290, 360 if compact else 600)]
+    left, plot = 0, 513
+    parts = [
+        svg_start(f"{title}, {unit}, trailing {days} days", 290),
+        '<g class="history-plot">',
+    ]
     for tick in range(5):
         y = 235 - tick * 210 / 4
         parts.append(
@@ -281,8 +271,7 @@ def history_chart(routes, histories, region, key, title, unit, days, generated_a
             f'class="axis" '
             f'x="{left - 10}" y="{y + 4}" text-anchor="end">{number(maximum * tick / 4)}</text>'
         )
-        if compact and short and tick % 2:
-            continue
+        cls = "axis compact-hidden" if short and tick % 2 else "axis"
         t = start + timedelta(seconds=span * tick / 4)
         if short:
             t = (t + timedelta(minutes=30)).replace(minute=0, second=0, microsecond=0)
@@ -290,7 +279,7 @@ def history_chart(routes, histories, region, key, title, unit, days, generated_a
         x = left + (t - start).total_seconds() / span * plot if short else left + plot * tick / 4
         anchor = "end" if short and tick == 4 else "middle"
         parts.append(
-            f'<text class="axis" x="{x:.2f}" y="260" text-anchor="{anchor}">{label}</text>'
+            f'<text class="{cls}" x="{x:.2f}" y="260" text-anchor="{anchor}">{label}</text>'
         )
     count = 0
     for route, points in series:
@@ -317,8 +306,7 @@ def history_chart(routes, histories, region, key, title, unit, days, generated_a
                 parts.append(
                     f'<circle tabindex="0" aria-label="{escape(tip, quote=True)}" cx="{x:.2f}" '
                     f'cy="{y:.2f}" '
-                    f'r="3" fill="{route["color"]}" '
-                    f'data-tooltip="{escape(tip, quote=True)}"></circle>'
+                    f'r="3" fill="{route["color"]}"></circle>'
                 )
                 count += 1
             previous = t
@@ -328,7 +316,7 @@ def history_chart(routes, histories, region, key, title, unit, days, generated_a
             f"available "
             f"for this region</text>"
         )
-    parts.append(f'<text class="axis" x="62" y="284">{escape(unit)} · UTC</text>')
+    parts.append(f'</g><text class="axis" x="62" y="284">{escape(unit)} · UTC</text>')
     return Markup("".join(parts) + "</svg>")
 
 
@@ -588,6 +576,7 @@ def build_site(data_dir: Path, output_dir: Path) -> None:
             provider=provider,
             model=models[route["model_id"]],
             label=label,
+            chart_label=len(routes),
             upstream=upstream,
             color=COLORS[
                 [r["id"] for r in summary["routes"] if r["model_id"] == route["model_id"]].index(
@@ -631,6 +620,7 @@ def build_site(data_dir: Path, output_dir: Path) -> None:
         "default_model": default_model,
         "metrics": METRICS,
         "bar_chart": bar_chart,
+        "truncate": truncate,
         "scatter_chart": scatter_chart,
         "history_chart": history_chart,
         "histories": histories,

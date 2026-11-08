@@ -155,13 +155,37 @@ def test_bar_charts_show_logos_and_skip_repeated_upstream(source, tmp_path):
     data = tmp_path / "data"
     shutil.copytree(FIXTURE, data)
     summary = json.loads((data / "summary.json").read_text())
-    next(p for p in summary["providers"] if p["id"] == "nanogpt")["name"] = "NanoGPT → Heabsy"
+    next(p for p in summary["providers"] if p["id"] == "nanogpt")["name"] = (
+        "NanoGPT → Heabsy gateway"
+    )
     (data / "summary.json").write_text(json.dumps(summary))
     build.build_site(data, tmp_path / "dist")
     page = (tmp_path / "dist" / "models" / "glm-5.3-flash" / "index.html").read_text()
-    assert "NanoGPT → Heabsy" in page
+    assert "NanoGPT → Heabsy gateway" in page
     assert "· Heabsy" not in page and "via Heabsy" not in page
-    assert page.count('class="logo-tile"') == page.count('class="bar-label"') > 0
+    assert 'class="logo-tile"' in page
+    assert 'class="bar-label"' in page
+    assert 'href="#logo-nanogpt"' in page
+    assert 'class="label-wide">NanoGPT → Heabsy gateway</tspan>' in page
+    assert 'class="label-compact">NanoGPT → Heabsy…</tspan>' in page
+
+
+@pytest.mark.parametrize("page", ["index.html", "models/deepseek-v4.1-flash-1017/index.html"])
+def test_charts_render_once_with_shared_labels(dist, page):
+    html = (dist / page).read_text()
+    assert html.count('<svg role="img"') == html.count('class="chart-scroll ') > 0
+    assert 'class="chart-wide"' not in html and 'class="chart-compact"' not in html
+    labels = re.findall(r'<g id="label-(\d+)">(.*?)</g>', html)
+    assert labels and all('class="bar-label"' in label for _, label in labels)
+    assert set(re.findall(r'href="#label-(\d+)"', html)) <= {key for key, _ in labels}
+    assert any("NanoGPT" in label for _, label in labels)
+
+
+def test_tooltips_reuse_accessible_labels(dist):
+    html = (dist / "models/deepseek-v4.1-flash-1017/index.html").read_text()
+    points = re.findall(r'<(?:rect|circle) [^>]*tabindex="0"[^>]*>', html)
+    assert points and all('aria-label="' in point for point in points)
+    assert "data-tooltip" not in html
 
 
 def test_pages_have_link_previews(dist):
