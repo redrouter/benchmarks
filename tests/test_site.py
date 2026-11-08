@@ -9,8 +9,7 @@ from threading import Thread
 import pytest
 from validate_data import validate_data
 
-from redrouter_benchmarks.site.build import build_site
-from redrouter_benchmarks.site.serve import SiteHandler, serve
+from redrouter_benchmarks.site import SiteHandler, build_site, serve
 
 
 def test_site_matches_approved_output(site_input, tmp_path):

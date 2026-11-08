@@ -4,8 +4,14 @@ from pathlib import Path
 import pytest
 
 from redrouter_benchmarks.adapters import get_adapter
-from redrouter_benchmarks.adapters.base import Content, Done, Finish, Usage
-from redrouter_benchmarks.sse import ProtocolError, SSEParser
+from redrouter_benchmarks.adapters.base import (
+    Content,
+    Done,
+    Finish,
+    ProtocolError,
+    SSEParser,
+    Usage,
+)
 
 FIXTURES = Path(__file__).parent / "fixtures" / "sse"
 

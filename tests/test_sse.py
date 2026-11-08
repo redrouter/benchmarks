@@ -2,7 +2,7 @@ import random
 
 import pytest
 
-from redrouter_benchmarks.sse import ProtocolError, SSEParser, decode_event
+from redrouter_benchmarks.adapters.base import ProtocolError, SSEParser, decode_event
 
 
 def test_arbitrary_boundaries_preserve_unicode_and_event_framing():

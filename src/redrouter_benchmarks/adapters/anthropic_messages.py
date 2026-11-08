@@ -6,12 +6,13 @@ from redrouter_benchmarks.adapters.base import (
     Error,
     Event,
     Finish,
+    ProtocolError,
     Usage,
     count,
+    decode_event,
     request,
     workload,
 )
-from redrouter_benchmarks.sse import ProtocolError, decode_event
 
 FINISH_REASONS = {
     "end_turn": "stop",

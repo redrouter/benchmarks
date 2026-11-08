@@ -74,19 +74,15 @@ def main(argv: list[str] | None = None) -> None:
 
             fetch_external(args.output, args.zip)
         elif args.command == "build-site":
-            from redrouter_benchmarks.site.build import build_site
+            from redrouter_benchmarks.site import build_site
 
             build_site(args.data, args.output)
         elif args.command == "serve":
-            from redrouter_benchmarks.site.serve import serve
+            from redrouter_benchmarks.site import serve
 
             serve(args.dist, args.port)
     except (ValueError, FileNotFoundError, FileExistsError) as exc:
         parser.exit(2, f"error: {exc}\n")
-    except ModuleNotFoundError as exc:
-        if exc.name and exc.name.startswith("redrouter_benchmarks.site"):
-            parser.exit(2, "error: site commands require the site branch to be integrated\n")
-        raise
 
 
 if __name__ == "__main__":

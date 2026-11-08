@@ -9,7 +9,7 @@ from jsonschema import Draft202012Validator, FormatChecker
 
 from redrouter_benchmarks import external
 from redrouter_benchmarks.catalog import resource
-from redrouter_benchmarks.site.build import build_site
+from redrouter_benchmarks.site import build_site
 
 
 def test_import_filters_and_preserves_provenance(tmp_path, site_input):

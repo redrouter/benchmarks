@@ -9,10 +9,17 @@ import httpx
 
 from redrouter_benchmarks import METHODOLOGY_VERSION, __version__
 from redrouter_benchmarks.adapters import get_adapter
-from redrouter_benchmarks.adapters.base import Content, Done, Error, Finish, Usage
+from redrouter_benchmarks.adapters.base import (
+    Content,
+    Done,
+    Error,
+    Finish,
+    ProtocolError,
+    SSEParser,
+    Usage,
+)
 from redrouter_benchmarks.catalog import Catalog, resource
 from redrouter_benchmarks.clock import Clock, iso
-from redrouter_benchmarks.sse import ProtocolError, SSEParser
 
 STRATA = ("prose-1000", "code-1000", "prose-8000", "code-8000")
 ERRORS = (

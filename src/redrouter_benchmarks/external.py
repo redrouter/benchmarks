@@ -12,11 +12,11 @@ from pathlib import Path
 import httpx
 
 from redrouter_benchmarks import __version__
-from redrouter_benchmarks.catalog import https_url
+from redrouter_benchmarks.catalog import https_url, resource
 
 EPOCH = "https://epoch.ai/benchmarks"
 ZIP_URL = "https://epoch.ai/data/benchmark_data.zip"
-LICENCES = Path(__file__).with_name("licences.json")
+LICENCES = resource("catalog") / "licences.json"
 MODEL_IDS = {
     "deepseek-v4.1-flash",
     "deepseek-v4.1-flash-1017",
@@ -130,7 +130,6 @@ def fetch_external(output: Path, zip_path: Path | None = None) -> dict:
                 continue
             internal = filename in INTERNAL
             description = metadata.get(filename)
-            # These published run files have no source_file entry in Epoch's metadata.
             if description is None and internal:
                 description = {
                     "benchmark": INTERNAL[filename],
