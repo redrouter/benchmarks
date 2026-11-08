@@ -44,7 +44,8 @@ class Catalog:
                 )
             if not all(https_url(p[k]) for k in ("url", "base_url", "terms_url")):
                 raise ValueError(f"Invalid provider URL: {path}")
-            if Path(p["logo"]).name != p["logo"] or not p["api_key_env"]:
+            logos = [p["logo"], *([p["gateway_logo"]] if "gateway_logo" in p else [])]
+            if any(Path(logo).name != logo for logo in logos) or not p["api_key_env"]:
                 raise ValueError(f"Invalid provider metadata: {path}")
             providers[p["id"]] = p
         models = {m["id"]: m for m in tomllib.loads((root / "models.toml").read_text())["models"]}

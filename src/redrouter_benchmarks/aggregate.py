@@ -181,7 +181,8 @@ def aggregate(
         "demo": any(r.get("demo", False) for r in records),
         "regions": [{"id": key, "label": label} for key, label in REGIONS.items()],
         "providers": [
-            {k: p[k] for k in ("id", "name", "url", "logo")} for p in catalog.providers.values()
+            {k: p[k] for k in ("id", "name", "url", "logo", "gateway_logo") if k in p}
+            for p in catalog.providers.values()
         ],
         "models": list(catalog.models.values()),
         "routes": [],

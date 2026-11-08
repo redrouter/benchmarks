@@ -128,12 +128,20 @@ def bar_chart(routes, region, key, title, unit, higher, compact=False):
         y = 16 + i * 38
         label = route["label"]
         tip = f"{label}: {number(value, 3 if key == 'price' else 1)} {unit}"
-        short_label = truncate(label, 17 if compact else 26)
+        short_label = truncate(label, 17 if compact else 30)
         parts.append(
             f'<rect class="logo-tile" x="0" y="{y + 1}" width="22" height="22" rx="4"/>'
             f'<image href="{escape(route["provider"]["logo"], quote=True)}" x="2" '
             f'y="{y + 3}" width="18" height="18"/>'
-            f'<text class="bar-label" x="30" y="{y + 16}">{escape(short_label)}</text>'
+            + (
+                f'<rect class="logo-tile gateway-tile" x="13" y="{y + 14}" width="12" '
+                f'height="12" rx="3"/><image href="'
+                f'{escape(route["provider"]["gateway_logo"], quote=True)}" x="14" '
+                f'y="{y + 15}" width="10" height="10"/>'
+                if route["provider"].get("gateway_logo")
+                else ""
+            )
+            + f'<text class="bar-label" x="30" y="{y + 16}">{escape(short_label)}</text>'
         )
         if value is not None:
             width = max(0, value) / maximum * plot
@@ -335,10 +343,10 @@ def build_site(data_dir: Path, output_dir: Path) -> None:
         raise ValueError("Unsupported summary schema_version")
     assets = resource("site") / "assets"
 
-    def logo_for(provider):
-        path = assets / "providers" / Path(provider["logo"]).name
+    def logo_for(provider, key="logo"):
+        path = assets / "providers" / Path(provider[key]).name
         if path.suffix not in (".svg", ".png") or not path.is_file():
-            raise ValueError(f"No local provider logo for {provider['id']}: {provider['logo']}")
+            raise ValueError(f"No local provider logo for {provider['id']}: {provider[key]}")
         return f"/assets/providers/{path.name}"
 
     provider_links = json.loads((assets / "providers" / "links.json").read_text())
@@ -347,7 +355,10 @@ def build_site(data_dir: Path, output_dir: Path) -> None:
             p,
             url=safe_url(p["url"]),
             logo=logo_for(p),
-            terms=provider_links.get(Path(p["logo"]).stem, {}).get("terms"),
+            gateway_logo=logo_for(p, "gateway_logo") if p.get("gateway_logo") else None,
+            terms=provider_links.get(Path(p.get("gateway_logo") or p["logo"]).stem, {}).get(
+                "terms"
+            ),
         )
         for p in summary["providers"]
     }
