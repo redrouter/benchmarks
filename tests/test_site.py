@@ -1,10 +1,13 @@
 import hashlib
 import json
+from copy import deepcopy
 from functools import partial
+from html import unescape
 from html.parser import HTMLParser
 from http.client import HTTPConnection
 from http.server import ThreadingHTTPServer
 from threading import Thread
+from xml.etree import ElementTree
 
 import pytest
 from validate_data import validate_data
@@ -24,7 +27,7 @@ def test_site_matches_approved_output(site_input, tmp_path):
                 + b"\0"
                 + hashlib.sha256(path.read_bytes()).digest()
             )
-    assert digest.hexdigest() == "ec00f48674a0f52efcbccfb6bf7400094e95aee001e33c355acfb94bf54dad2c"
+    assert digest.hexdigest() == "6e2541e48eca33b4773fb5fb54b2e958ac06a47e8313bcad9e0457a2f1c0a8c9"
 
 
 class Links(HTMLParser):
@@ -43,6 +46,90 @@ def test_internal_links_resolve(site_input, tmp_path):
     parser.root = tmp_path / "dist"
     for page in parser.root.rglob("*.html"):
         parser.feed(page.read_text())
+
+
+def test_provider_and_route_badges(site_input, tmp_path):
+    summary = json.loads((site_input / "summary.json").read_text())
+    build_site(site_input, tmp_path)
+    expected = {f"{p['id']}.svg" for p in summary["providers"]} | {
+        f"{r['provider_id']}/{r['model_id']}.svg" for r in summary["routes"]
+    }
+    badges = tmp_path / "badges"
+    assert {p.relative_to(badges).as_posix() for p in badges.rglob("*.svg")} == expected
+    for path in badges.rglob("*.svg"):
+        assert path.stat().st_size < 2000
+        svg = ElementTree.parse(path).getroot()
+        assert svg.tag == "{http://www.w3.org/2000/svg}svg"
+        assert svg.attrib["role"] == "img"
+        assert svg.attrib["aria-label"] == svg.find("{*}title").text
+        assert svg.attrib["height"] == "20"
+        assert not any("href" in key for e in svg.iter() for key in e.attrib)
+        assert "@import" not in path.read_text() and "@font-face" not in path.read_text()
+    assert "85 tok/s · 96.9% up" in (badges / "refuseless.svg").read_text()
+    assert "/badges/" not in (tmp_path / "sitemap.xml").read_text()
+    for provider in summary["providers"]:
+        page = (tmp_path / "providers" / provider["id"] / "index.html").read_text()
+        link = f"https://benchmarks.redrouter.org/providers/{provider['id']}/?utm_source=badge"
+        image = f"https://benchmarks.redrouter.org/badges/{provider['id']}.svg"
+        alt = f"{provider['name']} on Abliterated Benchmarks"
+        snippet = f'<a href="{link}"><img src="{image}" alt="{alt}" height="20"></a>'
+        assert f"<code>{snippet}</code>" in unescape(page)
+        assert f"[![{alt}]({image})]({link})" in page
+        assert page.count('<details class="badge-embed footnote">') == 1
+        assert page.index("Embed badge") > page.index('class="further-reading"')
+
+
+def test_badges_choose_fastest_eligible_route(site_input, tmp_path):
+    from redrouter_benchmarks.badges import write_badges
+    from redrouter_benchmarks.catalog import resource
+
+    summary = json.loads((site_input / "summary.json").read_text())
+    route = deepcopy(summary["routes"][0])
+    route["model_id"] = "another-model"
+    route["metrics"]["all"]["output_tokens_per_second"]["p50"] = 248
+    route["metrics"]["all"]["success_rate"] = 0.996
+    summary["routes"].append(route)
+    duplicate = deepcopy(route)
+    duplicate["status"] = "insufficient_data"
+    duplicate["metrics"]["all"]["output_tokens_per_second"]["p50"] = 999
+    summary["routes"].append(duplicate)
+    write_badges(summary, tmp_path, (resource("site") / "assets/tokens.css").read_text())
+    for path in ("refuseless.svg", "refuseless/another-model.svg"):
+        assert "248 tok/s · 99.6% up" in (tmp_path / "badges" / path).read_text()
+    assert "85 tok/s" in (tmp_path / "badges/refuseless/deepseek-v4.1-flash-1017.svg").read_text()
+
+
+@pytest.mark.parametrize(
+    "missing",
+    ["requests", "successes", "speed", "rate", "stale", "window", "routes"],
+)
+def test_badges_without_recent_data(site_input, tmp_path, missing):
+    from redrouter_benchmarks.badges import write_badges
+    from redrouter_benchmarks.catalog import resource
+
+    summary = json.loads((site_input / "summary.json").read_text())
+    for route in summary["routes"]:
+        metrics = route["metrics"]["all"]
+        if missing in ("requests", "successes"):
+            metrics[missing] = 7
+        elif missing == "speed":
+            metrics["output_tokens_per_second"]["p50"] = None
+        elif missing == "rate":
+            metrics["success_rate"] = None
+        elif missing == "stale":
+            route["status"] = "stale"
+    if missing == "window":
+        summary["window_hours"] = 24
+    if missing == "routes":
+        summary["routes"] = []
+    write_badges(summary, tmp_path, (resource("site") / "assets/tokens.css").read_text())
+    for provider in summary["providers"]:
+        assert (tmp_path / "badges" / f"{provider['id']}.svg").is_file()
+    for path in (tmp_path / "badges").rglob("*.svg"):
+        assert path.stat().st_size < 2000
+        svg = ElementTree.parse(path).getroot()
+        assert "no recent data" in svg.attrib["aria-label"]
+        assert "no recent data" in [e.text for e in svg.findall(".//{*}text")]
 
 
 @pytest.mark.parametrize("invalid", ["../secret.json", "/tmp/secret.json"])

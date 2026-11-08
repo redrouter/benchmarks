@@ -16,6 +16,7 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 from markupsafe import Markup
 
 from redrouter_benchmarks.aggregate import CADENCE_HOURS
+from redrouter_benchmarks.badges import write_badges
 from redrouter_benchmarks.catalog import resource
 from redrouter_benchmarks.external import EPOCH, licence_label, load_external
 
@@ -598,6 +599,7 @@ def build_site(data_dir: Path, output_dir: Path) -> None:
             raise ValueError(f"Invalid page id: {entity}")
     output_dir.mkdir(parents=True, exist_ok=True)
     shutil.copytree(assets, output_dir / "assets", dirs_exist_ok=True)
+    write_badges(summary, output_dir, (assets / "tokens.css").read_text())
     shutil.copytree(data_dir, output_dir / "data", dirs_exist_ok=True)
     shutil.copytree(resource("schema"), output_dir / "data" / "schema", dirs_exist_ok=True)
     if resource("LICENSE").is_file():
@@ -688,12 +690,20 @@ def build_site(data_dir: Path, output_dir: Path) -> None:
         kind="providers",
     )
     for provider in providers.values():
+        badge_url = f"{SITE_URL}/badges/{provider['id']}.svg"
+        badge_link = f"{SITE_URL}/providers/{provider['id']}/?utm_source=badge"
+        badge_alt = f"{provider['name']} on Abliterated Benchmarks"
         render(
             f"providers/{provider['id']}/index.html",
             "provider.html",
             title=provider["name"],
             active="providers",
             provider=provider,
+            badge_html=(
+                f'<a href="{badge_link}"><img src="{badge_url}" '
+                f'alt="{escape(badge_alt)}" height="20"></a>'
+            ),
+            badge_markdown=f"[![{badge_alt}]({badge_url})]({badge_link})",
         )
     render(
         "methodology/index.html",
