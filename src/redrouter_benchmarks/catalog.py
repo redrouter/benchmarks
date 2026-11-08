@@ -13,7 +13,9 @@ MODIFICATIONS = {"none", "abliterated", "uncensored", "heretic"}
 
 
 def resource(name: str) -> Path:
-    checkout = Path(__file__).resolve().parents[2] / name
+    checkout = Path(__file__).resolve().parents[2] / (
+        "catalog/schema" if name == "schema" else name
+    )
     return checkout if checkout.exists() else Path(__file__).parent / f"_{name}"
 
 
@@ -32,10 +34,12 @@ class Catalog:
     def load(cls, root: Path | None = None) -> "Catalog":
         root = root or resource("catalog")
         adapters = registry()
+        data = tomllib.loads((root / "catalog.toml").read_text())
         providers = {}
-        for path in sorted((root / "providers").glob("*.toml")):
-            p = tomllib.loads(path.read_text())
-            if p["id"] != path.stem or not SLUG.fullmatch(p["id"]):
+        for identity, settings in sorted(data["providers"].items()):
+            path = identity
+            p = {"id": identity, **data["defaults"], **settings}
+            if not SLUG.fullmatch(identity):
                 raise ValueError(f"Invalid provider identity: {path}")
             if p["protocol"] not in adapters:
                 raise ValueError(
@@ -50,17 +54,16 @@ class Catalog:
             providers[p["id"]] = p
         models = {m["id"]: m for m in tomllib.loads((root / "models.toml").read_text())["models"]}
         routes = {}
-        for path in sorted((root / "routes").glob("*/*/*.toml")):
-            r = tomllib.loads(path.read_text())
-            provider_id, model_id, modification = path.relative_to(root / "routes").parts
-            modification = Path(modification).stem
-            route_id = f"{provider_id}/{model_id}/{modification}"
+        for route_id, settings in sorted(
+            data["routes"].items(), key=lambda item: item[0].split("/")
+        ):
+            path = route_id
+            provider_id, model_id, modification = route_id.split("/")
+            r = {**settings, "model_id": model_id, "modification": modification}
             if (
                 provider_id not in providers
                 or model_id not in models
                 or not SLUG.fullmatch(model_id)
-                or r["model_id"] != model_id
-                or r["modification"] != modification
                 or modification not in MODIFICATIONS
                 or not isinstance(r["enabled"], bool)
                 or not r["provider_model"]

@@ -103,7 +103,7 @@ def archive(tmp_path, monkeypatch):
 
 
 def validate(data):
-    schema = json.loads((ROOT / "schema/external.schema.json").read_text())
+    schema = json.loads((ROOT / "catalog/schema/external.schema.json").read_text())
     Draft202012Validator.check_schema(schema)
     Draft202012Validator(schema, format_checker=FormatChecker()).validate(data)
 
@@ -203,10 +203,13 @@ def test_every_page_has_further_reading_and_optional_results(
     build = importlib.import_module("redrouter_benchmarks.site.build")
     root = tmp_path / "root"
     root.mkdir()
-    for folder in ("site", "schema"):
+    for folder in ("site", "catalog/schema"):
+        (root / folder).parent.mkdir(parents=True, exist_ok=True)
         (root / folder).symlink_to(ROOT / folder, target_is_directory=True)
     (root / "METHODOLOGY.md").write_text("# Test methodology\n")
-    monkeypatch.setattr(build, "resource", lambda name: root / name)
+    monkeypatch.setattr(
+        build, "resource", lambda name: root / ("catalog/schema" if name == "schema" else name)
+    )
     data = tmp_path / "data"
     shutil.copytree(FIXTURE, data)
     if present:

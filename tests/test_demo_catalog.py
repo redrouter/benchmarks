@@ -38,8 +38,12 @@ def test_catalogue_rejects_enabled_route_without_price(catalog, tmp_path):
     target = tmp_path / "catalog"
     shutil.copytree(root, target)
     route = next(r for r in catalog.routes.values() if r["enabled"])
-    path = target / "routes" / (route["id"] + ".toml")
-    path.write_text(path.read_text().split("[price]")[0])
+    path = target / "catalog.toml"
+    text = path.read_text()
+    start = text.index(f'[routes."{route["id"]}"]')
+    price = text.index("price = ", start)
+    end = text.index("\n", price)
+    path.write_text(text[:price] + text[end:])
     with pytest.raises(ValueError, match="Invalid price"):
         Catalog.load(target)
 

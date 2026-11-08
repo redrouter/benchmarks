@@ -1,0 +1,340 @@
+[defaults]
+protocol = "openai-chat"
+auth_header = "Authorization"
+auth_scheme = "Bearer"
+
+[providers.abliteration]
+name = "abliteration.ai"
+url = "https://abliteration.ai"
+logo = "abliteration.svg"
+base_url = "https://api.abliteration.ai/v1"
+api_key_env = "ABLITERATION_API_KEY"
+terms_url = "https://abliteration.ai/terms-of-service"
+
+[providers.explabs]
+name = "Experiential Labs"
+url = "https://www.experientiallabs.ai"
+logo = "explabs.svg"
+base_url = "https://api.experientiallabs.ai/v1"
+api_key_env = "EXPLABS_API_KEY"
+terms_url = "https://www.experientiallabs.ai/terms"
+
+[providers.larprouter]
+name = "LarpRouter"
+url = "https://larprouter.com"
+logo = "larprouter.png"
+base_url = "https://larprouter.com/v1"
+api_key_env = "LARPROUTER_API_KEY"
+terms_url = "https://larprouter.com/terms"
+
+[providers.nanogpt-abliteration]
+name = "abliteration.ai via NanoGPT"
+url = "https://nano-gpt.com/provider/abliteration"
+logo = "abliteration.svg"
+gateway_logo = "nanogpt.png"
+base_url = "https://nano-gpt.com/api/v1"
+api_key_env = "NANOGPT_API_KEY"
+terms_url = "https://nano-gpt.com/legal/terms-of-service"
+
+[providers.nanogpt-arnict]
+name = "Arnict via NanoGPT"
+url = "https://nano-gpt.com/provider/arnict"
+logo = "arnict.png"
+gateway_logo = "nanogpt.png"
+base_url = "https://nano-gpt.com/api/v1"
+api_key_env = "NANOGPT_API_KEY"
+terms_url = "https://nano-gpt.com/legal/terms-of-service"
+
+[providers.nanogpt-heabsy]
+name = "Heabsy via NanoGPT"
+url = "https://nano-gpt.com/provider/heabsy"
+logo = "heabsy.svg"
+gateway_logo = "nanogpt.png"
+base_url = "https://nano-gpt.com/api/v1"
+api_key_env = "NANOGPT_API_KEY"
+terms_url = "https://nano-gpt.com/legal/terms-of-service"
+
+[providers.nanogpt-orcarouter]
+name = "OrcaRouter via NanoGPT"
+url = "https://nano-gpt.com/provider/orcarouter"
+logo = "orcarouter.png"
+gateway_logo = "nanogpt.png"
+base_url = "https://nano-gpt.com/api/v1"
+api_key_env = "NANOGPT_API_KEY"
+terms_url = "https://nano-gpt.com/legal/terms-of-service"
+
+[providers.nanogpt-sable]
+name = "Sable via NanoGPT"
+url = "https://nano-gpt.com/provider/sable"
+logo = "sable.svg"
+gateway_logo = "nanogpt.png"
+base_url = "https://nano-gpt.com/api/v1"
+api_key_env = "NANOGPT_API_KEY"
+terms_url = "https://nano-gpt.com/legal/terms-of-service"
+
+[providers.nanogpt-venice]
+name = "Venice via NanoGPT"
+url = "https://nano-gpt.com/provider/venice"
+logo = "venice.png"
+gateway_logo = "nanogpt.png"
+base_url = "https://nano-gpt.com/api/v1"
+api_key_env = "NANOGPT_API_KEY"
+terms_url = "https://nano-gpt.com/legal/terms-of-service"
+
+[providers.openrouter]
+name = "OpenRouter"
+url = "https://openrouter.ai"
+logo = "openrouter.png"
+base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENROUTER_API_KEY"
+terms_url = "https://openrouter.ai/terms"
+
+[providers.refuseless]
+name = "Refuseless"
+url = "https://refuseless.com"
+logo = "refuseless.svg"
+base_url = "https://api.refuseless.com/v1"
+api_key_env = "REFUSELESS_API_KEY"
+terms_url = "https://refuseless.com/terms"
+
+[providers.venice]
+name = "Venice"
+url = "https://venice.ai"
+logo = "venice.png"
+base_url = "https://api.venice.ai/api/v1"
+api_key_env = "VENICE_API_KEY"
+terms_url = "https://venice.ai/legal/tos"
+
+[providers.yeta]
+name = "Yeta Labs"
+url = "https://yeta.ai"
+logo = "yeta.svg"
+base_url = "https://platform.yeta.ai/v1"
+api_key_env = "YETA_API_KEY"
+terms_url = "https://platform.yeta.ai/tos"
+
+[routes."abliteration/deepseek-v4.1-flash/abliterated"]
+provider_model = "abliterated-model-large-flash"
+enabled = true
+include_usage = true
+upstream = "Abliterated Large Flash"
+context_tokens = 1048576
+price = { input_usd_per_mtok = 1, output_usd_per_mtok = 2, source_url = "https://abliteration.ai/pricing", checked_at = "2026-11-05", cached_input_usd_per_mtok = 0.1 }
+extra_body = { reasoning_effort = "none" }
+
+[routes."abliteration/glm-5.3/abliterated"]
+provider_model = "abliterated-model-large-v2"
+enabled = true
+include_usage = true
+upstream = "Abliterated Large v2"
+context_tokens = 1000000
+price = { input_usd_per_mtok = 3, output_usd_per_mtok = 5, source_url = "https://abliteration.ai/pricing", checked_at = "2026-11-05", cached_input_usd_per_mtok = 0.3 }
+extra_body = { reasoning_effort = "low" }
+
+[routes."explabs/deepseek-v4.1-flash-1017/uncensored"]
+provider_model = "deepseek-v4.1-flash-uncensored"
+enabled = true
+include_usage = true
+upstream = "dealignai"
+context_tokens = 1000000
+price = { input_usd_per_mtok = 0.225, output_usd_per_mtok = 0.9, source_url = "https://www.experientiallabs.ai/uncensored", checked_at = "2026-11-05" }
+
+[routes."explabs/glm-5.3-flash/uncensored"]
+provider_model = "glm-5.3-flash-uncensored"
+enabled = true
+include_usage = true
+upstream = "dealignai"
+context_tokens = 1000000
+price = { input_usd_per_mtok = 0.15, output_usd_per_mtok = 0.5, source_url = "https://www.experientiallabs.ai/uncensored", checked_at = "2026-11-05" }
+
+[routes."larprouter/deepseek-v4.1-flash-1017/abliterated"]
+provider_model = "deepseek-v4.1-flash-1017-abliterated"
+enabled = false
+include_usage = true
+context_tokens = 1000000
+price = { input_usd_per_mtok = 0.12, output_usd_per_mtok = 0.5, source_url = "https://larprouter.com/pricing", checked_at = "2026-11-05" }
+
+[routes."nanogpt-abliteration/deepseek-v4.1-flash/abliterated"]
+provider_model = "abliteration-ai/abliterated-model-large-flash"
+enabled = true
+include_usage = true
+upstream = "abliteration"
+declared_precision = "FP8"
+context_tokens = 1000000
+price = { input_usd_per_mtok = 1.05, output_usd_per_mtok = 2.1, source_url = "https://nano-gpt.com/provider/abliteration", checked_at = "2026-11-05", cached_input_usd_per_mtok = 0.105 }
+extra_body = { reasoning_effort = "none", provider = { only = ["abliteration"], allow_fallbacks = false } }
+
+[routes."nanogpt-abliteration/glm-5.3/abliterated"]
+provider_model = "abliteration-ai/abliterated-model-large-v2"
+enabled = true
+include_usage = true
+upstream = "abliteration"
+declared_precision = "FP8"
+context_tokens = 1000000
+price = { input_usd_per_mtok = 3.15, output_usd_per_mtok = 5.25, source_url = "https://nano-gpt.com/provider/abliteration", checked_at = "2026-11-05", cached_input_usd_per_mtok = 0.315 }
+extra_body = { reasoning_effort = "low", provider = { only = ["abliteration"], allow_fallbacks = false } }
+
+[routes."nanogpt-arnict/glm-5.3/uncensored"]
+provider_model = "z-ai/glm-5.3-uncensored"
+enabled = true
+include_usage = true
+upstream = "arnict"
+declared_precision = "NVFP4"
+context_tokens = 1000000
+price = { input_usd_per_mtok = 1.04, output_usd_per_mtok = 2.09, source_url = "https://nano-gpt.com/provider/arnict", checked_at = "2026-11-05", cached_input_usd_per_mtok = 0.252 }
+extra_body = { reasoning_effort = "low", provider = { only = ["arnict"], allow_fallbacks = false } }
+
+[routes."nanogpt-arnict/glm-5.3-flash/uncensored"]
+provider_model = "z-ai/glm-5.3-flash-uncensored"
+enabled = true
+include_usage = true
+upstream = "arnict"
+declared_precision = "NVFP4"
+context_tokens = 1000000
+price = { input_usd_per_mtok = 0.131, output_usd_per_mtok = 0.525, source_url = "https://nano-gpt.com/provider/arnict", checked_at = "2026-11-05", cached_input_usd_per_mtok = 0.0525 }
+extra_body = { reasoning_effort = "low", provider = { only = ["arnict"], allow_fallbacks = false } }
+
+[routes."nanogpt-heabsy/deepseek-v4.1-flash-1017/uncensored"]
+provider_model = "deepseek/deepseek-v4.1-flash-1017-uncensored"
+enabled = true
+include_usage = true
+upstream = "heabsy"
+context_tokens = 1000000
+price = { input_usd_per_mtok = 0.35, output_usd_per_mtok = 1.39, source_url = "https://nano-gpt.com/provider/heabsy", checked_at = "2026-11-05", cached_input_usd_per_mtok = 0.009 }
+extra_body = { reasoning_effort = "none", provider = { only = ["heabsy"], allow_fallbacks = false } }
+
+[routes."nanogpt-heabsy/glm-5.3-flash/uncensored"]
+provider_model = "z-ai/glm-5.3-flash-uncensored"
+enabled = true
+include_usage = true
+upstream = "heabsy"
+declared_precision = "NVFP4"
+context_tokens = 1000000
+price = { input_usd_per_mtok = 0.2, output_usd_per_mtok = 0.8, source_url = "https://nano-gpt.com/provider/heabsy", checked_at = "2026-11-05", cached_input_usd_per_mtok = 0.0641 }
+extra_body = { reasoning_effort = "low", provider = { only = ["heabsy"], allow_fallbacks = false } }
+
+[routes."nanogpt-orcarouter/deepseek-v4.1-flash-1017/uncensored"]
+provider_model = "deepseek/deepseek-v4.1-flash-1017-uncensored"
+enabled = true
+include_usage = true
+upstream = "orcarouter"
+context_tokens = 1000000
+price = { input_usd_per_mtok = 0.84, output_usd_per_mtok = 1.68, source_url = "https://nano-gpt.com/provider/orcarouter", checked_at = "2026-11-05", cached_input_usd_per_mtok = 0.157 }
+extra_body = { reasoning_effort = "none", provider = { only = ["orcarouter"], allow_fallbacks = false } }
+
+[routes."nanogpt-orcarouter/glm-5.3-flash/uncensored"]
+provider_model = "z-ai/glm-5.3-flash-uncensored"
+enabled = true
+include_usage = true
+upstream = "orcarouter"
+context_tokens = 1000000
+price = { input_usd_per_mtok = 0.84, output_usd_per_mtok = 1.68, source_url = "https://nano-gpt.com/provider/orcarouter", checked_at = "2026-11-05", cached_input_usd_per_mtok = 0.157 }
+extra_body = { reasoning_effort = "low", provider = { only = ["orcarouter"], allow_fallbacks = false } }
+
+[routes."nanogpt-sable/deepseek-v4.1-flash-1017/heretic"]
+provider_model = "pqhaz/DeepSeek-V4.1-Flash-1017-heretic"
+enabled = true
+include_usage = true
+upstream = "sable"
+declared_precision = "NATIVE"
+context_tokens = 512000
+price = { input_usd_per_mtok = 0.173, output_usd_per_mtok = 0.693, source_url = "https://nano-gpt.com/provider/sable", checked_at = "2026-11-05", cached_input_usd_per_mtok = 0.0115 }
+extra_body = { reasoning_effort = "none", provider = { only = ["sable"], allow_fallbacks = false } }
+
+[routes."nanogpt-venice/deepseek-v4.1-flash/uncensored"]
+provider_model = "deepseek/deepseek-v4.1-flash-uncensored"
+enabled = true
+include_usage = true
+upstream = "venice"
+declared_precision = "FP8"
+context_tokens = 524288
+price = { input_usd_per_mtok = 0.347, output_usd_per_mtok = 1.39, source_url = "https://nano-gpt.com/provider/venice", checked_at = "2026-11-05", cached_input_usd_per_mtok = 0.00866 }
+extra_body = { reasoning_effort = "none", provider = { only = ["venice"], allow_fallbacks = false } }
+
+[routes."nanogpt-venice/deepseek-v4.1-flash-1017/uncensored"]
+provider_model = "deepseek/deepseek-v4.1-flash-1017-uncensored"
+enabled = false
+include_usage = true
+upstream = "venice"
+extra_body = { reasoning_effort = "none", provider = { only = ["venice"], allow_fallbacks = false } }
+
+[routes."openrouter/deepseek-v4.1-flash-1017/none"]
+provider_model = "deepseek/deepseek-v4.1-flash-1017"
+enabled = true
+include_usage = true
+upstream = "morph/fp8"
+declared_precision = "FP8"
+context_tokens = 1048576
+price = { input_usd_per_mtok = 0.022, output_usd_per_mtok = 0.4, source_url = "https://openrouter.ai/api/v1/models/deepseek/deepseek-v4.1-flash-1017/endpoints", checked_at = "2026-11-05", cached_input_usd_per_mtok = 0.004 }
+extra_body = { provider = { order = ["morph/fp8"], allow_fallbacks = false }, reasoning = { effort = "none" } }
+
+[routes."openrouter/glm-5.3/none"]
+provider_model = "z-ai/glm-5.3"
+enabled = true
+include_usage = true
+upstream = "z-ai/fp8"
+declared_precision = "FP8"
+context_tokens = 1048576
+price = { input_usd_per_mtok = 1.4, output_usd_per_mtok = 4.4, source_url = "https://openrouter.ai/api/v1/models/z-ai/glm-5.3/endpoints", checked_at = "2026-11-05", cached_input_usd_per_mtok = 0.26 }
+extra_body = { provider = { order = ["z-ai/fp8"], allow_fallbacks = false }, reasoning = { effort = "low" } }
+
+[routes."openrouter/glm-5.3-flash/none"]
+provider_model = "z-ai/glm-5.3-flash"
+enabled = true
+include_usage = true
+upstream = "z-ai/fp8"
+declared_precision = "FP8"
+context_tokens = 1048576
+price = { input_usd_per_mtok = 0.15, output_usd_per_mtok = 0.5, source_url = "https://openrouter.ai/api/v1/models/z-ai/glm-5.3-flash/endpoints", checked_at = "2026-11-05", cached_input_usd_per_mtok = 0.03 }
+extra_body = { provider = { order = ["z-ai/fp8"], allow_fallbacks = false }, reasoning = { effort = "low" } }
+
+[routes."refuseless/deepseek-v4.1-flash/abliterated"]
+provider_model = "deepseek-v4.1-flash-abliterated"
+enabled = true
+include_usage = true
+declared_precision = "FP8"
+context_tokens = 1048576
+price = { input_usd_per_mtok = 0.12, output_usd_per_mtok = 0.45, source_url = "https://refuseless.com/models/deepseek-v4.1-flash-abliterated", checked_at = "2026-11-05", cached_input_usd_per_mtok = 0.025 }
+extra_body = { reasoning_effort = "off" }
+
+[routes."refuseless/glm-5.3/abliterated"]
+provider_model = "glm-5.3-abliterated"
+enabled = true
+include_usage = true
+declared_precision = "NVFP4"
+context_tokens = 1048576
+price = { input_usd_per_mtok = 1, output_usd_per_mtok = 2, source_url = "https://refuseless.com/models/glm-5.3-abliterated", checked_at = "2026-11-05", cached_input_usd_per_mtok = 0.15 }
+extra_body = { reasoning_effort = "low" }
+
+[routes."refuseless/glm-5.3-flash/abliterated"]
+provider_model = "glm-5.3-flash-abliterated"
+enabled = true
+include_usage = true
+declared_precision = "NVFP4"
+context_tokens = 1048576
+price = { input_usd_per_mtok = 0.12, output_usd_per_mtok = 0.5, source_url = "https://refuseless.com/models/glm-5.3-flash-abliterated", checked_at = "2026-11-05", cached_input_usd_per_mtok = 0.03 }
+extra_body = { reasoning_effort = "low" }
+
+[routes."venice/deepseek-v4.1-flash-1017/uncensored"]
+provider_model = "deepseek-v4-1-flash-1017-uncensored"
+enabled = true
+include_usage = true
+context_tokens = 1000000
+price = { input_usd_per_mtok = 0.33, output_usd_per_mtok = 1.32, source_url = "https://docs.venice.ai/overview/pricing", checked_at = "2026-11-05", cached_input_usd_per_mtok = 0.00825 }
+extra_body = { venice_parameters = { disable_thinking = true, include_venice_system_prompt = false } }
+
+[routes."venice/glm-5.3/abliterated"]
+provider_model = "abliteration-abliterated-model-large-v2"
+enabled = true
+include_usage = true
+upstream = "Abliterated Large v2 via abliteration.ai"
+context_tokens = 1000000
+price = { input_usd_per_mtok = 3, output_usd_per_mtok = 5, source_url = "https://api.venice.ai/api/v1/models", checked_at = "2026-11-05", cached_input_usd_per_mtok = 0.3 }
+
+[routes."yeta/deepseek-v4.1-flash/uncensored"]
+provider_model = "deepseek-v4.1-flash-uncensored"
+enabled = true
+include_usage = true
+declared_precision = "FP8"
+context_tokens = 1000000
+price = { input_usd_per_mtok = 0.08, output_usd_per_mtok = 0.35, source_url = "https://yeta.ai/", checked_at = "2026-11-05", cached_input_usd_per_mtok = 0.01 }

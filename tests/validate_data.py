@@ -6,7 +6,7 @@ from jsonschema import Draft202012Validator, FormatChecker
 
 
 def validate_data(data_dir: Path) -> int:
-    schemas = Path(__file__).resolve().parents[1] / "schema"
+    schemas = Path(__file__).resolve().parents[1] / "catalog/schema"
     summary = json.loads((data_dir / "summary.json").read_text())
     validator = Draft202012Validator(
         json.loads((schemas / "summary.schema.json").read_text()), format_checker=FormatChecker()

@@ -38,13 +38,16 @@ class Links(HTMLParser):
 def source(tmp_path, monkeypatch):
     source = tmp_path / "source"
     source.mkdir()
-    for folder in ("site", "schema"):
+    for folder in ("site", "catalog/schema"):
+        (source / folder).parent.mkdir(parents=True, exist_ok=True)
         (source / folder).symlink_to(ROOT / folder, target_is_directory=True)
     (source / "METHODOLOGY.md").write_text(
         "# Fixture methodology\n\n## Metrics\n\nMedian of successful samples.\n"
     )
     (source / "LICENSE").write_text("Fixture licence\n")
-    monkeypatch.setattr(build, "resource", lambda name: source / name)
+    monkeypatch.setattr(
+        build, "resource", lambda name: source / ("catalog/schema" if name == "schema" else name)
+    )
     return source
 
 
@@ -58,12 +61,12 @@ def dist(tmp_path, source):
 def test_fixture_matches_both_schemas():
     summary = json.loads((FIXTURE / "summary.json").read_text())
     validator = Draft202012Validator(
-        json.loads((ROOT / "schema/summary.schema.json").read_text()),
+        json.loads((ROOT / "catalog/schema/summary.schema.json").read_text()),
         format_checker=FormatChecker(),
     )
     validator.validate(summary)
     validator = Draft202012Validator(
-        json.loads((ROOT / "schema/route-history.schema.json").read_text()),
+        json.loads((ROOT / "catalog/schema/route-history.schema.json").read_text()),
         format_checker=FormatChecker(),
     )
     for route in summary["routes"]:

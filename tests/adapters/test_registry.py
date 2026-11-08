@@ -33,7 +33,7 @@ def install_entry_point(
 def catalogue_with_protocol(tmp_path, protocol):
     root = tmp_path / "catalog"
     shutil.copytree(resource("catalog"), root)
-    path = next((root / "providers").glob("*.toml"))
+    path = root / "catalog.toml"
     path.write_text(
         path.read_text().replace('protocol = "openai-chat"', f'protocol = "{protocol}"')
     )

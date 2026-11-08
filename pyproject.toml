@@ -24,7 +24,7 @@ packages = ["src/redrouter_benchmarks"]
 [tool.hatch.build.targets.wheel.force-include]
 catalog = "redrouter_benchmarks/_catalog"
 prompts = "redrouter_benchmarks/_prompts"
-schema = "redrouter_benchmarks/_schema"
+"catalog/schema" = "redrouter_benchmarks/_schema"
 site = "redrouter_benchmarks/_site"
 "METHODOLOGY.md" = "redrouter_benchmarks/_METHODOLOGY.md"
 LICENSE = "redrouter_benchmarks/_LICENSE"

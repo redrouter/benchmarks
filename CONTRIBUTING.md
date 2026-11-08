@@ -1,6 +1,6 @@
 # Contributing
 
-Use Python 3.12 and [uv](https://docs.astral.sh/uv/). Keep changes small and reproducible:
+Use Python 3.12 and uv. Tests use local transports and simulated clocks; never add credentials, paid calls or private response text.
 
 ```sh
 uv sync --locked
@@ -11,46 +11,22 @@ uv run redrouter-benchmarks demo-data --output out/demo --days 14 --seed 7
 uv run python tests/validate_data.py out/demo
 ```
 
-Tests use local transports and simulated clocks. Never add credentials, paid test calls, private response text or personal data to fixtures. To preview, follow the [README](README.md).
+## Catalogue
 
-## Add a provider or route
+Edit [catalog/catalog.toml](catalog/catalog.toml). `[defaults]` supplies protocol and authentication settings; `[providers.<id>]` supplies name, URLs, local logo filenames, endpoint and credential environment-variable name. Providers using an existing protocol need no Python changes. Models are in [catalog/models.toml](catalog/models.toml).
 
-Providers using an existing protocol need only catalogue TOML; no provider class or runner change. Add `catalog/providers/<id>.toml` with `id`, `name`, public `url`, logo filename, `base_url`, `protocol` (`openai-chat` or `anthropic-messages`), `auth_header`, `auth_scheme`, `api_key_env` and `terms_url`. The logo filename refers to `site/assets/providers/<id>.svg` or `.png`. Use an existing logo asset or contribute one separately. Credentials are referenced by environment-variable name only. Bearer endpoints use `auth_header = "Authorization"` and `auth_scheme = "Bearer"`; Messages endpoints typically use `auth_header = "x-api-key"`, `auth_scheme = ""` and `[extra_headers]` with `anthropic-version = "2023-06-01"`.
+Each `[routes."<provider>/<model>/<modification>"]` names its identity; modification is `none`, `abliterated`, `uncensored` or `heretic`. Supply `provider_model`, `enabled`, `include_usage`, and publicly established upstream, precision and context size. Omit unknown values. `price` holds nonnegative input/output USD per million tokens, optional cached-input price, HTTPS source URL and quoted ISO check date. `extra_body` holds documented reasoning and supplier controls; never override the workload.
 
-Add `catalog/routes/<provider_id>/<model_id>/<modification>.toml`. The filename modification must be `none`, `abliterated`, `uncensored` or `heretic`; folder and file identities must match the route's fields. Add a model entry in `catalog/models.toml` only when it is a distinct base-model identity. Keep undated derivatives separate from a dated snapshot. Required route data:
+NanoGPT pins use `provider.only = ["<supplier>"]`; OpenRouter controls use one exact supplier in `provider.order`. Both require `allow_fallbacks = false`. Keep undated derivatives separate from dated checkpoints. Record public verification in [catalog/verification.json](catalog/verification.json); leave unconfirmed routes disabled. Never guess prices or identities, and exclude RedRouter routes.
 
-- `provider_model`, `model_id`, `modification`, `enabled`, and `include_usage`.
-- `upstream`, `declared_precision`, and `context_tokens` when publicly established; omit unknown values rather than inventing them. Missing TOML fields become null in public JSON.
-- `[price]` with nonnegative `input_usd_per_mtok`, `output_usd_per_mtok`, optional `cached_input_usd_per_mtok`, primary `source_url`, and quoted ISO date `checked_at`.
-- `[extra_body]` for documented reasoning controls and provider selection. Do not override model, messages, temperature, streaming or output limit.
+## Protocol adapters
 
-Verify the endpoint and exact ID with public docs or an unauthenticated models GET. Record source and date in `catalog/verification.json`. An API listing confirms advertisement, not serving health. Leave unconfirmed candidates `enabled = false`, without a code comment. Do not guess prices or checkpoint identity. A price without a source cannot enable a route.
+Implement `Adapter` in [adapters/base.py](src/redrouter_benchmarks/adapters/base.py): `build_request(provider, route, prompt, nonce, api_key)` returns an HTTP request; `parse_event(data)` yields normalized `Content`, cumulative `Usage`, `Finish`, `Error` and `Done` events without text or error bodies. Raise `ProtocolError` for malformed streams. Each request gets a fresh adapter; timing, transport, failures and cost belong to the runner. Provider quirks belong in TOML.
 
-NanoGPT suppliers use provider IDs `nanogpt-<supplier>`, the common gateway base URL and `NANOGPT_API_KEY`; set `extra_body.provider.only = ["<supplier>"]` and `allow_fallbacks = false`. `order` alone is a soft preference there. OpenRouter controls set a single exact supplier tag in `provider.order` and `allow_fallbacks = false`; take prices from that endpoint's public supplier entry, not the cheapest model-wide offer. Supplier-selection markup is already included in NanoGPT's displayed pin prices.
+Register installed zero-argument factories through `[project.entry-points."redrouter_benchmarks.adapters"]`, using the protocol name as key and `package.module:Factory` as value. Duplicate names fail validation; plug-ins load only when selected. Cover recorded SSE, arbitrary byte boundaries, missing usage, partial failures and secret retention with behavioural tests.
 
-Review the provider's terms and ordinary paid-account eligibility before operating a route. A catalogue entry is not a claim of contractual permission. RedRouter's own routes are outside the current scope. Include behavioral tests for changes to parsing, timing, scheduling or aggregation; schema compatibility is mandatory. The schemas are shared with the site and must not change without coordination.
+## Contracts
 
-## Add a protocol adapter
+Keep [JSON schemas](catalog/schema) compatible. Follow the version policy in [METHODOLOGY](METHODOLOGY.md) for measurement changes. External results require an explicit commercial-use Creative Commons grant recorded in [external/licences.json](src/redrouter_benchmarks/external/licences.json), with offline filtering tests.
 
-Implement `Adapter` from `src/redrouter_benchmarks/adapters/base.py`: `build_request(provider, route, prompt, nonce, api_key) -> httpx.Request` and `parse_event(data: str) -> list[Event]`. Each request gets a fresh adapter. Parse complete SSE data strings into `Content`, `Usage`, `Finish`, `Error` and `Done`; never return generated text or error bodies. Usage counts are cumulative `prompt`, `cached`, `completion` and `reasoning` tokens, with missing values omitted or null. `Content.tokens` is the reported token count for that first chunk, if known. Normalize successful finishes to `stop`, `length`, `tool_calls` or `function_call`; signal malformed streams with `ProtocolError`. Keep request timing, transport, scheduling, error classification, records and cost in the runner.
-
-Register a built-in zero-argument factory in `adapters.registry()`. Third-party packages expose that factory in their `pyproject.toml`:
-
-```toml
-[project.entry-points."redrouter_benchmarks.adapters"]
-custom-protocol = "my_package.adapter:CustomAdapter"
-```
-
-The entry-point name is the catalogue's `protocol`. Duplicate names fail validation; plug-in code loads only when selected. Keep authentication, extra headers, reasoning controls and supplier routing in TOML. Add protocol code only for a demonstrated wire difference.
-
-Require stored SSE fixture tests for content/reasoning/tool deltas, cumulative and missing usage, finish/termination, error envelopes, malformed/truncated streams and arbitrary byte boundaries. Include runner tests that retain partial timing and usage on failure without leaking text or credentials, plus request-body/authentication and registration tests. Fixtures must be public or synthetic, with provenance and no paid calls.
-
-## Add an external source
-
-Add a source to `src/redrouter_benchmarks/external/licences.json` only with an explicit Creative Commons grant that permits commercial reuse of the score data, its licence URL and evidence URL, and offline filtering tests.
-
-## Changes and corrections
-
-Use Conventional Commits, for example `feat(catalog): add a sourced supplier route` or `fix(runner): retain stream timeout failures`. Write commit identity as `RedRouter <support@redrouter.org>`. Include the exact validation commands and numeric results in the pull request. Keep code concise; add comments only for non-obvious constraints. Apply the version policy in [METHODOLOGY.md](METHODOLOGY.md) when changing measurement behavior.
-
-For corrections, open an [issue](https://github.com/redrouter/benchmarks/issues) or contact `support@redrouter.org` with route ID, time interval, version and supporting public evidence. Describe the observable discrepancy. Do not include API keys, account screenshots or generated private content. Preserve original evidence and identify any reprocessed results. Code and original prompts are Apache-2.0; published result data is CC BY 4.0 as stated in the [README](README.md).
+Use Conventional Commits and identity `RedRouter <support@redrouter.org>`. Include exact validation commands and results in the pull request. Preserve original evidence when correcting results; report discrepancies through the contacts in [README](README.md).
