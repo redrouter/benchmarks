@@ -141,7 +141,7 @@ def bar_chart(routes, region, key, title, unit, higher, compact=False):
                 f'<rect tabindex="0" aria-label="{escape(tip, quote=True)}" x="{left}" y="{y}" '
                 f'width="{width:.2f}" '
                 f'height="23" rx="3" fill="{route["color"]}" '
-                f'data-tooltip="{escape(tip, quote=True)}"><title>{escape(tip)}</title></rect>'
+                f'data-tooltip="{escape(tip, quote=True)}"></rect>'
             )
             parts.append(
                 f'<text class="value" x="{left + 5 + width:.2f}" '
@@ -203,7 +203,7 @@ def scatter_chart(routes, region, compact=False):
             f'<circle tabindex="0" aria-label="{escape(label, quote=True)}" '
             f'cx="{65 + x / xmax * plot:.2f}" '
             f'cy="{280 - y / ymax * 260:.2f}" r="6" fill="{r["color"]}" '
-            f'data-tooltip="{escape(label, quote=True)}"><title>{escape(label)}</title></circle>'
+            f'data-tooltip="{escape(label, quote=True)}"></circle>'
         )
     if not values:
         parts.append(
@@ -293,8 +293,7 @@ def history_chart(routes, histories, region, key, title, unit, days, generated_a
                     f'<circle tabindex="0" aria-label="{escape(tip, quote=True)}" cx="{x:.2f}" '
                     f'cy="{y:.2f}" '
                     f'r="3" fill="{route["color"]}" '
-                    f'data-tooltip="{escape(tip, quote=True)}">'
-                    f"<title>{escape(tip)}</title></circle>"
+                    f'data-tooltip="{escape(tip, quote=True)}"></circle>'
                 )
                 count += 1
             previous = t
@@ -429,7 +428,7 @@ def build_site(data_dir: Path, output_dir: Path) -> None:
     render(
         "index.html",
         "comparison.html",
-        title="Continuous inference provider benchmarks",
+        title="Abliterated Model API Speed, Reliability and Price",
         active="overview",
         model=None,
     )
