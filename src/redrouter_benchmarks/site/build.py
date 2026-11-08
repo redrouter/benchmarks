@@ -368,7 +368,7 @@ def page_metadata(summary, routes, path, context, downloads):
     if fastest and not provider:
         label = route_name(fastest)
         if not model:
-            label = f"{fastest['model']['name']} via {label}"
+            label = f"{fastest['provider']['name']} on {fastest['model']['name']}"
         fastest_clause = f"Fastest: {label}, {speed(fastest):.0f} tok/s."
     window = summary["window_hours"]
     cadence = f"Updated every {CADENCE_HOURS} hours."
@@ -396,8 +396,8 @@ def page_metadata(summary, routes, path, context, downloads):
             else ""
         )
         base = (
-            f"{model['name']} APIs: {len({r['provider_id'] for r in selected})} providers "
-            f"over {window}h."
+            f"{model['name']}{' abliterated and uncensored' if modified else ''} APIs: "
+            f"{len({r['provider_id'] for r in selected})} providers over {window}h."
         )
         if cheapest and len(" ".join([base, fastest_clause, price_clause])) > 160:
             price_clause = f"Lowest: ${cheapest['price']['blended_usd_per_mtok']:.3g}/1M."
@@ -436,8 +436,9 @@ def page_metadata(summary, routes, path, context, downloads):
         }
         if page in descriptions:
             description = describe(
-                f"{descriptions[page]} {len(summary['models'])} models and "
-                f"{len(summary['providers'])} providers over {window}h.",
+                f"{descriptions[page]} abliterated and uncensored LLM APIs: "
+                f"{len(summary['models'])} models, {len(summary['providers'])} providers "
+                f"over {window}h.",
                 [fastest_clause, cadence],
             )
         else:
