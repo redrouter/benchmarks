@@ -1,8 +1,25 @@
 # RedRouter Benchmarks
 
-Reproducible streaming API measurements for refusal-reduced open-weight models and standard-model controls. Maintained by **RedRouter, an inference provider**; RedRouter routes are excluded. Listings describe advertised configurations, not verified weights or serving health.
+Continuous, reproducible measurements of inference APIs serving refusal-reduced open-weight models, with standard-model controls. Results are published at [benchmarks.redrouter.org](https://benchmarks.redrouter.org).
 
-With Python 3.12 and [uv](https://docs.astral.sh/uv/):
+Maintained by **RedRouter, an inference provider**. RedRouter routes are excluded. Provider names identify measured services; they imply no endorsement. Public catalogue listings confirm advertised configuration, not working inference or deployed weight identity.
+
+## What is measured
+
+| Measurement | Definition |
+| --- | --- |
+| Time to first token | Request sent to the first non-empty content, reasoning or tool-argument delta |
+| Output speed | Provider-reported completion tokens after the first chunk, divided by first-to-last content-delta time |
+| Time to 500 tokens | TTFT + 500 / output speed; an extrapolation |
+| End-to-end latency | Raw records keep actual stream completion and final-delta times |
+| Success rate | Successful requests / attempted requests; failures are kept, never retried |
+| Price | Dated catalogue prices, USD per million tokens; 3:1 input/output blend |
+
+Latency and speed are reported as p50/p90 over a trailing 72 hours and need at least eight successful samples. Runs happen every eight hours from `us-east-1` and `us-west-2`. [METHODOLOGY.md](METHODOLOGY.md) has the exact definitions and limitations.
+
+## Preview locally, without keys
+
+Install [uv](https://docs.astral.sh/uv/) and Python 3.12, then:
 
 ```sh
 uv sync --locked
@@ -11,21 +28,55 @@ uv run redrouter-benchmarks build-site --data out/demo --output dist
 uv run redrouter-benchmarks serve --dist dist --port 8787
 ```
 
-Open `http://localhost:8787`. Demo data uses a simulated clock and local transport, with no provider calls. Seed 7 ends at `2026-11-05T00:00:00Z`, includes degradation and stale observations, and marks every record `demo: true`.
+Open `http://localhost:8787`. Demo data uses the real runner and aggregator with a simulated transport and clock, never contacts providers, and is marked `demo: true`.
 
-To measure a route, set its provider's `api_key_env` from [the catalogue](catalog/catalog.toml), then use:
+## Measure providers
+
+Set credentials only for the providers you want to measure:
+
+| Provider | Environment variable |
+| --- | --- |
+| Refuseless | `REFUSELESS_API_KEY` |
+| abliteration.ai | `ABLITERATION_API_KEY` |
+| Venice | `VENICE_API_KEY` |
+| Yeta Labs | `YETA_API_KEY` |
+| LarpRouter | `LARPROUTER_API_KEY` |
+| Experiential Labs | `EXPLABS_API_KEY` |
+| NanoGPT supplier pins | `NANOGPT_API_KEY` |
+| OpenRouter controls | `OPENROUTER_API_KEY` |
 
 ```sh
-uv run redrouter-benchmarks run --region us-east-1 --output out/requests \
-  --route nanogpt-heabsy/deepseek-v4.1-flash-1017/uncensored --seed 7
-uv run redrouter-benchmarks aggregate --input out/requests --output out/data \
-  --now 2026-11-05T12:00:00Z
+uv run redrouter-benchmarks run --region us-east-1 --output out/requests
+uv run redrouter-benchmarks aggregate --input out/requests --output out/data
+uv run redrouter-benchmarks build-site --data out/data --output dist
 ```
 
-`--route` is repeatable; omitting it selects enabled routes with credentials. Explicit selections require credentials before any calls. The region labels the actual client location. See [METHODOLOGY](METHODOLOGY.md) for workloads, metric definitions, sampling and limitations.
+Without `--route`, every enabled route with a credential runs. Pass `--route <provider>/<model>/<modification>` (repeatable) for a subset and `--seed` to reproduce request order. `--region` is a label; run from the region you name. `fetch-external --output <data-dir>` adds licensed published results (Epoch AI and CC-licensed sources) before `build-site`.
 
-`run` flushes one JSONL record per attempt, including failures. `aggregate` reads JSONL or `.jsonl.gz` archives and writes `summary.json`, `summary.csv`, `routes/<provider>/<model>/<modification>.json` and retained `raw/<date>/<region>.jsonl.gz`. Use a complete input archive and a fresh output directory. Identical inputs, catalogue and `--now` produce identical bytes. Public contracts are in [catalog/schema](catalog/schema).
+## Catalogue
 
-`fetch-external --output out/data` imports Epoch and explicitly CC-licensed Arena results before `build-site`; `--zip PATH` uses a local Epoch archive. External stock-model scores are separate from host measurements.
+Providers, models and routes with dated price sources are in [`catalog/catalog.toml`](catalog/catalog.toml). Public endpoint checks are in [`catalog/verification.json`](catalog/verification.json). NanoGPT supplier pins have their own provider IDs, such as `nanogpt-heabsy`, and are measured through the gateway. To add a provider, route or protocol adapter, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-For catalogue changes, adapter plug-ins and checks, see [CONTRIBUTING](CONTRIBUTING.md). Code and original prompts are [Apache-2.0](LICENSE). Result data is [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/); attribute RedRouter Benchmarks with the methodology version and observation period. Corrections: [issues](https://github.com/redrouter/benchmarks/issues) or `support@redrouter.org`, with reproducible evidence and no credentials.
+## Data
+
+```text
+<data-dir>/summary.json
+<data-dir>/summary.csv
+<data-dir>/routes/<provider_id>/<model_id>/<modification>.json
+<data-dir>/raw/<YYYY-MM-DD>/<region>.jsonl.gz
+```
+
+[`summary.schema.json`](catalog/schema/summary.schema.json) and [`route-history.schema.json`](catalog/schema/route-history.schema.json) define the public format. Each raw record is one request, including failures, with timestamps, status, usage, price and cost. API keys, request headers, error bodies and generated text are never stored. Identical inputs, catalogue and `--now` produce identical output.
+
+## Development
+
+```sh
+uv run pytest -q
+uv run ruff check .
+uv run ruff format --check .
+uv run python tests/validate_data.py out/demo
+```
+
+## Licence
+
+Code and original prompts: [Apache-2.0](LICENSE), copyright RedRouter. Published results: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/); attribute RedRouter Benchmarks with the methodology version and observation period.
