@@ -79,4 +79,4 @@ uv run python tests/validate_data.py out/demo
 
 ## Licence
 
-Code and original prompts: [Apache-2.0](LICENSE), copyright RedRouter. Published results: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/); attribute RedRouter Benchmarks with the methodology version and observation period.
+Licensing: code Apache-2.0, published results CC BY 4.0. See the [code licence](LICENSE) and [data licence](site/data/LICENSE.txt); attribute RedRouter Benchmarks with the methodology version and observation period.

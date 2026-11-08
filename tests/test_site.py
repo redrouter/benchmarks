@@ -1,5 +1,7 @@
 import hashlib
 import json
+import re
+import shutil
 from copy import deepcopy
 from functools import partial
 from html import unescape
@@ -15,6 +17,99 @@ from validate_data import validate_data
 from redrouter_benchmarks.site import SiteHandler, build_site, serve
 
 
+def structured_graph(page):
+    return json.loads(
+        re.search(r'<script type="application/ld\+json">(.*?)</script>', page, re.S)[1]
+    )["@graph"]
+
+
+def test_data_licence(site_input, tmp_path):
+    build_site(site_input, tmp_path)
+    notice, legalcode = (tmp_path / "data/LICENSE.txt").read_bytes().split(b"\n\n", 1)
+    assert notice.decode() == "Benchmark results © 2026 RedRouter, licensed under CC BY 4.0."
+    assert (
+        hashlib.sha256(legalcode).hexdigest()
+        == "9ba9550ad48438d0836ddab3da480b3b69ffa0aac7b7878b5a0039e7ab429411"
+    )
+    datasets = [
+        item
+        for page in tmp_path.rglob("*.html")
+        for item in structured_graph(page.read_text())
+        if item["@type"] == "Dataset"
+    ]
+    assert len(datasets) == 4
+    assert all(d["license"] == "https://creativecommons.org/licenses/by/4.0/" for d in datasets)
+
+
+def test_llms_tracks_built_data(site_input, tmp_path):
+    data, output = tmp_path / "data", tmp_path / "dist"
+    shutil.copytree(site_input, data)
+    build_site(data, output)
+    llms = (output / "llms.txt").read_text()
+    summary = json.loads((data / "summary.json").read_text())
+    assert llms.startswith("# Abliterated Benchmarks by RedRouter\n\n> ")
+    assert summary["generated_at"] in llms
+    for kind in ("models", "providers"):
+        for item in summary[kind]:
+            assert llms.count(f"/{kind}/{item['id']}/") == 1
+    for path in (output / "data").rglob("*"):
+        if path.suffix in (".csv", ".json"):
+            assert f"/data/{path.relative_to(output / 'data').as_posix()}" in llms
+    assert "larprouter/deepseek-v4.1-flash-1017/abliterated, pooled p50 153.0 tok/s" in llms
+    for route in summary["routes"]:
+        if route["model_id"] == "deepseek-v4.1-flash-1017":
+            route["metrics"]["all"]["output_tokens_per_second"]["p50"] = None
+        elif route["model_id"] == "glm-5.3-flash":
+            route["metrics"]["all"]["output_tokens_per_second"]["p50"] = 9999
+            route["metrics"]["all"]["requests"] = 7
+        else:
+            route["metrics"]["all"]["output_tokens_per_second"]["p50"] = 321
+    (data / "summary.json").write_text(json.dumps(summary))
+    build_site(data, output)
+    updated = (output / "llms.txt").read_text()
+    assert updated.count("No route has sufficient pooled speed data.") == 2
+    assert "pooled p50 321.0 tok/s" in updated
+    assert "153.0 tok/s" not in updated
+    assert "9999" not in updated
+
+
+def test_explainer_metadata_and_discovery(site_input, tmp_path):
+    build_site(site_input, tmp_path)
+    page = (tmp_path / "what-is-abliteration/index.html").read_text()
+    graph = structured_graph(page)
+    article = next(item for item in graph if item["@type"] == "Article")
+    faq = next(item for item in graph if item["@type"] == "FAQPage")
+    title = "What Is Abliteration? Abliterated vs Uncensored LLMs Explained"
+    assert f"<title>{title}</title>" in page
+    assert f"<h1>{title}</h1>" in page
+    assert article["headline"] == title
+    assert article["publisher"]["name"] == "RedRouter"
+    assert "author" not in article
+    assert article["datePublished"] == article["dateModified"] == "2026-11-07"
+    url = "https://benchmarks.redrouter.org/what-is-abliteration/"
+    assert f'<link rel="canonical" href="{url}">' in page
+    assert article["mainEntityOfPage"] == url
+    assert f'<meta name="description" content="{article["description"]}">' in page
+    visible = re.findall(r"<h3>(.*?)</h3>\s*<p>(.*?)</p>", page)
+    assert [(unescape(q), unescape(a)) for q, a in visible] == [
+        (q["name"], q["acceptedAnswer"]["text"]) for q in faq["mainEntity"]
+    ]
+    assert 4 <= len(visible) <= 5
+    body = re.search(r'<article class="prose">(.*?)</article>', page, re.S)[1]
+    assert 700 <= len(unescape(re.sub(r"<[^>]*>", " ", body)).split()) <= 1000
+    sitemap = ElementTree.fromstring((tmp_path / "sitemap.xml").read_text())
+    assert url in [node.text for node in sitemap.findall("{*}url/{*}loc")]
+    for path in tmp_path.rglob("*.html"):
+        html = path.read_text()
+        assert "/what-is-abliteration/" not in re.search(r"<nav\b.*?</nav>", html)[0]
+        assert "/what-is-abliteration/" in re.search(r"<footer>.*?</footer>", html)[0]
+        if path != tmp_path / "what-is-abliteration/index.html":
+            main = re.search(r"<main\b.*?</main>", html, re.S)[0]
+            assert main.count('href="/what-is-abliteration/"') == (
+                1 if path == tmp_path / "methodology/index.html" else 0
+            )
+
+
 def test_site_matches_approved_output(site_input, tmp_path):
     assert validate_data(site_input) == 9
     output = tmp_path / "dist"
@@ -27,7 +122,7 @@ def test_site_matches_approved_output(site_input, tmp_path):
                 + b"\0"
                 + hashlib.sha256(path.read_bytes()).digest()
             )
-    assert digest.hexdigest() == "6e2541e48eca33b4773fb5fb54b2e958ac06a47e8313bcad9e0457a2f1c0a8c9"
+    assert digest.hexdigest() == "bc5c3d169fddac93ec1906f47f844931cd0b21bbc4503c65f61a7e2eda8434c5"
 
 
 class Links(HTMLParser):
@@ -134,8 +229,6 @@ def test_badges_without_recent_data(site_input, tmp_path, missing):
 
 @pytest.mark.parametrize("invalid", ["../secret.json", "/tmp/secret.json"])
 def test_history_cannot_escape_input(site_input, tmp_path, invalid):
-    import shutil
-
     data = tmp_path / "data"
     shutil.copytree(site_input, data)
     summary = json.loads((data / "summary.json").read_text())

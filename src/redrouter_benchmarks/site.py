@@ -327,8 +327,69 @@ def finite(value):
     return isinstance(value, (int, float)) and math.isfinite(value)
 
 
+def llms_text(summary, routes, data_files):
+    lines = [
+        f"# {SITE_NAME}",
+        "",
+        "> RedRouter benchmarks inference APIs serving abliterated and uncensored open-weight "
+        "models, with standard-model controls. Speed, latency, observed success rate, and "
+        f"declared prices cover a trailing {summary['window_hours']}-hour window; "
+        f"built from {'demo' if summary.get('demo') else 'observed'} data generated "
+        f"{summary['generated_at']}. Performance does not establish answer quality "
+        "or refusal rate.",
+        "",
+        "## Models",
+    ]
+    for model in summary["models"]:
+        candidates = [
+            (r, metric_value(r, "all", "output_tokens_per_second"))
+            for r in routes
+            if r["model_id"] == model["id"] and r["metrics"].get("all", {}).get("requests", 0) >= 8
+        ]
+        fastest = max(
+            ((r, speed) for r, speed in candidates if finite(speed)),
+            key=lambda pair: pair[1],
+            default=None,
+        )
+        detail = "No route has sufficient pooled speed data."
+        if fastest:
+            route, speed = fastest
+            upstream = f" ({route['upstream']})" if route["upstream"] else ""
+            detail = f"Fastest route: {route['id']}{upstream}, pooled p50 {speed:.1f} tok/s."
+        lines.append(f"- [{model['name']}]({SITE_URL}/models/{model['id']}/): {detail}")
+    lines += ["", "## Providers"]
+    lines += [
+        f"- [{p['name']}]({SITE_URL}/providers/{p['id']}/): Measured API routes and performance."
+        for p in summary["providers"]
+    ]
+    lines += [
+        "",
+        "## Documentation",
+        f"- [Methodology]({SITE_URL}/methodology/): Workload, metrics, sampling, and limitations.",
+        f"- [External results]({SITE_URL}/external/): "
+        "Licensed stock-model scores from other evaluators.",
+        f"- [What is abliteration?]({SITE_URL}/what-is-abliteration/): Weight edits, "
+        "uncensored fine-tuning, and trade-offs.",
+        "",
+        "## Data",
+    ]
+    for path in data_files:
+        description = (
+            "Published route summary."
+            if path.name in ("summary.csv", "summary.json")
+            else "Public data schema."
+            if path.parts[0] == "schema"
+            else "Licensed external evaluation results."
+            if path.name == "external.json"
+            else "Route history with timing and success metrics."
+        )
+        lines.append(f"- [{path.as_posix()}]({SITE_URL}/data/{path.as_posix()}): {description}")
+    return "\n".join(lines) + "\n"
+
+
 def page_metadata(summary, routes, path, context, downloads):
     model, provider = context.get("model"), context.get("provider")
+    article = context.get("article")
     page = path.removesuffix("index.html") if path != "404.html" else "404/"
     canonical = f"{SITE_URL}/{page}"
     eligible = [r for r in routes if r["metrics"].get("all", {}).get("requests", 0) >= 8]
@@ -371,7 +432,9 @@ def page_metadata(summary, routes, path, context, downloads):
         "external/": "External Stock-Model Benchmark Results for Abliterated Model Families",
         "404/": f"Page not found · {SITE_NAME}",
     }
-    if model:
+    if article:
+        title, description = article["title"], article["description"]
+    elif model:
         modified = any(r["modification"] != "none" for r in routes if r["model_id"] == model["id"])
         qualifier = " Abliterated / Uncensored" if modified else " Standard-Model"
         title = f"{model['name']}{qualifier} API: Speed, Price & Uptime by Provider"
@@ -482,7 +545,7 @@ def page_metadata(summary, routes, path, context, downloads):
                 ),
                 "url": canonical,
                 "creator": organization,
-                "license": f"{SITE_URL}/data/LICENSE.txt",
+                "license": "https://creativecommons.org/licenses/by/4.0/",
                 "isAccessibleForFree": True,
                 "dateModified": generated,
                 "temporalCoverage": f"{start.isoformat()}/{generated}",
@@ -501,6 +564,29 @@ def page_metadata(summary, routes, path, context, downloads):
                 "distribution": downloads,
             }
         )
+    if article:
+        graph += [
+            {
+                "@type": "Article",
+                "headline": article["title"],
+                "description": article["description"],
+                "mainEntityOfPage": canonical,
+                "publisher": organization,
+                "datePublished": article["datePublished"],
+                "dateModified": article["dateModified"],
+            },
+            {
+                "@type": "FAQPage",
+                "mainEntity": [
+                    {
+                        "@type": "Question",
+                        "name": item["question"],
+                        "acceptedAnswer": {"@type": "Answer", "text": item["answer"]},
+                    }
+                    for item in article["faq"]
+                ],
+            },
+        ]
     return {
         "seo_title": title,
         "description": description,
@@ -602,8 +688,7 @@ def build_site(data_dir: Path, output_dir: Path) -> None:
     write_badges(summary, output_dir, (assets / "tokens.css").read_text())
     shutil.copytree(data_dir, output_dir / "data", dirs_exist_ok=True)
     shutil.copytree(resource("schema"), output_dir / "data" / "schema", dirs_exist_ok=True)
-    if resource("LICENSE").is_file():
-        shutil.copy2(resource("LICENSE"), output_dir / "data" / "LICENSE.txt")
+    shutil.copy2(resource("site") / "data" / "LICENSE.txt", output_dir / "data" / "LICENSE.txt")
     env = Environment(
         loader=FileSystemLoader(resource("site") / "templates"),
         autoescape=select_autoescape(),
@@ -715,6 +800,14 @@ def build_site(data_dir: Path, output_dir: Path) -> None:
             markdown.markdown(methodology.read_text(), extensions=["tables", "fenced_code", "toc"])
         ),
     )
+    article = json.loads((resource("site") / "data" / "abliteration.json").read_text())
+    render(
+        "what-is-abliteration/index.html",
+        "abliteration.html",
+        title=article["title"],
+        active="",
+        article=article,
+    )
     render(
         "404.html",
         "content.html",
@@ -731,6 +824,17 @@ def build_site(data_dir: Path, output_dir: Path) -> None:
         tostring(sitemap, encoding="utf-8", xml_declaration=True)
     )
     (output_dir / f"{INDEXNOW_KEY}.txt").write_text(INDEXNOW_KEY)
+    (output_dir / "llms.txt").write_text(
+        llms_text(
+            summary,
+            routes,
+            [
+                p.relative_to(output_dir / "data")
+                for p in sorted((output_dir / "data").rglob("*"))
+                if p.is_file() and p.suffix in (".csv", ".json")
+            ],
+        )
+    )
 
 
 class SiteHandler(SimpleHTTPRequestHandler):

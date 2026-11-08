@@ -1,0 +1,33 @@
+{
+  "title": "What Is Abliteration? Abliterated vs Uncensored LLMs Explained",
+  "description": "How abliteration edits LLM refusal directions, how it differs from uncensored fine-tuning and prompt jailbreaks, and what hosted API benchmarks can establish.",
+  "datePublished": "2026-11-07",
+  "dateModified": "2026-11-07",
+  "faq": [
+    {
+      "question": "Is an abliterated model fully uncensored?",
+      "answer": "No. Abliteration targets a refusal-related direction; it does not guarantee an answer to every request. FailSpy's model card explicitly warns that refusals and safety lectures can remain.",
+      "source": "https://huggingface.co/failspy/Meta-Llama-3-8B-Instruct-abliterated-v3"
+    },
+    {
+      "question": "Does abliteration reduce quality?",
+      "answer": "It can. Arditi et al. found broadly similar performance on several evaluations but consistent declines on TruthfulQA. Evaluate the modified checkpoint on your own tasks.",
+      "source": "https://arxiv.org/html/2406.11717v1#S4"
+    },
+    {
+      "question": "What is the difference between abliterated and uncensored?",
+      "answer": "Abliterated describes a weight-editing method. Uncensored describes intended behavior and can also refer to models fine-tuned on filtered datasets, as Dolphin's model card illustrates. The labels do not establish equivalent behavior.",
+      "source": "https://huggingface.co/cognitivecomputations/dolphin-2.9-llama3-8b"
+    },
+    {
+      "question": "Is abliteration a system-prompt jailbreak?",
+      "answer": "No. Weight orthogonalization changes the model's parameters. A prompt jailbreak changes the instructions supplied to a model. Arditi et al. distinguish their weight edit from prompt-based attacks.",
+      "source": "https://arxiv.org/html/2406.11717v1#S4"
+    },
+    {
+      "question": "Do these API benchmarks measure refusal rates?",
+      "answer": "No. RedRouter measures API speed, latency, observed success rate, and declared price. The workload does not measure refusal rate, answer correctness, or deployed weight identity. A successful stream is not a quality score.",
+      "source": "/methodology/"
+    }
+  ]
+}

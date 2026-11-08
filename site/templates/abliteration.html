@@ -1,0 +1,34 @@
+{% extends 'content.html' %}
+{% block content %}
+<article class="prose">
+<p>Abliteration is a way to reduce a language model's refusal behavior by editing its weights. It targets an internal representation associated with refusal, rather than training on new answers. The foundation is <a href="https://arxiv.org/html/2406.11717v1">Arditi et al.'s 2024 paper, “Refusal in Language Models Is Mediated by a Single Direction.”</a> The authors demonstrated the mechanism across 13 open chat models. That finding describes their experiments, not a guarantee about every model sold as abliterated.</p>
+
+<h2>How abliteration works</h2>
+<p>The residual stream carries representations between a transformer's layers. Arditi et al. compared activations on harmful and harmless instructions to identify a direction associated with refusal. Removing the component along that direction suppressed refusal; adding the direction could induce refusal even on harmless instructions. Their <a href="https://arxiv.org/html/2406.11717v1#S2">method</a> identifies and tests candidate directions using contrasting prompt sets.</p>
+<p>One implementation removes that component during inference. Another, <a href="https://arxiv.org/html/2406.11717v1#S4">weight orthogonalization</a>, edits the matrices that write to the residual stream so they cannot write along the selected direction. The paper shows the equivalence of these interventions. The weight edit needs access to the parameters, but does not require gradient-based retraining or examples of harmful answers. It changes how existing representations affect generation.</p>
+
+<h2>Where the name came from</h2>
+<p><a href="https://huggingface.co/failspy/Meta-Llama-3-8B-Instruct-abliterated-v3">FailSpy's model card</a> explains the name as a combination of “ablate” and “obliterated,” chosen to distinguish the method from uncensored fine-tunes. FailSpy also published tools for experimenting with refusal directions. Maxime Labonne's <a href="https://huggingface.co/blog/mlabonne/abliteration">June 2024 Hugging Face article</a> presented an implementation based on FailSpy's notebook and the original researchers' work. The community term identifies a modification technique; it is not a standardized certification.</p>
+
+<h2>Automated variants, including Heretic</h2>
+<p>Automation can search for modification settings instead of requiring someone to select each candidate manually. <a href="https://github.com/p-e-w/heretic#how-heretic-works">Heretic's documentation</a> describes an optimizer that tunes a modifier against configurable scores. Its default scoring includes refusal rate and KL divergence, a measure of change in output distributions. The project supports directional ablation as well as another modifier, Arbitrary-Rank Ablation. A Heretic label therefore warrants checking the actual configuration rather than assuming one fixed edit.</p>
+
+<h2>Abliterated, uncensored, and prompt-jailbroken</h2>
+<p>“Uncensored” is a behavioral description, not a single training recipe. For example, the <a href="https://huggingface.co/cognitivecomputations/dolphin-2.9-llama3-8b">Dolphin 2.9 model card</a> describes full-parameter fine-tuning and a dataset filtered to remove alignment and bias. That approach learns from training examples. Abliteration instead edits weights using an identified direction. A checkpoint can also combine abliteration with subsequent fine-tuning, as <a href="https://huggingface.co/blog/mlabonne/abliteration">Labonne's worked example</a> does.</p>
+<p>A system-prompt jailbreak changes the instructions sent to a model. It does not itself change the stored weights. Arditi et al. distinguish their <a href="https://arxiv.org/html/2406.11717v1#S4">weight-based intervention from prompt-based attacks</a>. These methods can produce superficially similar answers, so an accommodating response alone cannot establish which modification a service uses. Ask for the modification's provenance rather than inferring it from the label.</p>
+
+<h2>Trade-offs and remaining refusals</h2>
+<p>Capability preservation is an empirical question. <a href="https://arxiv.org/html/2406.11717v1#S4">Arditi et al.</a> reported broadly similar results on several capability evaluations, alongside consistent declines on TruthfulQA. <a href="https://huggingface.co/blog/mlabonne/abliteration">Labonne</a> observed performance loss after abliteration in his example and recovered much of it with additional preference training. Neither result supplies a universal quality penalty for another checkpoint.</p>
+<p>Reduced refusal also does not mean zero refusal. <a href="https://huggingface.co/failspy/Meta-Llama-3-8B-Instruct-abliterated-v3">FailSpy explicitly cautions</a> that the modified model can still refuse or lecture about safety. Treat refusal behavior, task accuracy, and serving speed as separate questions. Test representative requests and compare the exact modified checkpoint with its source model before drawing conclusions about your workload.</p>
+
+<h2>What a hosted API actually serves</h2>
+<p>Record the gateway, API model identifier, declared modification, and pinned supplier when available. Ask the host for the checkpoint and modification documentation. RedRouter's <a href="/methodology/">Methodology</a> treats different modifications and uncertain aliases as distinct products, and treats precision and upstream identity as provider declarations. A route name is useful evidence for reproducing a request, but these measurements do not verify deployed weight hashes.</p>
+<p>The same <a href="/methodology/">Methodology</a> defines serial streaming requests, a trailing 72-hour summary, and the minimum samples for speed and latency percentiles. It measures customer-observed API performance and declared prices, not refusal rate or answer correctness. Compare the available routes on {% for model in models.values() %}<a href="/models/{{ model.id }}/">{{ model.name }}</a>{% if not loop.last %}, {% endif %}{% endfor %}. Use those pages to choose serving performance, then evaluate behavior separately.</p>
+
+<h2>Frequently asked questions</h2>
+{% for item in article.faq %}<h3>{{ item.question }}</h3>
+<p>{{ item.answer }}</p>
+<p><a href="{{ item.source }}">Source</a></p>
+{% endfor %}
+</article>
+{% endblock %}

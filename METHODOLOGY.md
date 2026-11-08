@@ -72,6 +72,10 @@ Use ordinary paid accounts, public endpoints and the same settings for every rou
 
 The suite does not measure task correctness, refusal rate, tool-call quality, model capability, deployed weight hashes, actual quantization, saturated throughput, concurrency scaling, long-context limits or worldwide uptime. These require different workloads, references or infrastructure; latency cannot establish them. A transport-level successful answer can still be useless. Four synthetic requests every eight hours cannot certify an SLA or rare-event reliability. Cache busting reduces shared-prefix reuse but cannot guarantee no provider-side cache hits; retain reported cache usage.
 
+For the distinction between weight edits and other refusal-reduction methods, see [What is abliteration?](/what-is-abliteration/).
+
+Licensing: code Apache-2.0, published results CC BY 4.0. The [data licence](/data/LICENSE.txt) includes the legal code.
+
 ## External results
 
 External results describe stock models evaluated by other organizations. They are not RedRouter measurements and not measurements of the listed hosts. Exact model identifiers and reasoning settings are preserved; missing run dates and benchmark versions remain unknown.
