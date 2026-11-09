@@ -29,7 +29,7 @@ configs:
 
 Customer-observed API latency, output speed, reliability and catalogue prices for abliterated and uncensored open-weight models, with standard-model controls. Data and charts: [benchmarks.redrouter.org](https://benchmarks.redrouter.org). These measurements do not assess model quality, refusal rates or worldwide uptime.
 
-Generated: {{ summary.generated_at }}. Methodology: {{ summary.methodology_version }}. Demonstration data: {{ 'yes' if summary.demo else 'no' }}.
+Generated: {{ summary.generated_at }}. Methodology: {{ summary.methodology_version }}.{% if summary.demo %} Demonstration data: yes.{% endif %}
 
 ## Current routes by model
 
@@ -38,7 +38,7 @@ Fastest means highest pooled {{ summary.window_hours }}-hour p50 output speed; c
 | Model | Fastest route | p50 tok/s | Cheapest route | USD / million tokens |
 | --- | --- | ---: | --- | ---: |
 {% for leader in leaders -%}
-| {{ leader.model | table_cell }} | {{ leader.fastest.route_id if leader.fastest else 'Unavailable' }} | {{ '%g' | format(leader.fastest.output_tokens_per_second_p50) if leader.fastest else 'Unavailable' }} | {{ leader.cheapest.route_id if leader.cheapest else 'Unavailable' }} | {{ '%g' | format(leader.cheapest.blended_usd_per_mtok) if leader.cheapest else 'Unavailable' }} |
+| {{ leader.model | table_cell }} | {{ leader.fastest | route_name | table_cell if leader.fastest else 'Unavailable' }} | {{ '%.0f' | format(leader.fastest.output_tokens_per_second_p50) if leader.fastest else 'Unavailable' }} | {{ leader.cheapest | route_name | table_cell if leader.cheapest else 'Unavailable' }} | {{ '%.3g' | format(leader.cheapest.blended_usd_per_mtok) if leader.cheapest else 'Unavailable' }} |
 {% endfor %}
 ## Columns
 

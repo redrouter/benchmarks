@@ -63,6 +63,13 @@ def size_category(rows: int) -> str:
     return "n>1B"
 
 
+def route_name(row: dict) -> str:
+    provider, upstream = row["provider"], row["upstream"]
+    if upstream and upstream.lower() not in provider.lower():
+        return f"{upstream} via {provider}"
+    return provider
+
+
 def model_leaders(summary: dict, rows: list[dict]) -> list[dict]:
     leaders = []
     for model in sorted(summary["models"], key=lambda model: model["id"]):
@@ -138,6 +145,7 @@ def export_dataset(data: Path, output: Path) -> None:
         autoescape=False,
         keep_trailing_newline=True,
     )
+    environment.filters["route_name"] = route_name
     environment.filters["table_cell"] = lambda value: (
         str(value).replace("|", "\\|").replace("\n", " ")
     )

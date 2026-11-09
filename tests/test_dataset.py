@@ -6,7 +6,7 @@ import pytest
 import yaml
 
 from redrouter_benchmarks.cli import main
-from redrouter_benchmarks.dataset import export_dataset
+from redrouter_benchmarks.dataset import export_dataset, route_name
 
 
 def read_csv(path):
@@ -63,8 +63,8 @@ def test_export_csvs_match_source_and_card_configs(site_input, tmp_path):
         },
         {"config_name": "history", "data_files": [{"split": "history", "path": "history.csv"}]},
     ]
-    assert "| GLM 5.3 Flash | nanogpt/glm-5.3-flash/abliterated | 187 |" in card
-    assert "explabs/glm-5.3-flash/uncensored | 0.535 |" in card
+    assert "| GLM 5.3 Flash | Heabsy via NanoGPT | 187 |" in card
+    assert "Experiential Labs | 0.535 |" in card
     assert "author = {RedRouter}" in card
     assert "year = {2026}" in card
 
@@ -120,3 +120,33 @@ def test_history_path_cannot_leave_data_directory(site_input, tmp_path):
     (data / "summary.json").write_text(json.dumps(summary))
     with pytest.raises(ValueError, match="leaves data directory"):
         export_dataset(data, tmp_path / "dataset")
+
+
+@pytest.mark.parametrize(
+    ("provider", "upstream", "expected"),
+    [
+        ("NanoGPT", "Heabsy", "Heabsy via NanoGPT"),
+        ("abliteration.ai", None, "abliteration.ai"),
+        ("abliteration.ai", "Abliteration", "abliteration.ai"),
+    ],
+)
+def test_route_names(provider, upstream, expected):
+    assert route_name({"provider": provider, "upstream": upstream}) == expected
+
+
+def test_card_rounds_numbers_and_marks_only_demo_data(site_input, tmp_path):
+    data, output = tmp_path / "data", tmp_path / "dataset"
+    shutil.copytree(site_input, data)
+    summary = json.loads((data / "summary.json").read_text())
+    for route in summary["routes"]:
+        route["metrics"]["all"]["output_tokens_per_second"]["p50"] = 187.6789
+        route["price"]["blended_usd_per_mtok"] = 0.534567
+    for demo in (False, True):
+        summary["demo"] = demo
+        (data / "summary.json").write_text(json.dumps(summary))
+        export_dataset(data, output)
+        card = (output / "README.md").read_text()
+        assert "| 188 |" in card
+        assert "| 0.535 |" in card
+        assert ("Demonstration data:" in card) == demo
+        assert yaml.safe_load(card.split("---", 2)[1])["license"] == "cc-by-4.0"
