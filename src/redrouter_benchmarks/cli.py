@@ -36,6 +36,9 @@ def main(argv: list[str] | None = None) -> None:
     build = sub.add_parser("build-site", help="Build the static benchmark site")
     build.add_argument("--data", type=Path, required=True)
     build.add_argument("--output", type=Path, required=True)
+    export = sub.add_parser("export-dataset", help="Export benchmark CSVs and a dataset card")
+    export.add_argument("--data", type=Path, required=True)
+    export.add_argument("--output", type=Path, required=True)
     serve_parser = sub.add_parser("serve", help="Preview a static site locally")
     serve_parser.add_argument("--dist", type=Path, required=True)
     serve_parser.add_argument("--port", type=int, default=8787)
@@ -77,6 +80,10 @@ def main(argv: list[str] | None = None) -> None:
             from redrouter_benchmarks.site import build_site
 
             build_site(args.data, args.output)
+        elif args.command == "export-dataset":
+            from redrouter_benchmarks.dataset import export_dataset
+
+            export_dataset(args.data, args.output)
         elif args.command == "serve":
             from redrouter_benchmarks.site import serve
 

@@ -59,6 +59,8 @@ Providers, models and routes with dated price sources are in [`catalog/catalog.t
 
 ## Data
 
+`redrouter-benchmarks export-dataset --data <data-dir> --output <dataset-dir>` exports summary and history CSVs with a Hugging Face dataset card.
+
 ```text
 <data-dir>/summary.json
 <data-dir>/summary.csv
