@@ -124,11 +124,11 @@ nav a[aria-current] {
   color:var(--text);
   border-bottom-color:var(--brand);
 }
-.github {
+.github,.huggingface {
   display:flex;
   color:var(--text-muted);
 }
-.github:hover {
+.github:hover,.huggingface:hover {
   color:var(--text);
 }
 .sign-in {
@@ -584,7 +584,7 @@ footer p:last-child {
   .demo+nav+.github {
     margin-left:0;
   }
-  .sign-in {
+  .huggingface,.sign-in {
     order:1;
   }
   nav {

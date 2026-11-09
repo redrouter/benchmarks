@@ -513,6 +513,7 @@ def page_metadata(summary, routes, path, context, downloads):
         "name": "RedRouter",
         "url": "https://redrouter.org",
         "logo": f"{SITE_URL}/assets/logo.svg",
+        "sameAs": ["https://huggingface.co/redrouter"],
     }
     graph = [organization]
     if not page:
@@ -547,6 +548,7 @@ def page_metadata(summary, routes, path, context, downloads):
                     "published; speed and latency percentiles require eight usable successes."
                 ),
                 "url": canonical,
+                "sameAs": ["https://huggingface.co/datasets/redrouter/abliterated-benchmarks"],
                 "creator": organization,
                 "license": "https://creativecommons.org/licenses/by/4.0/",
                 "isAccessibleForFree": True,

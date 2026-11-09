@@ -122,7 +122,7 @@ def test_site_matches_approved_output(site_input, tmp_path):
                 + b"\0"
                 + hashlib.sha256(path.read_bytes()).digest()
             )
-    assert digest.hexdigest() == "0046265de5be1e45d910c2383aeeada0c196fba443be6a9e7a0f1fcc76c82251"
+    assert digest.hexdigest() == "5b5f1913cffb45fd15e32d0827c22201205fc62fba9ec7321bca09ef5325cf3a"
 
 
 class Links(HTMLParser):
@@ -268,3 +268,36 @@ def test_hugging_face_dataset_discovery(site_input, tmp_path):
         footer = re.search(r"<footer>.*?</footer>", html)[0]
         assert footer.count(f'<a href="{url}">Dataset</a>') == 1
         assert url not in re.search(r"<nav\b.*?</nav>", html)[0]
+
+
+def test_hugging_face_header(site_input, tmp_path):
+    build_site(site_input, tmp_path)
+    for path in tmp_path.rglob("*.html"):
+        header = re.search(r"<header>.*?</header>", path.read_text(), re.S)[0]
+        assert header.count('aria-label="Dataset on Hugging Face"') == 1
+        link = re.search(r'<a class="huggingface".*?</a>', header)[0]
+        assert 'href="https://huggingface.co/datasets/redrouter/abliterated-benchmarks"' in link
+        assert 'title="Dataset on Hugging Face"' in link
+        svg = ElementTree.fromstring(re.search(r"<svg.*?</svg>", link)[0])
+        assert svg.attrib == {
+            "width": "20",
+            "height": "20",
+            "viewBox": "0 0 24 24",
+            "aria-hidden": "true",
+        }
+        assert svg.find("path").attrib["fill"] == "currentColor"
+        assert header.index('class="github"') < header.index(link) < header.index('class="sign-in"')
+
+
+def test_hugging_face_structured_identities(site_input, tmp_path):
+    build_site(site_input, tmp_path)
+    for path in tmp_path.rglob("*.html"):
+        graph = structured_graph(path.read_text())
+        organization = next(item for item in graph if item["@type"] == "Organization")
+        assert "https://huggingface.co/redrouter" in organization["sameAs"]
+        for dataset in (item for item in graph if item["@type"] == "Dataset"):
+            assert (
+                "https://huggingface.co/datasets/redrouter/abliterated-benchmarks"
+                in dataset["sameAs"]
+            )
+            assert dataset["creator"] == organization

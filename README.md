@@ -2,6 +2,8 @@
 
 Continuous, reproducible measurements of inference APIs serving refusal-reduced open-weight models, with standard-model controls. Results are published at [benchmarks.redrouter.org](https://benchmarks.redrouter.org).
 
+Data is also published as a [Hugging Face dataset](https://huggingface.co/datasets/redrouter/abliterated-benchmarks).
+
 Maintained by **RedRouter, an inference provider**. RedRouter routes are excluded. Provider names identify measured services; they imply no endorsement. Public catalogue listings confirm advertised configuration, not working inference or deployed weight identity.
 
 ## What is measured
