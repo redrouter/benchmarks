@@ -122,7 +122,7 @@ def test_site_matches_approved_output(site_input, tmp_path):
                 + b"\0"
                 + hashlib.sha256(path.read_bytes()).digest()
             )
-    assert digest.hexdigest() == "bc5c3d169fddac93ec1906f47f844931cd0b21bbc4503c65f61a7e2eda8434c5"
+    assert digest.hexdigest() == "0046265de5be1e45d910c2383aeeada0c196fba443be6a9e7a0f1fcc76c82251"
 
 
 class Links(HTMLParser):
@@ -257,3 +257,14 @@ def test_preview_returns_custom_404(tmp_path):
         finally:
             server.shutdown()
             worker.join(timeout=1)
+
+
+def test_hugging_face_dataset_discovery(site_input, tmp_path):
+    build_site(site_input, tmp_path)
+    url = "https://huggingface.co/datasets/redrouter/abliterated-benchmarks"
+    assert f"[Hugging Face dataset]({url})" in (tmp_path / "llms.txt").read_text()
+    for path in tmp_path.rglob("*.html"):
+        html = path.read_text()
+        footer = re.search(r"<footer>.*?</footer>", html)[0]
+        assert footer.count(f'<a href="{url}">Dataset</a>') == 1
+        assert url not in re.search(r"<nav\b.*?</nav>", html)[0]

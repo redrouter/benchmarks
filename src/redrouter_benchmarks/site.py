@@ -372,6 +372,9 @@ def llms_text(summary, routes, data_files):
         "uncensored fine-tuning, and trade-offs.",
         "",
         "## Data",
+        "- [Hugging Face dataset]"
+        "(https://huggingface.co/datasets/redrouter/abliterated-benchmarks): "
+        "Summary and history CSVs, updated every 8 hours.",
     ]
     for path in data_files:
         description = (
