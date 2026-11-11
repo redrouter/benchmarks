@@ -14,7 +14,7 @@ from xml.etree import ElementTree
 import pytest
 from validate_data import validate_data
 
-from redrouter_benchmarks.site import SiteHandler, build_site, serve
+from redrouter_benchmarks.site import SiteHandler, build_site, serve, write_assets
 
 
 def structured_graph(page):
@@ -122,7 +122,7 @@ def test_site_matches_approved_output(site_input, tmp_path):
                 + b"\0"
                 + hashlib.sha256(path.read_bytes()).digest()
             )
-    assert digest.hexdigest() == "5b5f1913cffb45fd15e32d0827c22201205fc62fba9ec7321bca09ef5325cf3a"
+    assert digest.hexdigest() == "60aff05b3dabc662749077628ce4be30583430de55cd6ee1e5d7094005a5d09a"
 
 
 class Links(HTMLParser):
@@ -141,6 +141,43 @@ def test_internal_links_resolve(site_input, tmp_path):
     parser.root = tmp_path / "dist"
     for page in parser.root.rglob("*.html"):
         parser.feed(page.read_text())
+
+
+def test_asset_versions_follow_dependencies(tmp_path):
+    source, output = tmp_path / "source", tmp_path / "output"
+    (source / "fonts").mkdir(parents=True)
+    (source / "fonts/geist.woff2").write_bytes(b"first font")
+    (source / "site.css").write_text("@font-face{src:url('/assets/fonts/geist.woff2')}")
+    (source / "tokens.css").write_text(":root{--color:red}")
+    (source / "external.css").write_text(".external{color:var(--color)}")
+    (source / "site.js").write_text("document.title='Ready'")
+    (source / "og.png").write_bytes(b"public preview")
+    first = write_assets(source, output)
+    assert first == write_assets(source, output)
+    css = output / first["/assets/site.css"].removeprefix("/assets/")
+    assert first["/assets/fonts/geist.woff2"] in css.read_text()
+    assert ":root{--color:red}" in css.read_text()
+    assert ".external{color:var(--color)}" in css.read_text()
+    assert (output / "og.png").read_bytes() == b"public preview"
+    (source / "fonts/geist.woff2").write_bytes(b"second font")
+    second = write_assets(source, output)
+    assert second["/assets/fonts/geist.woff2"] != first["/assets/fonts/geist.woff2"]
+    assert second["/assets/site.css"] != first["/assets/site.css"]
+    assert second["/assets/site.js"] == first["/assets/site.js"]
+    assert css.is_file()
+
+
+def test_font_preloads_match_bundled_styles(site_input, tmp_path):
+    build_site(site_input, tmp_path)
+    css = next((tmp_path / "assets").glob("site.*.css")).read_text()
+    for page in tmp_path.rglob("*.html"):
+        html = page.read_text()
+        assert len(re.findall(r'rel="stylesheet"', html)) == 1
+        fonts = re.findall(r'<link rel="preload" href="([^"]+)"[^>]+crossorigin>', html)
+        assert len(fonts) == 2
+        for font in fonts:
+            assert font in css
+            assert (tmp_path / font.lstrip("/")).is_file()
 
 
 def test_provider_and_route_badges(site_input, tmp_path):

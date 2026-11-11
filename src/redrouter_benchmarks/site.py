@@ -1,3 +1,4 @@
+import hashlib
 import json
 import math
 import re
@@ -601,6 +602,35 @@ def page_metadata(summary, routes, path, context, downloads):
     }
 
 
+def write_assets(source: Path, output: Path) -> dict[str, str]:
+    urls = {}
+
+    def write(relative, content):
+        path = Path(relative)
+        digest = hashlib.sha256(content).hexdigest()[:16]
+        target = output / path.with_name(f"{path.stem}.{digest}{path.suffix}")
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(content)
+        urls[f"/assets/{relative}"] = f"/assets/{target.relative_to(output).as_posix()}"
+
+    for path in sorted(source.rglob("*")):
+        if not path.is_file() or path.suffix == ".css":
+            continue
+        relative = path.relative_to(source).as_posix()
+        if path.suffix in (".json", ".txt") or relative in ("og.png", "logo.svg"):
+            target = output / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(path, target)
+        else:
+            write(relative, path.read_bytes())
+    styles = "\n".join(
+        (source / name).read_text() for name in ("tokens.css", "site.css", "external.css")
+    )
+    styles = re.sub(r"/assets/[\w./-]+", lambda m: urls.get(m[0], m[0]), styles)
+    write("site.css", styles.encode())
+    return urls
+
+
 def build_site(data_dir: Path, output_dir: Path) -> None:
     data_dir, output_dir = Path(data_dir).resolve(), Path(output_dir).resolve()
     if (
@@ -689,7 +719,7 @@ def build_site(data_dir: Path, output_dir: Path) -> None:
         if not re.fullmatch(r"[a-z0-9][a-z0-9.-]*", entity):
             raise ValueError(f"Invalid page id: {entity}")
     output_dir.mkdir(parents=True, exist_ok=True)
-    shutil.copytree(assets, output_dir / "assets", dirs_exist_ok=True)
+    asset_urls = write_assets(assets, output_dir / "assets")
     write_badges(summary, output_dir, (assets / "tokens.css").read_text())
     shutil.copytree(data_dir, output_dir / "data", dirs_exist_ok=True)
     shutil.copytree(resource("schema"), output_dir / "data" / "schema", dirs_exist_ok=True)
@@ -738,7 +768,9 @@ def build_site(data_dir: Path, output_dir: Path) -> None:
         target = output_dir / path
         target.parent.mkdir(parents=True, exist_ok=True)
         metadata = page_metadata(summary, routes, path, context, downloads)
-        target.write_text(env.get_template(template).render(**common, **context, **metadata))
+        page = env.get_template(template).render(**common, **context, **metadata)
+        page = re.sub(r"/assets/[\w./-]+", lambda m: asset_urls.get(m[0], m[0]), page)
+        target.write_text(page)
         if not metadata["noindex"]:
             entry = SubElement(sitemap, "url")
             SubElement(entry, "loc").text = metadata["canonical"]

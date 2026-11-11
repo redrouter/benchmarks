@@ -28,7 +28,8 @@
   let pageHeight = 0, heroHeight = 0, sheetWidth = 0, sheetLeft = 0;
   let viewTop = 0, firstRow = 0, rowShift = 0, gridLeft = 0, columnOrigin = 0;
   let overscan = 0, placedTop = 0;
-  let ready = false;
+  let ready = false, visible = true;
+  let columnU = new Float64Array(0), columnEdge = new Float64Array(0);
   const hero = panel ? container : document.querySelector('.landing-hero') || container;
   const levels = colors.map(() => []);
   const counts = new Uint32Array(colors.length);
@@ -163,6 +164,7 @@
   }
 
   function orbField(t) {
+    if (!seeded) { fieldTime = t; return; }
     field.fill(0);
     if (still.matches || !wide.matches) return;
     for (let n = 0; n < trailCount - 1; n++) {
@@ -285,6 +287,12 @@
     gridLeft = sheetLeft - columnOrigin * cw;
     cols = Math.ceil(width / cw);
     rows = Math.ceil(height / ch) + 1;
+    columnU = new Float64Array(cols);
+    columnEdge = new Float64Array(cols);
+    for (let x = 0; x < cols; x++) {
+      columnU[x] = (x * cw + gridLeft) / width;
+      columnEdge[x] = smooth(columnU[x] / 0.08) * smooth((1 - columnU[x]) / 0.12);
+    }
     const capacity = cols * (rows + 1);
     for (let i = 0; i < levels.length; i++) levels[i] = new Uint32Array(capacity);
     glyph = new Uint8Array(capacity);
@@ -355,25 +363,27 @@
     for (let y = -1; y < rows; y++) {
       const documentY = (firstRow + y) * ch;
       const mirror = panel ? 0 : smooth((documentY - heroHeight) / middle);
+      const leftWidth = 0.22 + 0.78 * mirror, rightWidth = 1 - 0.78 * mirror;
+      const leftPower = 2 - 0.5 * mirror, rightPower = 1.5 + 0.5 * mirror;
       for (let x = 0; x < cols; x++) {
-        const u = (x * cw + gridLeft) / width;
+        const u = columnU[x];
         const cell = (y + 1) * cols + x;
-        const edge = panel ? smooth(u / 0.08) * smooth((1 - u) / 0.12) :
+        const edge = panel ? columnEdge[x] :
           documentY <= heroHeight ? smooth((u - 0.5) / 0.11) :
           documentY >= pageHeight - heroHeight ? smooth((0.5 - u) / 0.11) : 1;
         const fade = active ? edge : 0;
-        const sampleU = u - Math.tanh(settled[cell * 3] / ch) * ch * fade / width;
-        const sampleY = Math.max(0, Math.min(rows, y + 1 - Math.tanh(settled[cell * 3 + 1] / ch) * fade));
+        const sampleU = active ? u - Math.tanh(settled[cell * 3] / ch) * ch * fade / width : u;
+        const sampleY = active ? Math.max(0, Math.min(rows, y + 1 - Math.tanh(settled[cell * 3 + 1] / ch) * fade)) : y + 1;
         const row = Math.floor(sampleY), blend = sampleY - row;
         const a = row * sheets.length * 3, b = Math.min(rows, row + 1) * sheets.length * 3;
         let intensity = 0;
         for (let s = 0; s < sheets.length * 3; s += 3) {
-          const center = sheetRows[a + s] + (sheetRows[b + s] - sheetRows[a + s]) * blend;
-          const breadth = sheetRows[a + s + 1] + (sheetRows[b + s + 1] - sheetRows[a + s + 1]) * blend;
-          const depth = sheetRows[a + s + 2] + (sheetRows[b + s + 2] - sheetRows[a + s + 2]) * blend;
+          const center = blend ? sheetRows[a + s] + (sheetRows[b + s] - sheetRows[a + s]) * blend : sheetRows[a + s];
+          const breadth = blend ? sheetRows[a + s + 1] + (sheetRows[b + s + 1] - sheetRows[a + s + 1]) * blend : sheetRows[a + s + 1];
+          const depth = blend ? sheetRows[a + s + 2] + (sheetRows[b + s + 2] - sheetRows[a + s + 2]) * blend : sheetRows[a + s + 2];
           const d = (sampleU - center) / breadth;
-          const face = d < 0 ? Math.exp(-((-d / (0.22 + 0.78 * mirror)) ** (2 - 0.5 * mirror))) :
-            Math.exp(-((d / (1 - 0.78 * mirror)) ** (1.5 + 0.5 * mirror)));
+          const face = d < 0 ? Math.exp(-((-d / leftWidth) ** leftPower)) :
+            Math.exp(-((d / rightWidth) ** rightPower));
           intensity = Math.max(intensity, face * depth);
         }
         intensity *= edge;
@@ -409,12 +419,12 @@
   }
 
   function requestFrame() {
-    if (ready && !document.hidden && !(panel && !wide.matches) && !raf) raf = requestAnimationFrame(frame);
+    if (ready && visible && !document.hidden && !(panel && !wide.matches) && !raf) raf = requestAnimationFrame(frame);
   }
 
   function frame(t) {
     raf = 0;
-    if (document.hidden || (panel && !wide.matches)) return;
+    if (!visible || document.hidden || (panel && !wide.matches)) return;
     syncScroll();
     if (still.matches) { draw(12000); return; }
     if (t - last >= 1000 / (wide.matches && !panel ? 60 : 30) - 0.5) {
@@ -444,6 +454,18 @@
       resize();
     }
   });
+  new IntersectionObserver(entries => {
+    visible = entries[0].isIntersecting;
+    if (visible) {
+      physicsTime = fieldTime = performance.now();
+      last = -Infinity;
+      requestFrame();
+    } else {
+      cancelAnimationFrame(raf);
+      raf = 0;
+      pointerActive = false;
+    }
+  }).observe(canvas);
   document.fonts.ready.then(() => {
     const observer = new ResizeObserver(resize);
     observer.observe(canvas);

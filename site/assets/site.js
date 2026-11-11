@@ -6,6 +6,9 @@
   if (validOption(region, params.get('region'))) region.value = params.get('region');
   if (model?.dataset.navigate === 'false' && validOption(model, params.get('model'))) model.value = params.get('model');
   function select() {
+    document.querySelectorAll('template[data-model]').forEach(template => {
+      if (template.dataset.model === model.value && template.dataset.region === region.value) template.replaceWith(template.content);
+    });
     document.querySelectorAll('.selection').forEach(section => {
       section.hidden = (model && section.dataset.model !== model.value) || section.dataset.region !== region.value;
     });
@@ -80,10 +83,13 @@
     });
   });
   document.addEventListener('click', event => { if (!event.target.closest('.picker')) closeAll(); });
-  document.querySelectorAll('.period-selector').forEach(selector => selector.addEventListener('change', () => {
-    selector.closest('.selection').querySelectorAll('.history-period').forEach(period => { period.hidden = period.dataset.days !== selector.value; });
-  }));
-  document.querySelectorAll('[data-sort]').forEach(button => button.addEventListener('click', () => {
+  document.addEventListener('change', event => {
+    const selector = event.target.closest('.period-selector');
+    if (selector) selector.closest('.selection').querySelectorAll('.history-period').forEach(period => { period.hidden = period.dataset.days !== selector.value; });
+  });
+  document.addEventListener('click', event => {
+    const button = event.target.closest('[data-sort]');
+    if (!button) return;
     const table = button.closest('table');
     const th = button.closest('th');
     const index = Number(button.dataset.sort);
@@ -99,7 +105,7 @@
       return direction * (Number.isFinite(Number(av)) && Number.isFinite(Number(bv)) ? Number(av) - Number(bv) : av.localeCompare(bv));
     });
     table.tBodies[0].append(...rows);
-  }));
+  });
   const tooltip = document.querySelector('#tooltip');
   function show(target, x, y) {
     tooltip.textContent = target.getAttribute('aria-label');
