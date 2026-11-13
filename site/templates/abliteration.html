@@ -1,6 +1,8 @@
 {% extends 'content.html' %}
+{% set canonical_url = "https://redrouter.org/blog/what-is-abliteration" %}
 {% block content %}
 <article class="prose">
+<p>Full explainer: <a href="https://redrouter.org/blog/what-is-abliteration">what is abliteration</a>.</p>
 <p>Abliteration is a way to reduce a language model's refusal behavior by editing its weights. It targets an internal representation associated with refusal, rather than training on new answers. The foundation is <a href="https://arxiv.org/html/2406.11717v1">Arditi et al.'s 2024 paper, “Refusal in Language Models Is Mediated by a Single Direction.”</a> The authors demonstrated the mechanism across 13 open chat models. That finding describes their experiments, not a guarantee about every model sold as abliterated.</p>
 
 <h2>How abliteration works</h2>

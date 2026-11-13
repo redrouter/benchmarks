@@ -87,7 +87,9 @@ def test_explainer_metadata_and_discovery(site_input, tmp_path):
     assert "author" not in article
     assert article["datePublished"] == article["dateModified"] == "2026-11-07"
     url = "https://benchmarks.redrouter.org/what-is-abliteration/"
-    assert f'<link rel="canonical" href="{url}">' in page
+    blog_url = "https://redrouter.org/blog/what-is-abliteration"
+    assert f'<link rel="canonical" href="{blog_url}">' in page
+    assert f'<a href="{blog_url}">what is abliteration</a>' in page
     assert article["mainEntityOfPage"] == url
     assert f'<meta name="description" content="{article["description"]}">' in page
     visible = re.findall(r"<h3>(.*?)</h3>\s*<p>(.*?)</p>", page)
@@ -122,7 +124,7 @@ def test_site_matches_approved_output(site_input, tmp_path):
                 + b"\0"
                 + hashlib.sha256(path.read_bytes()).digest()
             )
-    assert digest.hexdigest() == "60aff05b3dabc662749077628ce4be30583430de55cd6ee1e5d7094005a5d09a"
+    assert digest.hexdigest() == "2bc22e1e67f384079e29cd7522d75f62573f92ba472dab030e2ade948c99e3eb"
 
 
 class Links(HTMLParser):

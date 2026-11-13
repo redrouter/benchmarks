@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{{ seo_title }}</title>
 <meta name="description" content="{{ description }}">
-<link rel="canonical" href="{{ canonical }}">
+<link rel="canonical" href="{{ canonical_url|default(canonical) }}">
 {% if noindex %}<meta name="robots" content="noindex">{% endif %}
 <meta property="og:site_name" content="Abliterated Benchmarks by RedRouter">
 <meta property="og:type" content="website">
