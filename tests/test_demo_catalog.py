@@ -20,8 +20,8 @@ def demo(tmp_path_factory):
 
 
 def test_catalogue_has_sourced_prices_and_no_affiliated_routes(catalog):
-    assert len(catalog.providers) == 17
-    assert len(catalog.routes) == 36
+    assert len(catalog.providers) == 18
+    assert len(catalog.routes) == 38
     assert sum(r["enabled"] for r in catalog.routes.values()) == 34
     for route in catalog.routes.values():
         assert "redrouter" not in route["id"]

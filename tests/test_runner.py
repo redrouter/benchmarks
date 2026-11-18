@@ -246,6 +246,15 @@ def test_normalized_fixtures_keep_runner_timing_usage_and_cost(
     assert all(secret not in json.dumps(record) for secret in ("sample", "never-log", "synthetic"))
 
 
+def test_unknown_cache_price_uses_fresh_rate_and_flags_estimated_cost(catalog, route):
+    route["price"] = {"input_usd_per_mtok": 1, "output_usd_per_mtok": 2}
+    record = observation(catalog, route, fixture_chunks("openai-chat", "complete"))
+    assert record["error_class"] is None
+    assert record["usage"]["cached"] == 200
+    assert record["cost_usd"] == pytest.approx(0.002004)
+    assert record["cost_estimated"] is True
+
+
 @pytest.mark.parametrize(
     ("protocol", "error", "first", "completion"),
     [("openai-chat", "rate_limited", 1, 2), ("anthropic-messages", "protocol", 2, 1)],
