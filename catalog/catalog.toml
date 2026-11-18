@@ -436,12 +436,6 @@ creator = "Google"
 family = "Gemma"
 
 [[models]]
-id = "deepseek-v4-pro-qwen3.5-9b"
-name = "DeepSeek V4 Pro distill (Qwen3.5 9B)"
-creator = "Qwen"
-family = "Qwen"
-
-[[models]]
 id = "venice-uncensored-1.2"
 name = "Venice Uncensored 1.2"
 creator = "Venice"
@@ -489,7 +483,7 @@ enabled = true
 include_usage = true
 upstream = "lyber"
 context_tokens = 1048576
-price = { input_usd_per_mtok = 4.2, output_usd_per_mtok = 15.75, cached_input_usd_per_mtok = 4.2, source_url = "https://nano-gpt.com/api/models/lyber%2Fkimi-k3.1-pro-abliterated/providers", checked_at = "2026-11-18" }
+price = { input_usd_per_mtok = 4.2, output_usd_per_mtok = 15.75, source_url = "https://nano-gpt.com/api/models/lyber%2Fkimi-k3.1-pro-abliterated/providers", checked_at = "2026-11-18" }
 extra_body = { reasoning_effort = "low", provider = { only = ["lyber"], allow_fallbacks = false } }
 
 [routes."nanogpt-aoru/glm-5.3-flash-cybersecurity/uncensored"]
@@ -532,16 +526,6 @@ context_tokens = 262144
 price = { input_usd_per_mtok = 0.105, output_usd_per_mtok = 0.4725, cached_input_usd_per_mtok = 0.0525, source_url = "https://nano-gpt.com/api/models/Gemma-4-31B-Gembrain-uncensored-heretic/providers", checked_at = "2026-11-18" }
 extra_body = { reasoning_effort = "none", provider = { only = ["aoru"], allow_fallbacks = false } }
 
-[routes."nanogpt-kitani/deepseek-v4-pro-qwen3.5-9b/heretic"]
-provider_model = "xtools-at/deepseek-v4-pro-qwen3.5-9b-uncensored-heretic"
-enabled = true
-include_usage = true
-upstream = "kitani"
-declared_precision = "BF16"
-context_tokens = 32768
-price = { input_usd_per_mtok = 0.294, output_usd_per_mtok = 0.294, cached_input_usd_per_mtok = 0.147, source_url = "https://nano-gpt.com/api/models/xtools-at%2Fdeepseek-v4-pro-qwen3.5-9b-uncensored-heretic/providers", checked_at = "2026-11-18" }
-extra_body = { provider = { only = ["kitani"], allow_fallbacks = false } }
-
 [routes."venice/venice-uncensored-1.2/uncensored"]
 provider_model = "venice-uncensored-1-2"
 enabled = true
@@ -560,3 +544,33 @@ declared_precision = "FP8"
 context_tokens = 524288
 price = { input_usd_per_mtok = 0.28, output_usd_per_mtok = 1.1, cached_input_usd_per_mtok = 0.056, source_url = "https://openrouter.ai/api/v1/models/minimax/minimax-m3/endpoints", checked_at = "2026-11-18" }
 extra_body = { provider = { order = ["deepinfra/fp8"], allow_fallbacks = false } }
+
+[providers.heabsy]
+name = "Heabsy"
+url = "https://heabsy.com"
+logo = "heabsy.svg"
+base_url = "https://api.heabsy.com/v1"
+api_key_env = "HEABSY_API_KEY"
+terms_url = "https://heabsy.com/terms"
+
+[routes."refuseless/kimi-k3.1-pro/abliterated"]
+provider_model = "kimi-k3.1-pro-abliterated"
+enabled = true
+include_usage = true
+declared_precision = "MXFP4"
+context_tokens = 1048576
+price = { input_usd_per_mtok = 2.5, output_usd_per_mtok = 5, cached_input_usd_per_mtok = 0.25, source_url = "https://api.refuseless.com/models/kimi-k3.1-pro-abliterated", checked_at = "2026-11-18" }
+extra_body = { reasoning_effort = "low" }
+
+[routes."heabsy/qwen3.8-27b/uncensored"]
+provider_model = "qwen38-unc"
+enabled = false
+include_usage = true
+declared_precision = "NVFP4"
+price = { input_usd_per_mtok = 0.4887, output_usd_per_mtok = 2.17, cached_input_usd_per_mtok = 0.0626, source_url = "https://heabsy.com/models/qwen38-unc", checked_at = "2026-11-18" }
+
+[routes."heabsy/mimo-v2.6-flash/abliterated"]
+provider_model = "mimo-v26-flash-abl"
+enabled = false
+include_usage = true
+price = { input_usd_per_mtok = 0.5, output_usd_per_mtok = 1.5, cached_input_usd_per_mtok = 0.27, source_url = "https://heabsy.com/models/mimo-v26-flash-abl", checked_at = "2026-11-18" }

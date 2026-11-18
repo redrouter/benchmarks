@@ -61,24 +61,8 @@
       "url": "https://nano-gpt.com/api/models/qwen%2Fqwen3.8-27b-uncensored/providers",
       "http_status": 200,
       "routes": [
-        "nanogpt-heabsy/qwen3.8-27b/uncensored"
-      ],
-      "result": "Public provider-selection metadata lists this supplier as available. Prices are the supplier-specific pin prices (per 1K multiplied by 1,000), including the gateway markup; not default or direct prices. Precision and context are supplier-declared. No inference or deployed weight verification."
-    },
-    {
-      "checked_at": "2026-11-18",
-      "url": "https://nano-gpt.com/api/models/qwen%2Fqwen3.8-27b-uncensored/providers",
-      "http_status": 200,
-      "routes": [
-        "nanogpt-kitani/qwen3.8-27b/uncensored"
-      ],
-      "result": "Public provider-selection metadata lists this supplier as available. Prices are the supplier-specific pin prices (per 1K multiplied by 1,000), including the gateway markup; not default or direct prices. Precision and context are supplier-declared. No inference or deployed weight verification."
-    },
-    {
-      "checked_at": "2026-11-18",
-      "url": "https://nano-gpt.com/api/models/qwen%2Fqwen3.8-27b-uncensored/providers",
-      "http_status": 200,
-      "routes": [
+        "nanogpt-heabsy/qwen3.8-27b/uncensored",
+        "nanogpt-kitani/qwen3.8-27b/uncensored",
         "nanogpt-creekside/qwen3.8-27b/uncensored"
       ],
       "result": "Public provider-selection metadata lists this supplier as available. Prices are the supplier-specific pin prices (per 1K multiplied by 1,000), including the gateway markup; not default or direct prices. Precision and context are supplier-declared. No inference or deployed weight verification."
@@ -90,7 +74,7 @@
       "routes": [
         "nanogpt-lyber/kimi-k3.1-pro/abliterated"
       ],
-      "result": "Public provider-selection metadata lists this supplier as available. Prices are the supplier-specific pin prices (per 1K multiplied by 1,000), including the gateway markup; not default or direct prices. Precision and context are supplier-declared. No inference or deployed weight verification. Cache-price discrepancy: provider-selection JSON reports $4.20/M cached input while the provider page shows $0.42/M. Catalogue uses the JSON price; resolve before treating cached-price comparisons as authoritative."
+      "result": "Public provider-selection metadata lists this supplier as available. Prices are the supplier-specific pin prices (per 1K multiplied by 1,000), including the gateway markup; not default or direct prices. Precision and context are supplier-declared. No inference or deployed weight verification. Cache-price discrepancy: provider-selection JSON reports $4.20/M cached input while the provider page shows $0.42/M. Cached-input price is omitted until the conflicting public prices are reconciled; cost estimates conservatively use the fresh-input rate and are flagged when cached tokens are reported."
     },
     {
       "checked_at": "2026-11-18",
@@ -130,15 +114,6 @@
     },
     {
       "checked_at": "2026-11-18",
-      "url": "https://nano-gpt.com/api/models/xtools-at%2Fdeepseek-v4-pro-qwen3.5-9b-uncensored-heretic/providers",
-      "http_status": 200,
-      "routes": [
-        "nanogpt-kitani/deepseek-v4-pro-qwen3.5-9b/heretic"
-      ],
-      "result": "Public provider-selection metadata lists this supplier as available. Prices are the supplier-specific pin prices (per 1K multiplied by 1,000), including the gateway markup; not default or direct prices. Precision and context are supplier-declared. No inference or deployed weight verification."
-    },
-    {
-      "checked_at": "2026-11-18",
       "url": "https://api.venice.ai/api/v1/models",
       "http_status": 200,
       "routes": [
@@ -159,7 +134,7 @@
       "checked_at": "2026-11-18",
       "url": "https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic/raw/main/README.md",
       "http_status": 200,
-      "result": "Heretic edit of Jackrong/DeepSeek-V4-Pro-Qwen3.5-9B. This is a Qwen3.5 9B distill, not full DeepSeek V4 Pro. Kept as a separate Qwen identity; no full-size DeepSeek V4 Pro heretic endpoint verified."
+      "result": "Heretic edit of Jackrong/DeepSeek-V4-Pro-Qwen3.5-9B. This is a Qwen3.5 9B distill, not full DeepSeek V4 Pro, and is excluded from this expansion. No full-size DeepSeek V4 Pro Heretic endpoint verified."
     },
     {
       "checked_at": "2026-11-18",
@@ -184,6 +159,48 @@
       "url": "https://heabsy.com/models/uncensored",
       "http_status": 200,
       "result": "Heabsy describes qwen38-unc as its NVFP4 quantization of huihui-ai/Huihui-Qwen3.8-27B-abliterated and mimo-v26-flash-abl as a MorinoNushi Heretic-method build. Gateway route IDs retain the NanoGPT advertised uncensored/abliterated labels. These direct supplier claims do not independently verify the gateway deployment or make other Qwen hosts equivalent."
+    },
+    {
+      "checked_at": "2026-11-18",
+      "url": "https://www.lyber.ai/docs/models/",
+      "http_status": 200,
+      "routes": [
+        "nanogpt-lyber/kimi-k3.1-pro/abliterated"
+      ],
+      "result": "Lyber documents hosted Kimi as served by an external inference provider; this gateway route does not establish independent hosting infrastructure. Hosted API docs list no cache discount ($4/M direct) while marketing pages still show $0.40/M direct. Current authenticated route pricing is needed to resolve the discrepancy."
+    },
+    {
+      "checked_at": "2026-11-18",
+      "url": "https://api.refuseless.com/models/kimi-k3.1-pro-abliterated",
+      "http_status": 200,
+      "routes": [
+        "refuseless/kimi-k3.1-pro/abliterated"
+      ],
+      "result": "Public model page confirms exact direct model ID, endpoint, 1,048,576 context, MXFP4 and $2.50/$5.00 I/O plus $0.25 cached input per million. Low reasoning effort is documented in the provider homepage client configuration. Public catalogue verification only; no inference or independent checkpoint verification."
+    },
+    {
+      "checked_at": "2026-11-18",
+      "url": "https://heabsy.com/models/qwen38-unc",
+      "http_status": 200,
+      "routes": [
+        "heabsy/qwen3.8-27b/uncensored"
+      ],
+      "result": "Direct qwen38-unc ID, NVFP4 and $0.4887/$2.17 I/O plus $0.0626 cached input per million confirmed in the dated public model page. Provider names huihui-ai/Huihui-Qwen3.8-27B-abliterated. Candidate stays disabled pending authenticated catalogue, reasoning-control and streaming/usage checks on an ordinary paid account."
+    },
+    {
+      "checked_at": "2026-11-18",
+      "url": "https://heabsy.com/models/mimo-v26-flash-abl",
+      "http_status": 200,
+      "routes": [
+        "heabsy/mimo-v2.6-flash/abliterated"
+      ],
+      "result": "Direct mimo-v26-flash-abl ID and $0.50/$1.50 I/O plus $0.27 cached input per million confirmed publicly. Candidate stays disabled pending authenticated catalogue, reasoning-control and streaming/usage checks on an ordinary paid account."
+    },
+    {
+      "checked_at": "2026-11-18",
+      "url": "https://api.heabsy.com/v1/models",
+      "http_status": 401,
+      "result": "Unauthenticated catalogue GET requires credentials; no paid inference performed."
     }
   ]
 }
