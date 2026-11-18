@@ -16,5 +16,35 @@
     "creator": "Qwen",
     "source_url": "https://github.com/lobehub/lobe-icons",
     "license": "MIT"
+  },
+  {
+    "id": "moonshotai",
+    "creator": "Moonshot AI",
+    "source_url": "https://github.com/lobehub/lobe-icons",
+    "license": "MIT"
+  },
+  {
+    "id": "google",
+    "creator": "Google",
+    "source_url": "https://github.com/lobehub/lobe-icons",
+    "license": "MIT"
+  },
+  {
+    "id": "minimax",
+    "creator": "MiniMax",
+    "source_url": "https://github.com/lobehub/lobe-icons",
+    "license": "MIT"
+  },
+  {
+    "id": "venice",
+    "creator": "Venice",
+    "source_url": "https://github.com/lobehub/lobe-icons",
+    "license": "MIT"
+  },
+  {
+    "id": "xiaomi",
+    "creator": "Xiaomi",
+    "source_url": "https://nano-gpt.com/icons/Xiaomi.svg",
+    "license": "Provider brand mark"
   }
 ]

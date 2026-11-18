@@ -98,5 +98,28 @@
     "format": "svg",
     "monogram": true,
     "reason": "https://sableapi.com/favicon.svg: HTTP Error 404: Not Found; https://sableapi.com/icon.svg: HTTP Error 404: Not Found; https://sableapi.com/apple-touch-icon.png: HTTP Error 404: Not Found; https://sableapi.com/favicon.ico: HTTP Error 404: Not Found"
+  },
+  {
+    "id": "creekside",
+    "source_url": "https://nano-gpt.com/icons/Creekside.svg",
+    "fetched_at": "2026-11-18",
+    "format": "svg",
+    "monogram": false
+  },
+  {
+    "id": "aoru",
+    "source_url": "https://nano-gpt.com/provider/aoru",
+    "fetched_at": "2026-11-18",
+    "format": "svg",
+    "monogram": true,
+    "reason": "Direct favicon returned HTTP 403; neutral monogram."
+  },
+  {
+    "id": "lyber",
+    "source_url": "https://nano-gpt.com/provider/lyber",
+    "fetched_at": "2026-11-18",
+    "format": "svg",
+    "monogram": true,
+    "reason": "Direct favicon returned HTTP 403; neutral monogram."
   }
 ]

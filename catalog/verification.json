@@ -1,51 +1,189 @@
 {
-  "checked_at": "2026-11-06",
+  "checked_at": "2026-11-18",
   "method": "Unauthenticated public GETs and authenticated GET /v1/models; no inference calls.",
   "observations": [
     {
       "url": "https://api.refuseless.com/v1/models",
       "http_status": 200,
-      "result": "IDs and context confirmed. The authenticated list exposes only undated deepseek-v4.1-flash-abliterated, so it is catalogued as the undated derivative."
+      "result": "IDs and context confirmed. The authenticated list exposes only undated deepseek-v4.1-flash-abliterated, so it is catalogued as the undated derivative.",
+      "checked_at": "2026-11-06"
     },
     {
       "url": "https://docs.abliteration.ai/models",
       "http_status": 200,
-      "result": "Model IDs, base URL and context confirmed; GET /v1/models requires authentication (401). Large v2 cannot disable reasoning."
+      "result": "Model IDs, base URL and context confirmed; GET /v1/models requires authentication (401). Large v2 cannot disable reasoning.",
+      "checked_at": "2026-11-06"
     },
     {
       "url": "https://api.venice.ai/api/v1/models",
       "http_status": 200,
-      "result": "Exact dated DeepSeek ID and Large v2 confirmed with prices; public metadata is not a serving test."
+      "result": "Exact dated DeepSeek ID and Large v2 confirmed with prices; public metadata is not a serving test.",
+      "checked_at": "2026-11-06"
     },
     {
       "url": "https://platform.yeta.ai/v1/models",
       "http_status": 200,
-      "result": "Base URL and request IDs confirmed with an authenticated GET. Only undated deepseek-v4.1-flash-uncensored is listed, so it is catalogued as the undated derivative. Prices from yeta.ai."
+      "result": "Base URL and request IDs confirmed with an authenticated GET. Only undated deepseek-v4.1-flash-uncensored is listed, so it is catalogued as the undated derivative. Prices from yeta.ai.",
+      "checked_at": "2026-11-06"
     },
     {
       "url": "https://larprouter.com/",
       "http_status": 200,
-      "result": "Base URL and exact dated model ID confirmed in curl example; /v1/models requires authentication (401)."
+      "result": "Base URL and exact dated model ID confirmed in curl example; /v1/models requires authentication (401).",
+      "checked_at": "2026-11-06"
     },
     {
       "url": "https://www.experientiallabs.ai/uncensored",
       "http_status": 200,
-      "result": "Base URL, IDs, dated DeepSeek base, context and promotional prices confirmed; /v1/models requires authentication (401)."
+      "result": "Base URL, IDs, dated DeepSeek base, context and promotional prices confirmed; /v1/models requires authentication (401).",
+      "checked_at": "2026-11-06"
     },
     {
       "url": "https://nano-gpt.com/api/v1/models",
       "http_status": 200,
-      "result": "Canonical model IDs confirmed. Supplier membership and marked-up prices checked on each /provider/<supplier> page and /api/models/<id>/providers. Venice serves only the undated uncensored DeepSeek; its dated uncensored pin stays disabled."
+      "result": "Canonical model IDs confirmed. Supplier membership and marked-up prices checked on each /provider/<supplier> page and /api/models/<id>/providers. Venice serves only the undated uncensored DeepSeek; its dated uncensored pin stays disabled.",
+      "checked_at": "2026-11-06"
     },
     {
       "url": "https://docs.nano-gpt.com/api-reference/miscellaneous/provider-selection",
       "http_status": 200,
-      "result": "provider.only is a hard pin; provider.order alone is soft. All pins set only and allow_fallbacks=false."
+      "result": "provider.only is a hard pin; provider.order alone is soft. All pins set only and allow_fallbacks=false.",
+      "checked_at": "2026-11-06"
     },
     {
       "url": "https://openrouter.ai/api/v1/models",
       "http_status": 200,
-      "result": "Standard-model controls confirmed. Supplier tags, precision and prices checked with each model /endpoints GET; controls pin morph/fp8 or z-ai/fp8."
+      "result": "Standard-model controls confirmed. Supplier tags, precision and prices checked with each model /endpoints GET; controls pin morph/fp8 or z-ai/fp8.",
+      "checked_at": "2026-11-06"
+    },
+    {
+      "checked_at": "2026-11-18",
+      "url": "https://nano-gpt.com/api/models/qwen%2Fqwen3.8-27b-uncensored/providers",
+      "http_status": 200,
+      "routes": [
+        "nanogpt-heabsy/qwen3.8-27b/uncensored"
+      ],
+      "result": "Public provider-selection metadata lists this supplier as available. Prices are the supplier-specific pin prices (per 1K multiplied by 1,000), including the gateway markup; not default or direct prices. Precision and context are supplier-declared. No inference or deployed weight verification."
+    },
+    {
+      "checked_at": "2026-11-18",
+      "url": "https://nano-gpt.com/api/models/qwen%2Fqwen3.8-27b-uncensored/providers",
+      "http_status": 200,
+      "routes": [
+        "nanogpt-kitani/qwen3.8-27b/uncensored"
+      ],
+      "result": "Public provider-selection metadata lists this supplier as available. Prices are the supplier-specific pin prices (per 1K multiplied by 1,000), including the gateway markup; not default or direct prices. Precision and context are supplier-declared. No inference or deployed weight verification."
+    },
+    {
+      "checked_at": "2026-11-18",
+      "url": "https://nano-gpt.com/api/models/qwen%2Fqwen3.8-27b-uncensored/providers",
+      "http_status": 200,
+      "routes": [
+        "nanogpt-creekside/qwen3.8-27b/uncensored"
+      ],
+      "result": "Public provider-selection metadata lists this supplier as available. Prices are the supplier-specific pin prices (per 1K multiplied by 1,000), including the gateway markup; not default or direct prices. Precision and context are supplier-declared. No inference or deployed weight verification."
+    },
+    {
+      "checked_at": "2026-11-18",
+      "url": "https://nano-gpt.com/api/models/lyber%2Fkimi-k3.1-pro-abliterated/providers",
+      "http_status": 200,
+      "routes": [
+        "nanogpt-lyber/kimi-k3.1-pro/abliterated"
+      ],
+      "result": "Public provider-selection metadata lists this supplier as available. Prices are the supplier-specific pin prices (per 1K multiplied by 1,000), including the gateway markup; not default or direct prices. Precision and context are supplier-declared. No inference or deployed weight verification. Cache-price discrepancy: provider-selection JSON reports $4.20/M cached input while the provider page shows $0.42/M. Catalogue uses the JSON price; resolve before treating cached-price comparisons as authoritative."
+    },
+    {
+      "checked_at": "2026-11-18",
+      "url": "https://nano-gpt.com/api/models/z-ai%2Fglm-5.3-flash-cybersecurity/providers",
+      "http_status": 200,
+      "routes": [
+        "nanogpt-aoru/glm-5.3-flash-cybersecurity/uncensored"
+      ],
+      "result": "Public provider-selection metadata lists this supplier as available. Prices are the supplier-specific pin prices (per 1K multiplied by 1,000), including the gateway markup; not default or direct prices. Precision and context are supplier-declared. No inference or deployed weight verification."
+    },
+    {
+      "checked_at": "2026-11-18",
+      "url": "https://nano-gpt.com/api/models/z-ai%2Fglm-5.3-flash-apex-abliterated/providers",
+      "http_status": 200,
+      "routes": [
+        "nanogpt-aoru/glm-5.3-flash-apex/abliterated"
+      ],
+      "result": "Public provider-selection metadata lists this supplier as available. Prices are the supplier-specific pin prices (per 1K multiplied by 1,000), including the gateway markup; not default or direct prices. Precision and context are supplier-declared. No inference or deployed weight verification."
+    },
+    {
+      "checked_at": "2026-11-18",
+      "url": "https://nano-gpt.com/api/models/xiaomi%2Fmimo-v2.6-flash-abliterated/providers",
+      "http_status": 200,
+      "routes": [
+        "nanogpt-heabsy/mimo-v2.6-flash/abliterated"
+      ],
+      "result": "Public provider-selection metadata lists this supplier as available. Prices are the supplier-specific pin prices (per 1K multiplied by 1,000), including the gateway markup; not default or direct prices. Precision and context are supplier-declared. No inference or deployed weight verification."
+    },
+    {
+      "checked_at": "2026-11-18",
+      "url": "https://nano-gpt.com/api/models/Gemma-4-31B-Gembrain-uncensored-heretic/providers",
+      "http_status": 200,
+      "routes": [
+        "nanogpt-aoru/gemma-4-31b-gembrain/heretic"
+      ],
+      "result": "Public provider-selection metadata lists this supplier as available. Prices are the supplier-specific pin prices (per 1K multiplied by 1,000), including the gateway markup; not default or direct prices. Precision and context are supplier-declared. No inference or deployed weight verification."
+    },
+    {
+      "checked_at": "2026-11-18",
+      "url": "https://nano-gpt.com/api/models/xtools-at%2Fdeepseek-v4-pro-qwen3.5-9b-uncensored-heretic/providers",
+      "http_status": 200,
+      "routes": [
+        "nanogpt-kitani/deepseek-v4-pro-qwen3.5-9b/heretic"
+      ],
+      "result": "Public provider-selection metadata lists this supplier as available. Prices are the supplier-specific pin prices (per 1K multiplied by 1,000), including the gateway markup; not default or direct prices. Precision and context are supplier-declared. No inference or deployed weight verification."
+    },
+    {
+      "checked_at": "2026-11-18",
+      "url": "https://api.venice.ai/api/v1/models",
+      "http_status": 200,
+      "routes": [
+        "venice/venice-uncensored-1.2/uncensored"
+      ],
+      "result": "Exact 1.2 ID, FP16, 128,000 context and $0.20/$0.90 I/O per million confirmed; modelSource names Dolphin-Mistral-24B-Venice-Edition. No inference."
+    },
+    {
+      "checked_at": "2026-11-18",
+      "url": "https://openrouter.ai/api/v1/models/minimax/minimax-m3/endpoints",
+      "http_status": 200,
+      "routes": [
+        "openrouter/minimax-m3/none"
+      ],
+      "result": "Canonical MiniMax M3 request ID and deepinfra/fp8 standard endpoint confirmed. $0.28/$1.10 I/O and $0.056 cached input per million; distinct from cheaper deepinfra/fp8/flex. No inference."
+    },
+    {
+      "checked_at": "2026-11-18",
+      "url": "https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic/raw/main/README.md",
+      "http_status": 200,
+      "result": "Heretic edit of Jackrong/DeepSeek-V4-Pro-Qwen3.5-9B. This is a Qwen3.5 9B distill, not full DeepSeek V4 Pro. Kept as a separate Qwen identity; no full-size DeepSeek V4 Pro heretic endpoint verified."
+    },
+    {
+      "checked_at": "2026-11-18",
+      "url": "https://nano-gpt.com/api/v1/models?detailed=true",
+      "http_status": 200,
+      "result": "Kimi K3.1 Pro is explicitly listed as abliterated through Lyber. Stock Kimi K3 is not evidence for a K3 abliterated route. GLM Flash Cybersecurity and Apex Flash 1 Abliterated have separate model identities from generic GLM 5.3 Flash. NanoGPT descriptions and supplier claims are not verified deployed checkpoints."
+    },
+    {
+      "checked_at": "2026-11-18",
+      "url": "https://api.refuseless.com/v1/models",
+      "http_status": 403,
+      "result": "Catalogue recheck blocked; no new Refuseless route enabled based only on search snippets."
+    },
+    {
+      "checked_at": "2026-11-18",
+      "url": "https://platform.yeta.ai/v1/models",
+      "http_status": 403,
+      "result": "Catalogue recheck blocked; no new Yeta route enabled."
+    },
+    {
+      "checked_at": "2026-11-18",
+      "url": "https://heabsy.com/models/uncensored",
+      "http_status": 200,
+      "result": "Heabsy describes qwen38-unc as its NVFP4 quantization of huihui-ai/Huihui-Qwen3.8-27B-abliterated and mimo-v26-flash-abl as a MorinoNushi Heretic-method build. Gateway route IDs retain the NanoGPT advertised uncensored/abliterated labels. These direct supplier claims do not independently verify the gateway deployment or make other Qwen hosts equivalent."
     }
   ]
 }

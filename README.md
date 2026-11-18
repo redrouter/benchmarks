@@ -59,6 +59,8 @@ Without `--route`, every enabled route with a credential runs. Pass `--route <pr
 
 Providers, models and routes with dated price sources are in [`catalog/catalog.toml`](catalog/catalog.toml). Public endpoint checks are in [`catalog/verification.json`](catalog/verification.json). NanoGPT supplier pins have their own provider IDs, such as `nanogpt-heabsy`, and are measured through the gateway. To add a provider, route or protocol adapter, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
+Coverage includes Qwen 3.8 27B, Kimi K3.1 Pro, GLM Flash Cybersecurity/Apex, MiMo V2.6 Flash, Gemma 4 31B Gembrain, Venice Uncensored 1.2 and a MiniMax M3 control. Named Cyber/Apex and Gembrain derivatives remain separate identities. The DeepSeek V4 Pro-named Heretic route is explicitly a **Qwen3.5 9B distill**, not full DeepSeek V4 Pro. Public listings establish advertised routes, not deployed weights or successful inference.
+
 ## Data
 
 `redrouter-benchmarks export-dataset --data <data-dir> --output <dataset-dir>` exports summary and history CSVs with a Hugging Face dataset card.

@@ -124,7 +124,7 @@ def test_site_matches_approved_output(site_input, tmp_path):
                 + b"\0"
                 + hashlib.sha256(path.read_bytes()).digest()
             )
-    assert digest.hexdigest() == "2bc22e1e67f384079e29cd7522d75f62573f92ba472dab030e2ade948c99e3eb"
+    assert digest.hexdigest() == "72a9bc06d138ad3cd4e567858ed34bbf00c1a8e397f4b8f8693ac47fe8f53977"
 
 
 class Links(HTMLParser):
